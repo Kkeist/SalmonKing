@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#fff8f0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -10,10 +12,17 @@
   <link rel="icon" href="./img/192icon.PNG" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&display=swap"
+    rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -24,6 +33,7 @@
       background: linear-gradient(180deg, #fff8f0 0%, #ffe8dc 50%, #ffddd0 100%);
       font-family: "ZCOOL KuaiLe", "Ma Shan Zheng", "Noto Sans SC", sans-serif;
     }
+
     #app {
       width: 100%;
       height: 100%;
@@ -31,333 +41,968 @@
       margin: 0 auto;
       position: relative;
       background: linear-gradient(180deg, #fffaf5 0%, #fff0e8 30%, #ffebe0 70%, #ffe4d6 100%);
-      box-shadow: 0 0 0 1px rgba(255,180,160,0.2);
+      box-shadow: 0 0 0 1px rgba(255, 180, 160, 0.2);
     }
 
     /* 加载画面：下层切水果小游戏 + 上层居中信息卡 */
     #loading {
-      position: absolute; inset: 0; z-index: 9999;
+      position: absolute;
+      inset: 0;
+      z-index: 9999;
       background: linear-gradient(180deg, #fff8f0, #ffe8dc);
       overflow: hidden;
     }
-    #loading.hidden { display: none; }
+
+    #loading.hidden {
+      display: none;
+    }
+
     #loading-game {
-      position: absolute; inset: 0; z-index: 0;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
       pointer-events: none;
     }
-    #loading-game .loading-tap-layer { position: absolute; inset: 0; pointer-events: auto; }
-    #loading-items { position: absolute; inset: 0; pointer-events: none; }
+
+    #loading-game .loading-tap-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: auto;
+    }
+
+    #loading-items {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
     #loading-items .loading-item {
-      position: absolute; pointer-events: auto; cursor: pointer;
-      width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;
+      position: absolute;
+      pointer-events: auto;
+      cursor: pointer;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 0.1s;
       z-index: 1;
     }
-    #loading-items .loading-item:hover { transform: scale(1.08); }
-    #loading-items .loading-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; image-rendering: crisp-edges; }
-    #loading-combo {
-      position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
-      z-index: 2; pointer-events: none;
-      font-size: 1.5rem; font-weight: bold; color: #c45c3e;
-      text-shadow: 0 2px 4px rgba(255,255,255,0.9);
+
+    #loading-items .loading-item:hover {
+      transform: scale(1.08);
     }
-    #loading-combo .combo-num { font-size: 2rem; }
+
+    #loading-items .loading-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      image-rendering: crisp-edges;
+    }
+
+    #loading-combo {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      pointer-events: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #c45c3e;
+      text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+    }
+
+    #loading-combo .combo-num {
+      font-size: 2rem;
+    }
+
     .loading-pop {
-      position: absolute; pointer-events: none; z-index: 10;
-      width: 20px; height: 20px; margin-left: -10px; margin-top: -10px;
-      border-radius: 50%; background: rgba(255,200,180,0.9);
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+      width: 20px;
+      height: 20px;
+      margin-left: -10px;
+      margin-top: -10px;
+      border-radius: 50%;
+      background: rgba(255, 200, 180, 0.9);
       animation: loading-pop 0.4s ease-out forwards;
     }
+
     @keyframes loading-pop {
-      0% { transform: scale(0); opacity: 1; }
-      100% { transform: scale(2.5); opacity: 0; }
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(2.5);
+        opacity: 0;
+      }
     }
-    #loading-items .loading-item { animation: loading-throw 0.35s ease-out forwards; }
+
+    #loading-items .loading-item {
+      animation: loading-throw 0.35s ease-out forwards;
+    }
+
     @keyframes loading-throw {
-      0% { transform: scale(0.4); opacity: 0; }
-      70% { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
+      0% {
+        transform: scale(0.4);
+        opacity: 0;
+      }
+
+      70% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
+
     #loading-card {
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-      z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 24px; background: rgba(255,248,240,0.92);
-      border-radius: 24px; box-shadow: 0 8px 32px rgba(196,92,62,0.15);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(255, 248, 240, 0.92);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(196, 92, 62, 0.15);
       pointer-events: auto;
     }
+
     #loading-card .logo {
-      width: 140px; height: 140px; object-fit: contain;
-      margin-bottom: 12px; filter: drop-shadow(0 4px 12px rgba(255,120,80,0.25));
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 12px rgba(255, 120, 80, 0.25));
     }
-    #loading-card h1 { font-size: 1.5rem; color: #c45c3e; margin-bottom: 16px; letter-spacing: 2px; }
+
+    #loading-card h1 {
+      font-size: 1.5rem;
+      color: #c45c3e;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
     #loading-card .bar-wrap {
-      width: 200px; height: 10px; background: rgba(255,180,160,0.3); border-radius: 5px;
-      overflow: hidden; margin-bottom: 8px;
+      width: 200px;
+      height: 10px;
+      background: rgba(255, 180, 160, 0.3);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 8px;
     }
-    #loading-card .bar { height: 100%; width: 0%; background: linear-gradient(90deg, #e8a090, #c45c3e); border-radius: 5px; transition: width 0.15s; }
-    #loading-card .tip { font-size: 0.8rem; color: #a05040; }
+
+    #loading-card .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #e8a090, #c45c3e);
+      border-radius: 5px;
+      transition: width 0.15s;
+    }
+
+    #loading-card .tip {
+      font-size: 0.8rem;
+      color: #a05040;
+    }
 
     /* 主菜单 */
-    #menu { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-    #menu.hidden { display: none; }
-    #menu .title-img { width: 260px; height: 260px; object-fit: contain; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08)); }
-    #menu h1 { font-size: 1.5rem; color: #c45c3e; margin-bottom: 32px; }
-    #menu .mode-btn {
-      width: 100%; max-width: 260px; padding: 16px 24px; margin: 8px 0;
-      border: none; border-radius: 16px;
-      background: linear-gradient(145deg, #fff5ee, #ffddd0);
-      box-shadow: 0 4px 16px rgba(196,92,62,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
-      font-size: 1.1rem; color: #8b451a; font-weight: bold;
-      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    #menu {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    #menu .mode-btn:active { transform: scale(0.98); }
-    #menu .mode-btn-locked { opacity: 0.6; cursor: not-allowed; }
+
+    #menu.hidden {
+      display: none;
+    }
+
+    #menu .title-img {
+      width: 260px;
+      height: 260px;
+      object-fit: contain;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+    }
+
+    #menu h1 {
+      font-size: 1.5rem;
+      color: #c45c3e;
+      margin-bottom: 32px;
+    }
+
+    #menu .mode-btn {
+      width: 100%;
+      max-width: 260px;
+      padding: 16px 24px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #fff5ee, #ffddd0);
+      box-shadow: 0 4px 16px rgba(196, 92, 62, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+      color: #8b451a;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    #menu .mode-btn:active {
+      transform: scale(0.98);
+    }
+
+    #menu .mode-btn-locked {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
     /* 选关 */
-    #level-select { position: absolute; inset: 0; z-index: 90; background: rgba(255,248,240,0.98); display: none; flex-direction: column; padding: 16px; }
-    #level-select.visible { display: flex; }
-    #level-select .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    #level-select .header h2 { font-size: 1.2rem; color: #c45c3e; }
-    #level-select .back-btn { padding: 8px 16px; border-radius: 12px; border: none; background: #ffddd0; color: #8b451a; cursor: pointer; }
-    #level-select .levels { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-    #level-select .level-btn {
-      width: 72px; height: 72px; border-radius: 16px;
-      background: linear-gradient(145deg, #fff5ee, #ffddd0);
-      box-shadow: 0 4px 12px rgba(196,92,62,0.12);
-      border: 2px solid rgba(255,180,160,0.5);
-      font-size: 1.2rem; font-weight: bold; color: #8b451a;
+    #level-select {
+      position: absolute;
+      inset: 0;
+      z-index: 90;
+      background: rgba(255, 248, 240, 0.98);
+      display: none;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    #level-select.visible {
+      display: flex;
+    }
+
+    #level-select .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    #level-select .header h2 {
+      font-size: 1.2rem;
+      color: #c45c3e;
+    }
+
+    #level-select .back-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: none;
+      background: #ffddd0;
+      color: #8b451a;
       cursor: pointer;
     }
-    #level-select .level-btn.locked { opacity: 0.6; cursor: not-allowed; }
+
+    #level-select .levels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    #level-select .level-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #fff5ee, #ffddd0);
+      box-shadow: 0 4px 12px rgba(196, 92, 62, 0.12);
+      border: 2px solid rgba(255, 180, 160, 0.5);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #8b451a;
+      cursor: pointer;
+    }
+
+    #level-select .level-btn.locked {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
     /* 游戏主界面 */
-    #game { position: absolute; inset: 0; z-index: 50; display: none; flex-direction: column; overflow: hidden; }
-    #game.visible { display: flex; }
+    #game {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #game.visible {
+      display: flex;
+    }
+
     /* 竖屏层级：顶行 → 进度条 → 想吃对话框 → 回转寿司+左右饮料 → 寿司空位 → 盘子 → 调料2x3 → 吃饭区 */
 
     /* 顶栏：左侧返回 + 中间标题 + 右侧设置；下方进度条 */
     #game .top-bar {
-      flex-shrink: 0; min-height: 44px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 8px 0 4px; background: linear-gradient(180deg, rgba(255,245,238,0.98), rgba(255,235,220,0.95));
-      border-bottom: 1px solid rgba(255,180,160,0.3);
+      flex-shrink: 0;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px 0 4px;
+      background: linear-gradient(180deg, rgba(255, 245, 238, 0.98), rgba(255, 235, 220, 0.95));
+      border-bottom: 1px solid rgba(255, 180, 160, 0.3);
     }
-    #game .top-bar .back-btn { width: 40px; height: 40px; border: none; background: none; font-size: 1.4rem; cursor: pointer; color: #c45c3e; line-height: 1; }
-    #game .top-bar .title { flex: 1; text-align: center; font-size: 1rem; color: #c45c3e; font-weight: bold; }
-    #game .top-bar .settings { display: flex; gap: 4px; }
+
+    #game .top-bar .back-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #c45c3e;
+      line-height: 1;
+    }
+
+    #game .top-bar .title {
+      flex: 1;
+      text-align: center;
+      font-size: 1rem;
+      color: #c45c3e;
+      font-weight: bold;
+    }
+
+    #game .top-bar .settings {
+      display: flex;
+      gap: 4px;
+    }
+
     #game .top-bar .set-btn {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: rgba(255,220,200,0.6); border: none;
-      color: #8b451a; font-size: 0.8rem; cursor: pointer;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(255, 220, 200, 0.6);
+      border: none;
+      color: #8b451a;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
 
     /* 满足度条/金额条：参考规范 80% 宽、30px 高 */
-    #game .satisfaction-wrap { flex-shrink: 0; padding: 6px 12px; background: rgba(255,248,240,0.9); display: flex; flex-direction: column; align-items: center; }
-    #game .satisfaction-bar {
-      width: 80%; max-width: 320px; height: 30px; border: 2px solid rgba(80,60,50,0.4); border-radius: 15px;
-      background: rgba(255,180,160,0.25); overflow: hidden;
+    #game .satisfaction-wrap {
+      flex-shrink: 0;
+      padding: 6px 12px;
+      background: rgba(255, 248, 240, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    #game .satisfaction-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #e8a090, #c45c3e); border-radius: 13px; transition: width 0.2s; }
-    #game .timer { text-align: center; font-size: 1rem; color: #a05040; margin-top: 4px; font-weight: bold; }
+
+    #game .satisfaction-bar {
+      width: 80%;
+      max-width: 320px;
+      height: 30px;
+      border: 2px solid rgba(80, 60, 50, 0.4);
+      border-radius: 15px;
+      background: rgba(255, 180, 160, 0.25);
+      overflow: hidden;
+    }
+
+    #game .satisfaction-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #e8a090, #c45c3e);
+      border-radius: 13px;
+      transition: width 0.2s;
+    }
+
+    #game .timer {
+      text-align: center;
+      font-size: 1rem;
+      color: #a05040;
+      margin-top: 4px;
+      font-weight: bold;
+    }
 
     /* 对话框区域：横着2排、不占满屏；当前想吃大、下一个小 */
     #game .dialog-area {
-      flex-shrink: 0; height: 18vh; min-height: 72px; max-height: 100px;
-      padding: 6px 10px; display: flex; align-items: stretch; justify-content: center; gap: 10px;
+      flex-shrink: 0;
+      height: 18vh;
+      min-height: 72px;
+      max-height: 100px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 10px;
       box-sizing: border-box;
     }
+
     #game .dialog-bubble {
-      background: rgba(255,255,255,0.95);
+      background: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
       padding: 8px 10px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,200,180,0.4);
-      display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-      overflow: hidden; box-sizing: border-box;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 200, 180, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+      box-sizing: border-box;
     }
-    #game .dialog-bubble.dialog-current { flex: 1.4; min-width: 0; max-width: 55%; }
-    #game .dialog-bubble.dialog-next { flex: 0.8; min-width: 0; max-width: 28%; }
-    #game .dialog-bubble .label { font-size: 0.75rem; color: #a05040; flex-shrink: 0; }
+
+    #game .dialog-bubble.dialog-current {
+      flex: 1.4;
+      min-width: 0;
+      max-width: 55%;
+    }
+
+    #game .dialog-bubble.dialog-next {
+      flex: 0.8;
+      min-width: 0;
+      max-width: 28%;
+    }
+
+    #game .dialog-bubble .label {
+      font-size: 0.75rem;
+      color: #a05040;
+      flex-shrink: 0;
+    }
+
     /* 横着2排：第1排组合图（不换行），第2排 x数量 */
-    #game .dialog-bubble .want-imgs { flex: 1; display: flex; flex-direction: column; gap: 2px; justify-content: center; align-items: center; min-height: 0; overflow: hidden; }
-    #game .dialog-bubble .want-imgs .want-row { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 2px; flex-shrink: 0; }
-    #game .dialog-bubble .want-imgs .want-combo { display: inline-flex; flex-wrap: nowrap; align-items: center; gap: 0; flex-shrink: 0; }
-    #game .dialog-bubble .want-imgs .want-combo + .want-combo { margin-left: 6px; }
-    #game .dialog-bubble .want-imgs .img-crop { flex-shrink: 0; }
-    #game .dialog-bubble .want-plus { font-size: 0.85rem; font-weight: bold; color: #c45c3e; margin: 0 1px; flex-shrink: 0; }
-    #game .dialog-bubble .want-x { font-size: 0.85rem; font-weight: bold; color: #c45c3e; flex-shrink: 0; margin: 0 4px; }
-    #game .dialog-bubble .want-combo.done .img-crop img { opacity: 0.4; filter: grayscale(0.5); }
-    #game .dialog-bubble .want-combo.done .img-crop img { opacity: 0.4; filter: grayscale(0.5); }
-    #game .dialog-bubble .want-x.done { text-decoration: line-through; opacity: 0.6; }
+    #game .dialog-bubble .want-imgs {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      justify-content: center;
+      align-items: center;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #game .dialog-bubble .want-imgs .want-row {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    #game .dialog-bubble .want-imgs .want-combo {
+      display: inline-flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+
+    #game .dialog-bubble .want-imgs .want-combo+.want-combo {
+      margin-left: 6px;
+    }
+
+    #game .dialog-bubble .want-imgs .img-crop {
+      flex-shrink: 0;
+    }
+
+    #game .dialog-bubble .want-plus {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #c45c3e;
+      margin: 0 1px;
+      flex-shrink: 0;
+    }
+
+    #game .dialog-bubble .want-x {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #c45c3e;
+      flex-shrink: 0;
+      margin: 0 4px;
+    }
+
+    #game .dialog-bubble .want-combo.done .img-crop img {
+      opacity: 0.4;
+      filter: grayscale(0.5);
+    }
+
+    #game .dialog-bubble .want-combo.done .img-crop img {
+      opacity: 0.4;
+      filter: grayscale(0.5);
+    }
+
+    #game .dialog-bubble .want-x.done {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
 
     /* 两侧饭友气泡（预留） */
-    #game .friends-left, #game .friends-right {
-      position: absolute; top: 120px; width: 28%; max-width: 100px;
-      display: flex; flex-direction: column; gap: 8px; padding: 0 4px;
+    #game .friends-left,
+    #game .friends-right {
+      position: absolute;
+      top: 120px;
+      width: 28%;
+      max-width: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 0 4px;
     }
-    #game .friends-left { left: 6px; }
-    #game .friends-right { right: 6px; }
+
+    #game .friends-left {
+      left: 6px;
+    }
+
+    #game .friends-right {
+      right: 6px;
+    }
+
     #game .friend-bubble {
-      background: rgba(255,255,255,0.9);
-      border-radius: 12px; padding: 6px 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      font-size: 0.7rem; color: #666;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 6px 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      font-size: 0.7rem;
+      color: #666;
     }
-    #game .friend-bubble.full { color: #c45c3e; }
+
+    #game .friend-bubble.full {
+      color: #c45c3e;
+    }
 
     /* 中间游戏区：单屏内全部放下，不滚动 */
     #game .play-zone {
-      flex: 1; min-height: 0; overflow: hidden;
-      display: flex; flex-direction: column; align-items: center;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    #game .play-zone > * { flex-shrink: 0; }
+
+    #game .play-zone>* {
+      flex-shrink: 0;
+    }
 
     /* 回转寿司台：浅灰色背景，寿司在盘子上 */
     #game .conveyor-wrap {
-      flex-shrink: 0; width: 100%; height: 120px;
+      flex-shrink: 0;
+      width: 100%;
+      height: 120px;
       background: linear-gradient(180deg, #d8d4d0 0%, #c8c4c0 50%, #b8b4b0 100%);
       border-radius: 0 0 20px 20px;
       margin: 0 8px;
-      position: relative; overflow: hidden;
-      box-shadow: inset 0 1px 4px rgba(255,255,255,0.5), 0 2px 8px rgba(0,0,0,0.08);
-      border: 1px solid rgba(160,155,150,0.4);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.5), 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(160, 155, 150, 0.4);
     }
+
     #game .conveyor-track {
-      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-      height: 100px; display: flex; align-items: center; gap: 8px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 100px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       will-change: transform;
     }
+
     #game .conveyor-track .belt-item {
-      width: 100px; height: 100px; flex-shrink: 0;
-      cursor: grab; position: relative; display: flex; align-items: center; justify-content: center;
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
+      cursor: grab;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
     #game .conveyor-track .belt-item .belt-plate {
-      position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    #game .conveyor-track .belt-item .belt-plate img { width: 100%; height: 100%; object-fit: contain; }
+
+    #game .conveyor-track .belt-item .belt-plate img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
     #game .conveyor-track .belt-item .belt-sushi {
-      position: absolute; width: 70%; height: 70%; display: flex; align-items: center; justify-content: center;
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       pointer-events: none;
     }
-    #game .conveyor-track .belt-item .belt-sushi .img-crop { width: 100%; height: 100%; }
-    #game .conveyor-track .belt-item .belt-sushi img { image-rendering: crisp-edges; }
+
+    #game .conveyor-track .belt-item .belt-sushi .img-crop {
+      width: 100%;
+      height: 100%;
+    }
+
+    #game .conveyor-track .belt-item .belt-sushi img {
+      image-rendering: crisp-edges;
+    }
 
     /* 桌上固定位：虚线圆盘位（寿司盘子区） */
     #game .table-slots {
-      display: flex; justify-content: center; gap: 16px; padding: 14px 16px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 14px 16px;
       flex-shrink: 0;
     }
+
     #game .table-slots .slot {
-      width: 100px; height: 100px;
-      border: 2px dashed rgba(196,92,62,0.4);
+      width: 100px;
+      height: 100px;
+      border: 2px dashed rgba(196, 92, 62, 0.4);
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(255,240,230,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 240, 230, 0.5);
     }
-    #game .table-slots .slot.filled { border: none; background: transparent; }
-    #game .table-slots .slot .slot-inner { width: 86px; height: 86px; position: relative; }
-    #game .table-slots .slot .slot-inner .img-crop { width: 100%; height: 100%; }
-    #game .table-slots .slot .slot-inner .img-crop img { image-rendering: crisp-edges; }
+
+    #game .table-slots .slot.filled {
+      border: none;
+      background: transparent;
+    }
+
+    #game .table-slots .slot .slot-inner {
+      width: 86px;
+      height: 86px;
+      position: relative;
+    }
+
+    #game .table-slots .slot .slot-inner .img-crop {
+      width: 100%;
+      height: 100%;
+    }
+
+    #game .table-slots .slot .slot-inner .img-crop img {
+      image-rendering: crisp-edges;
+    }
 
     /* 盘子区：盘装菜专用区域 */
     #game .plates-row {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px;
-      flex-shrink: 0; min-height: 140px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      flex-shrink: 0;
+      min-height: 140px;
     }
+
     #game .plates-row .plate-item {
-      width: 140px; height: 140px; position: relative; cursor: default;
+      width: 140px;
+      height: 140px;
+      position: relative;
+      cursor: default;
     }
-    #game .plates-row .plate-item .img-crop { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    #game .plates-row .plate-item .img-crop img { image-rendering: crisp-edges; }
+
+    #game .plates-row .plate-item .img-crop {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #game .plates-row .plate-item .img-crop img {
+      image-rendering: crisp-edges;
+    }
 
     /* 回转台一行：左茶水 + 中回转 + 右饮料 */
     #game .conveyor-row {
-      flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
-      width: 100%; padding: 0 4px; gap: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 4px;
+      gap: 4px;
     }
-    #game .conveyor-row .conveyor-wrap { flex: 1; margin: 0; }
+
+    #game .conveyor-row .conveyor-wrap {
+      flex: 1;
+      margin: 0;
+    }
+
     #game .drinks-side {
-      flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       min-width: 115px;
     }
-    #game .drinks-side .cup, #game .drinks-side .bottle { width: 110px; height: 110px; object-fit: contain; image-rendering: crisp-edges; }
+
+    #game .drinks-side .cup,
+    #game .drinks-side .bottle {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      image-rendering: crisp-edges;
+    }
 
     /* 酱料区：2行x3列，参考规范 60px 圆碟 */
     #game .sauce-row {
-      flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, auto);
-      gap: 10px; padding: 10px 16px; justify-items: center; align-items: center; min-height: 100px;
-      background: linear-gradient(180deg, transparent, rgba(255,235,220,0.6));
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, auto);
+      gap: 10px;
+      padding: 10px 16px;
+      justify-items: center;
+      align-items: center;
+      min-height: 100px;
+      background: linear-gradient(180deg, transparent, rgba(255, 235, 220, 0.6));
     }
-    #game .sauce-row .sauce-item { width: 60px; height: 60px; cursor: default; }
-    #game .sauce-row .sauce-item .img-crop { width: 100%; height: 100%; }
-    #game .sauce-row .sauce-item .img-crop img { image-rendering: crisp-edges; }
+
+    #game .sauce-row .sauce-item {
+      width: 60px;
+      height: 60px;
+      cursor: default;
+    }
+
+    #game .sauce-row .sauce-item .img-crop {
+      width: 100%;
+      height: 100%;
+    }
+
+    #game .sauce-row .sauce-item .img-crop img {
+      image-rendering: crisp-edges;
+    }
 
     /* 吃入区：最底，独立不重叠 */
     #game .eat-zone-wrap {
-      flex-shrink: 0; padding: 14px 16px;
-      background: linear-gradient(180deg, rgba(255,220,200,0.5), rgba(255,200,180,0.6));
-      border-top: 3px dashed rgba(196,92,62,0.4);
+      flex-shrink: 0;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, rgba(255, 220, 200, 0.5), rgba(255, 200, 180, 0.6));
+      border-top: 3px dashed rgba(196, 92, 62, 0.4);
     }
+
     #game .eat-zone {
-      height: 90px; border-radius: 20px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,235,225,0.6));
-      border: 2px dashed rgba(196,92,62,0.55);
-      display: flex; align-items: center; justify-content: center;
+      height: 90px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 235, 225, 0.6));
+      border: 2px dashed rgba(196, 92, 62, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-      box-shadow: 0 2px 8px rgba(196,92,62,0.1);
+      box-shadow: 0 2px 8px rgba(196, 92, 62, 0.1);
     }
-    #game .eat-zone.highlight { background: linear-gradient(180deg, rgba(255,230,210,0.8), rgba(255,200,180,0.6)); border-color: rgba(196,92,62,0.7); box-shadow: 0 4px 16px rgba(196,92,62,0.2); }
-    #game .eat-zone .hint { font-size: 1rem; color: #a05040; }
+
+    #game .eat-zone.highlight {
+      background: linear-gradient(180deg, rgba(255, 230, 210, 0.8), rgba(255, 200, 180, 0.6));
+      border-color: rgba(196, 92, 62, 0.7);
+      box-shadow: 0 4px 16px rgba(196, 92, 62, 0.2);
+    }
+
+    #game .eat-zone .hint {
+      font-size: 1rem;
+      color: #a05040;
+    }
 
     /* 筷子：悬浮可拖 */
     #chopstick-cursor {
-      position: fixed; z-index: 200;
-      width: 200px; height: 200px;
-      margin-left: -100px; margin-top: -100px;
+      position: fixed;
+      z-index: 200;
+      width: 200px;
+      height: 200px;
+      margin-left: -100px;
+      margin-top: -100px;
       pointer-events: none;
       display: none;
     }
-    #game.visible ~ #chopstick-cursor { display: block; }
+
+    #game.visible~#chopstick-cursor {
+      display: block;
+    }
+
     #chopstick-cursor .chopstick-back,
     #chopstick-cursor .chopstick-front {
-      position: absolute; left: 0; top: 0; width: 100%; height: 100%;
-      object-fit: contain; object-position: center center;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
       image-rendering: crisp-edges;
     }
-    #chopstick-cursor .chopstick-layer { position: absolute; inset: 0; }
-    #chopstick-cursor .chopstick-back { z-index: 0; }
-    #chopstick-cursor .held-food { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; z-index: 1; pointer-events: none; }
-    #chopstick-cursor .held-food .img-crop { width: 100%; height: 100%; }
-    #chopstick-cursor .chopstick-front { z-index: 2; }
-    #chopstick-cursor .held-item-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-    #chopstick-cursor .held-item-layer .img-crop { width: 100px; height: 100px; }
-    .source-placeholder { border: 2px dashed rgba(196,92,62,0.5); border-radius: 12px; background: rgba(255,240,230,0.3); box-sizing: border-box; flex-shrink: 0; }
+
+    #chopstick-cursor .chopstick-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    #chopstick-cursor .chopstick-back {
+      z-index: 0;
+    }
+
+    #chopstick-cursor .held-food {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #chopstick-cursor .held-food .img-crop {
+      width: 100%;
+      height: 100%;
+    }
+
+    #chopstick-cursor .chopstick-front {
+      z-index: 2;
+    }
+
+    #chopstick-cursor .held-item-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    #chopstick-cursor .held-item-layer .img-crop {
+      width: 100px;
+      height: 100px;
+    }
+
+    .source-placeholder {
+      border: 2px dashed rgba(196, 92, 62, 0.5);
+      border-radius: 12px;
+      background: rgba(255, 240, 230, 0.3);
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
 
     /* 夹取层（跟随筷子） */
     #held-layer {
-      position: absolute; left: 0; top: 0; right: 0; bottom: 0;
-      pointer-events: none; z-index: 150;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 150;
     }
+
     #held-layer .held-item {
-      position: fixed; width: 88px; height: 88px;
-      margin-left: -44px; margin-top: -44px;
+      position: fixed;
+      width: 88px;
+      height: 88px;
+      margin-left: -44px;
+      margin-top: -44px;
       z-index: 151;
     }
-    #held-layer .held-item img { width: 100%; height: 100%; object-fit: contain; }
+
+    #held-layer .held-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
     /* 游戏内弹窗：不用系统 alert/confirm */
-    #game-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-    #game-modal.game-modal-hidden { display: none; }
-    #game-modal .game-modal-mask { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-    #game-modal .game-modal-box { position: relative; background: linear-gradient(180deg, #fffaf5, #fff0e8); border-radius: 20px; padding: 24px; max-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 2px solid rgba(196,92,62,0.3); }
-    #game-modal .game-modal-msg { font-size: 1.1rem; color: #5a4030; margin-bottom: 16px; text-align: center; }
-    #game-modal .game-modal-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    #game-modal .game-modal-btns button { padding: 10px 20px; border-radius: 12px; border: none; background: linear-gradient(180deg, #ffddd0, #e8c4b8); color: #5a4030; font-weight: bold; cursor: pointer; }
+    #game-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    #game-modal.game-modal-hidden {
+      display: none;
+    }
+
+    #game-modal .game-modal-mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    #game-modal .game-modal-box {
+      position: relative;
+      background: linear-gradient(180deg, #fffaf5, #fff0e8);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 320px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 2px solid rgba(196, 92, 62, 0.3);
+    }
+
+    #game-modal .game-modal-msg {
+      font-size: 1.1rem;
+      color: #5a4030;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    #game-modal .game-modal-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #game-modal .game-modal-btns button {
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(180deg, #ffddd0, #e8c4b8);
+      color: #5a4030;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
     /* 按透明底裁剪：只显示图案部分，不把整张2000缩小 */
-    .img-crop { overflow: hidden; position: relative; display: inline-block; }
-    .img-crop img { display: block; position: absolute; }
+    .img-crop {
+      overflow: hidden;
+      position: relative;
+      display: inline-block;
+    }
+
+    .img-crop img {
+      display: block;
+      position: absolute;
+    }
   </style>
 </head>
+
 <body>
   <div id="app">
     <div id="loading">
@@ -369,7 +1014,9 @@
       <div id="loading-card">
         <img class="logo" src="./img/512icon.PNG" alt="" />
         <h1>三文鱼之神</h1>
-        <div class="bar-wrap"><div class="bar" id="loadBar"></div></div>
+        <div class="bar-wrap">
+          <div class="bar" id="loadBar"></div>
+        </div>
         <p class="tip" id="loadTip">加载中…</p>
       </div>
     </div>
@@ -378,7 +1025,8 @@
       <img class="title-img" src="./img/512icon.PNG" alt="" />
       <h1>抢饭模拟器</h1>
       <button class="mode-btn" data-mode="endless" id="btnEndless">无尽自助</button>
-      <button class="mode-btn mode-btn-locked" data-mode="challenge" id="btnChallenge" disabled title="敬请期待">闯关模式（敬请期待）</button>
+      <button class="mode-btn mode-btn-locked" data-mode="challenge" id="btnChallenge" disabled
+        title="敬请期待">闯关模式（敬请期待）</button>
     </div>
 
     <div id="level-select">
@@ -399,7 +1047,9 @@
         </div>
       </div>
       <div class="satisfaction-wrap">
-        <div class="satisfaction-bar"><div class="satisfaction-fill" id="satisfactionFill"></div></div>
+        <div class="satisfaction-bar">
+          <div class="satisfaction-fill" id="satisfactionFill"></div>
+        </div>
         <div class="timer" id="gameTimer">02:00</div>
       </div>
       <div class="dialog-area">
@@ -455,1054 +1105,1055 @@
   </div>
 
   <script>
-(function() {
-  'use strict';
-  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-  document.addEventListener('selectstart', function(e) { e.preventDefault(); });
-  document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    (function () {
+      'use strict';
+      document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+      document.addEventListener('selectstart', function (e) { e.preventDefault(); });
+      document.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
-  var IMG_BASE = './img/';
-  const SOURCE_SIZE = 2000;
+      var IMG_BASE = './img/';
+      const SOURCE_SIZE = 2000;
 
-  var LOADING_GET_ITEMS = [
-    'get_salmonSlice.PNG', 'get_salmonBelly.PNG', 'get_salmonCube.PNG', 'get_salmonNoodle.PNG',
-    'get_beef.PNG', 'get_fryRice.PNG', 'get_seaweed.PNG',
-    'get_sushi_tempera.PNG', 'get_sushi_salmonLover.PNG', 'get_sushi_norm_salmon.PNG', 'get_sushi_norm_ikura.PNG',
-    'get_sushi_norm_corn.PNG', 'get_sushi_norm_crab.PNG', 'get_sushi_norm_eel.PNG', 'get_sushi_norm_egg.PNG',
-    'get_sushi_norm_seaweed.PNG', 'get_sushi_norm_shirmp.PNG', 'get_sushi_norm_tuna.PNG',
-    'get_sushi_norm_salmon_aburi.PNG', 'get_sushi_norm_salmon_aburiMayo.PNG', 'get_sushi_norm_salmon_aburiMayIkura.PNG'
-  ];
-  var loadingCombo = 0;
-  var loadingSpawnTimer = null;
+      var LOADING_GET_ITEMS = [
+        'get_salmonSlice.PNG', 'get_salmonBelly.PNG', 'get_salmonCube.PNG', 'get_salmonNoodle.PNG',
+        'get_beef.PNG', 'get_fryRice.PNG', 'get_seaweed.PNG',
+        'get_sushi_tempera.PNG', 'get_sushi_salmonLover.PNG', 'get_sushi_norm_salmon.PNG', 'get_sushi_norm_ikura.PNG',
+        'get_sushi_norm_corn.PNG', 'get_sushi_norm_crab.PNG', 'get_sushi_norm_eel.PNG', 'get_sushi_norm_egg.PNG',
+        'get_sushi_norm_seaweed.PNG', 'get_sushi_norm_shirmp.PNG', 'get_sushi_norm_tuna.PNG',
+        'get_sushi_norm_salmon_aburi.PNG', 'get_sushi_norm_salmon_aburiMayo.PNG', 'get_sushi_norm_salmon_aburiMayIkura.PNG'
+      ];
+      var loadingCombo = 0;
+      var loadingSpawnTimer = null;
 
-  function startLoadingMinigame() {
-    var container = document.getElementById('loading-items');
-    var comboEl = document.getElementById('loadingComboNum');
-    var card = document.getElementById('loading-card');
-    if (!container || !comboEl) return;
-    function spawnOne() {
-      var path = LOADING_GET_ITEMS[Math.floor(Math.random() * LOADING_GET_ITEMS.length)];
-      var el = document.createElement('div');
-      el.className = 'loading-item';
-      el.dataset.path = path;
-      var img = document.createElement('img');
-      img.src = IMG_BASE + path;
-      img.alt = path;
-      el.appendChild(img);
-      var r = document.getElementById('app').getBoundingClientRect();
-      var pad = 0.12;
-      var x = pad * r.width + Math.random() * (r.width * (1 - 2 * pad));
-      var y = pad * r.height + Math.random() * (r.height * (1 - 2 * pad));
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      el.style.transform = 'rotate(' + (Math.random() * 30 - 15) + 'deg)';
-      container.appendChild(el);
-    }
-    function popAt(x, y) {
-      var n = 10;
-      for (var i = 0; i < n; i++) {
-        var b = document.createElement('div');
-        b.className = 'loading-pop';
-        var angle = (i / n) * Math.PI * 2 + Math.random() * 0.5;
-        var dist = 25 + Math.random() * 20;
-        b.style.left = (x + Math.cos(angle) * dist) + 'px';
-        b.style.top = (y + Math.sin(angle) * dist) + 'px';
-        b.style.background = 'rgba(255,' + (180 + Math.floor(Math.random() * 40)) + ',' + (160 + Math.floor(Math.random() * 40)) + ',0.95)';
-        container.appendChild(b);
-        setTimeout(function(el) { if (el.parentNode) el.parentNode.removeChild(el); }, 450, b);
-      }
-    }
-    function onLoadingClick(e) {
-      if (document.getElementById('loading-card').contains(e.target)) return;
-      var item = e.target.closest('.loading-item');
-      if (!item) return;
-      e.preventDefault();
-      var r = item.getBoundingClientRect();
-      var cx = r.left + r.width / 2;
-      var cy = r.top + r.height / 2;
-      var containerRect = document.getElementById('app').getBoundingClientRect();
-      popAt(cx - containerRect.left, cy - containerRect.top);
-      item.remove();
-      loadingCombo++;
-      comboEl.textContent = loadingCombo;
-      comboEl.parentElement.style.animation = 'none';
-      comboEl.parentElement.offsetHeight;
-      comboEl.parentElement.style.animation = 'loading-combo-bump 0.2s ease-out';
-    }
-    document.getElementById('loading').addEventListener('click', onLoadingClick, false);
-    document.getElementById('loading').addEventListener('touchstart', function(e) {
-      if (e.touches.length) onLoadingClick({ target: e.touches[0].target, preventDefault: function() { e.preventDefault(); } });
-    }, { passive: false });
-    var bumpKeyframes = document.createElement('style');
-    bumpKeyframes.textContent = '@keyframes loading-combo-bump { 0%{transform:translateX(-50%) scale(1.2)} 100%{transform:translateX(-50%) scale(1)} }';
-    document.head.appendChild(bumpKeyframes);
-    spawnOne();
-    loadingSpawnTimer = setInterval(spawnOne, 700);
-  }
-
-  function stopLoadingMinigame() {
-    if (loadingSpawnTimer) { clearInterval(loadingSpawnTimer); loadingSpawnTimer = null; }
-    var items = document.getElementById('loading-items');
-    if (items) items.innerHTML = '';
-  }
-
-  // 需要预加载的图片清单（按用途分组）
-  const IMG_MANIFEST = {
-    icon: ['512icon.PNG', '192icon.PNG'],
-    chopstick: {
-      front: 'frontChopstick_black.PNG',
-      back: 'backChopstick_black.PNG'
-    },
-    dishes: [
-      'dish_salmonSlice.PNG', 'dish_salmon_belly.PNG', 'dish_salmon_noodle.PNG',
-      'dish_salmonCube.PNG', 'dish_beef.PNG', 'dish_fryRice.PNG'
-    ],
-    sauce: [
-      'sauce_egg.PNG', 'sauce_laozhi.PNG', 'sauce_mayo.PNG', 'sauce_on.PNG',
-      'sauce_seaweed.PNG', 'sauce_soy.PNG', 'sauce_soyWasabi.PNG'
-    ],
-    water: [
-      'water_bei_cha.PNG', 'water_bei_hu.PNG', 'water_bei_empty.PNG',
-      'water_hu.PNG', 'water_cha.PNG',
-      'water_glass_calpis_full.PNG', 'water_glass_calpis_half.PNG',
-      'water_glass_coke_full.PNG', 'water_glass_coke_half.PNG',
-      'water_glass_orange_full.PNG', 'water_glass_orange_half.PNG',
-      'water_glass_empty.PNG', 'water_orange.PNG', 'water_calpis.PNG', 'water_coke.PNG'
-    ],
-    sushiPlates: ['sushiPlate_black.PNG', 'sushiPlate_grey.PNG'],
-    conveyorSushi: [
-      'sushi_tempera_left.PNG', 'sushi_salmonLove.PNG', 'sushi_roll_salmonAvoca.PNG', 'sushi_roll_cucum.PNG', 'sushi_roll_salmon.PNG',
-      'sushi_california_crab.PNG', 'sushi_california_tempera.PNG',
-      'sushi_norm_ikura.PNG', 'sushi_norm_corn.PNG', 'sushi_norm_seaweed.PNG', 'sushi_norm_eel.PNG', 'sushi_norm_crab.PNG',
-      'sushi_norm_egg.PNG', 'sushi_norm_shirmp.PNG', 'sushi_norm_tuna.PNG', 'sushi_norm_salmon.PNG',
-      'sushi_norm_salmon_aburi.PNG', 'sushi_norm_salmon_aburiMayo.PNG', 'sushi_norm_salmon_aburiMayIkura.PNG'
-    ],
-    get: [
-      'get_salmonSlice.PNG', 'get_salmonBelly.PNG', 'get_salmonCube.PNG', 'get_salmonNoodle.PNG', 'get_beef.PNG', 'get_fryRice.PNG',
-      'get_salmonSlice+soy.PNG', 'get_salmonSlice+soy+wb.PNG', 'get_salmonSlice+mayo.PNG', 'get_salmonSlice+on.PNG', 'get_salmonSlice+lz.PNG', 'get_salmonSlice+egg.PNG',
-      'get_salmonBelly+soy.PNG', 'get_salmonBelly+soy+wb.PNG', 'get_salmonBelly+mayo.PNG', 'get_salmonBelly+on.PNG', 'get_salmonBelly+lz.PNG', 'get_salmonBelly+egg.PNG',
-      'get_salmonCube+soy.PNG', 'get_salmonCube+soy+wb.PNG', 'get_salmonCube+mayo.PNG', 'get_salmonCube+on.PNG', 'get_salmonCube+lz.PNG', 'get_salmonCube+egg.PNG',
-      'get_salmonNoodle+soy.PNG', 'get_salmonNoodle+mayo.PNG', 'get_salmonNoodle+on.PNG', 'get_salmonNoodle+lz.PNG', 'get_salmonNoodle+egg.PNG',
-      'get_beef+egg.PNG', 'get_seaweed.PNG',
-      'get_sushi_tempera.PNG', 'get_sushi_salmonLover.PNG', 'get_sushi_norm_salmon.PNG', 'get_sushi_norm_ikura.PNG', 'get_sushi_norm_corn.PNG',
-      'get_sushi_norm_crab.PNG', 'get_sushi_norm_eel.PNG', 'get_sushi_norm_egg.PNG', 'get_sushi_norm_seaweed.PNG', 'get_sushi_norm_shirmp.PNG', 'get_sushi_norm_tuna.PNG',
-      'get_sushi_norm_salmon+soy.PNG', 'get_sushi_norm_salmon+soy+wb.PNG', 'get_sushi_norm_salmon_aburi.PNG', 'get_sushi_norm_salmon_aburiMayo.PNG', 'get_sushi_norm_salmon_aburiMayIkura.PNG'
-    ]
-  };
-
-  // 计算图片透明区域的实际边界（在 0~1 相对坐标）；本地 file:// 可能污染 canvas，用 try-catch 兜底
-  function getImageBounds(img) {
-    try {
-      const c = document.createElement('canvas');
-      c.width = img.naturalWidth || img.width;
-      c.height = img.naturalHeight || img.height;
-      if (!c.width || !c.height) return { x: 0, y: 0, w: 1, h: 1 };
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const data = ctx.getImageData(0, 0, c.width, c.height).data;
-    let minX = c.width, minY = c.height, maxX = 0, maxY = 0;
-    for (let y = 0; y < c.height; y++) {
-      for (let x = 0; x < c.width; x++) {
-        const i = (y * c.width + x) * 4;
-        if (data[i + 3] > 10) {
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
+      function startLoadingMinigame() {
+        var container = document.getElementById('loading-items');
+        var comboEl = document.getElementById('loadingComboNum');
+        var card = document.getElementById('loading-card');
+        if (!container || !comboEl) return;
+        function spawnOne() {
+          var path = LOADING_GET_ITEMS[Math.floor(Math.random() * LOADING_GET_ITEMS.length)];
+          var el = document.createElement('div');
+          el.className = 'loading-item';
+          el.dataset.path = path;
+          var img = document.createElement('img');
+          img.src = IMG_BASE + path;
+          img.alt = path;
+          el.appendChild(img);
+          var r = document.getElementById('app').getBoundingClientRect();
+          var pad = 0.12;
+          var x = pad * r.width + Math.random() * (r.width * (1 - 2 * pad));
+          var y = pad * r.height + Math.random() * (r.height * (1 - 2 * pad));
+          el.style.left = x + 'px';
+          el.style.top = y + 'px';
+          el.style.transform = 'rotate(' + (Math.random() * 30 - 15) + 'deg)';
+          container.appendChild(el);
         }
+        function popAt(x, y) {
+          var n = 10;
+          for (var i = 0; i < n; i++) {
+            var b = document.createElement('div');
+            b.className = 'loading-pop';
+            var angle = (i / n) * Math.PI * 2 + Math.random() * 0.5;
+            var dist = 25 + Math.random() * 20;
+            b.style.left = (x + Math.cos(angle) * dist) + 'px';
+            b.style.top = (y + Math.sin(angle) * dist) + 'px';
+            b.style.background = 'rgba(255,' + (180 + Math.floor(Math.random() * 40)) + ',' + (160 + Math.floor(Math.random() * 40)) + ',0.95)';
+            container.appendChild(b);
+            setTimeout(function (el) { if (el.parentNode) el.parentNode.removeChild(el); }, 450, b);
+          }
+        }
+        function onLoadingClick(e) {
+          if (document.getElementById('loading-card').contains(e.target)) return;
+          var item = e.target.closest('.loading-item');
+          if (!item) return;
+          e.preventDefault();
+          var r = item.getBoundingClientRect();
+          var cx = r.left + r.width / 2;
+          var cy = r.top + r.height / 2;
+          var containerRect = document.getElementById('app').getBoundingClientRect();
+          popAt(cx - containerRect.left, cy - containerRect.top);
+          item.remove();
+          loadingCombo++;
+          comboEl.textContent = loadingCombo;
+          comboEl.parentElement.style.animation = 'none';
+          comboEl.parentElement.offsetHeight;
+          comboEl.parentElement.style.animation = 'loading-combo-bump 0.2s ease-out';
+        }
+        document.getElementById('loading').addEventListener('click', onLoadingClick, false);
+        document.getElementById('loading').addEventListener('touchstart', function (e) {
+          if (e.touches.length) onLoadingClick({ target: e.touches[0].target, preventDefault: function () { e.preventDefault(); } });
+        }, { passive: false });
+        var bumpKeyframes = document.createElement('style');
+        bumpKeyframes.textContent = '@keyframes loading-combo-bump { 0%{transform:translateX(-50%) scale(1.2)} 100%{transform:translateX(-50%) scale(1)} }';
+        document.head.appendChild(bumpKeyframes);
+        spawnOne();
+        loadingSpawnTimer = setInterval(spawnOne, 700);
       }
-    }
-    if (minX > maxX) return { x: 0, y: 0, w: 1, h: 1 };
-      return {
-        x: minX / c.width,
-        y: minY / c.height,
-        w: (maxX - minX + 1) / c.width,
-        h: (maxY - minY + 1) / c.height
+
+      function stopLoadingMinigame() {
+        if (loadingSpawnTimer) { clearInterval(loadingSpawnTimer); loadingSpawnTimer = null; }
+        var items = document.getElementById('loading-items');
+        if (items) items.innerHTML = '';
+      }
+
+      // 需要预加载的图片清单（按用途分组）
+      const IMG_MANIFEST = {
+        icon: ['512icon.PNG', '192icon.PNG'],
+        chopstick: {
+          front: 'frontChopstick_black.PNG',
+          back: 'backChopstick_black.PNG'
+        },
+        dishes: [
+          'dish_salmonSlice.PNG', 'dish_salmon_belly.PNG', 'dish_salmon_noodle.PNG',
+          'dish_salmonCube.PNG', 'dish_beef.PNG', 'dish_fryRice.PNG'
+        ],
+        sauce: [
+          'sauce_egg.PNG', 'sauce_laozhi.PNG', 'sauce_mayo.PNG', 'sauce_on.PNG',
+          'sauce_seaweed.PNG', 'sauce_soy.PNG', 'sauce_soyWasabi.PNG'
+        ],
+        water: [
+          'water_bei_cha.PNG', 'water_bei_hu.PNG', 'water_bei_empty.PNG',
+          'water_hu.PNG', 'water_cha.PNG',
+          'water_glass_calpis_full.PNG', 'water_glass_calpis_half.PNG',
+          'water_glass_coke_full.PNG', 'water_glass_coke_half.PNG',
+          'water_glass_orange_full.PNG', 'water_glass_orange_half.PNG',
+          'water_glass_empty.PNG', 'water_orange.PNG', 'water_calpis.PNG', 'water_coke.PNG'
+        ],
+        sushiPlates: ['sushiPlate_black.PNG', 'sushiPlate_grey.PNG'],
+        conveyorSushi: [
+          'sushi_tempera_left.PNG', 'sushi_salmonLove.PNG', 'sushi_roll_salmonAvoca.PNG', 'sushi_roll_cucum.PNG', 'sushi_roll_salmon.PNG',
+          'sushi_california_crab.PNG', 'sushi_california_tempera.PNG',
+          'sushi_norm_ikura.PNG', 'sushi_norm_corn.PNG', 'sushi_norm_seaweed.PNG', 'sushi_norm_eel.PNG', 'sushi_norm_crab.PNG',
+          'sushi_norm_egg.PNG', 'sushi_norm_shirmp.PNG', 'sushi_norm_tuna.PNG', 'sushi_norm_salmon.PNG',
+          'sushi_norm_salmon_aburi.PNG', 'sushi_norm_salmon_aburiMayo.PNG', 'sushi_norm_salmon_aburiMayIkura.PNG'
+        ],
+        get: [
+          'get_salmonSlice.PNG', 'get_salmonBelly.PNG', 'get_salmonCube.PNG', 'get_salmonNoodle.PNG', 'get_beef.PNG', 'get_fryRice.PNG',
+          'get_salmonSlice+soy.PNG', 'get_salmonSlice+soy+wb.PNG', 'get_salmonSlice+mayo.PNG', 'get_salmonSlice+on.PNG', 'get_salmonSlice+lz.PNG', 'get_salmonSlice+egg.PNG',
+          'get_salmonBelly+soy.PNG', 'get_salmonBelly+soy+wb.PNG', 'get_salmonBelly+mayo.PNG', 'get_salmonBelly+on.PNG', 'get_salmonBelly+lz.PNG', 'get_salmonBelly+egg.PNG',
+          'get_salmonCube+soy.PNG', 'get_salmonCube+soy+wb.PNG', 'get_salmonCube+mayo.PNG', 'get_salmonCube+on.PNG', 'get_salmonCube+lz.PNG', 'get_salmonCube+egg.PNG',
+          'get_salmonNoodle+soy.PNG', 'get_salmonNoodle+mayo.PNG', 'get_salmonNoodle+on.PNG', 'get_salmonNoodle+lz.PNG', 'get_salmonNoodle+egg.PNG',
+          'get_beef+egg.PNG', 'get_seaweed.PNG',
+          'get_sushi_tempera.PNG', 'get_sushi_salmonLover.PNG', 'get_sushi_norm_salmon.PNG', 'get_sushi_norm_ikura.PNG', 'get_sushi_norm_corn.PNG',
+          'get_sushi_norm_crab.PNG', 'get_sushi_norm_eel.PNG', 'get_sushi_norm_egg.PNG', 'get_sushi_norm_seaweed.PNG', 'get_sushi_norm_shirmp.PNG', 'get_sushi_norm_tuna.PNG',
+          'get_sushi_norm_salmon+soy.PNG', 'get_sushi_norm_salmon+soy+wb.PNG', 'get_sushi_norm_salmon_aburi.PNG', 'get_sushi_norm_salmon_aburiMayo.PNG', 'get_sushi_norm_salmon_aburiMayIkura.PNG'
+        ]
       };
-    } catch (e) {
-      return { x: 0, y: 0, w: 1, h: 1 };
-    }
-  }
 
-  // 预加载并计算边界
-  const imageCache = {};
-  const imageBounds = {};
-
-  function loadImage(path) {
-    if (imageCache[path]) return Promise.resolve(imageCache[path]);
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      if (window.location.protocol !== 'file:') img.crossOrigin = 'anonymous';
-      var src = IMG_BASE + path;
-      img.onload = function() {
-        imageCache[path] = img;
+      // 计算图片透明区域的实际边界（在 0~1 相对坐标）；本地 file:// 可能污染 canvas，用 try-catch 兜底
+      function getImageBounds(img) {
         try {
-          imageBounds[path] = getImageBounds(img);
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth || img.width;
+          c.height = img.naturalHeight || img.height;
+          if (!c.width || !c.height) return { x: 0, y: 0, w: 1, h: 1 };
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const data = ctx.getImageData(0, 0, c.width, c.height).data;
+          let minX = c.width, minY = c.height, maxX = 0, maxY = 0;
+          for (let y = 0; y < c.height; y++) {
+            for (let x = 0; x < c.width; x++) {
+              const i = (y * c.width + x) * 4;
+              if (data[i + 3] > 10) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+              }
+            }
+          }
+          if (minX > maxX) return { x: 0, y: 0, w: 1, h: 1 };
+          return {
+            x: minX / c.width,
+            y: minY / c.height,
+            w: (maxX - minX + 1) / c.width,
+            h: (maxY - minY + 1) / c.height
+          };
         } catch (e) {
-          imageBounds[path] = { x: 0, y: 0, w: 1, h: 1 };
+          return { x: 0, y: 0, w: 1, h: 1 };
         }
-        resolve(img);
-      };
-      img.onerror = function() {
-        var fallback = path.replace(/\.PNG$/, '.png');
-        if (fallback !== path) {
-          img.onerror = null;
-          img.onload = null;
-          img.src = IMG_BASE + fallback;
-          img.onload = function() {
+      }
+
+      // 预加载并计算边界
+      const imageCache = {};
+      const imageBounds = {};
+
+      function loadImage(path) {
+        if (imageCache[path]) return Promise.resolve(imageCache[path]);
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          if (window.location.protocol !== 'file:') img.crossOrigin = 'anonymous';
+          var src = IMG_BASE + path;
+          img.onload = function () {
             imageCache[path] = img;
-            imageBounds[path] = { x: 0, y: 0, w: 1, h: 1 };
+            try {
+              imageBounds[path] = getImageBounds(img);
+            } catch (e) {
+              imageBounds[path] = { x: 0, y: 0, w: 1, h: 1 };
+            }
             resolve(img);
           };
-          img.onerror = function() { reject(new Error('Failed: ' + path)); };
-        } else {
-          reject(new Error('Failed: ' + path));
-        }
+          img.onerror = function () {
+            var fallback = path.replace(/\.PNG$/, '.png');
+            if (fallback !== path) {
+              img.onerror = null;
+              img.onload = null;
+              img.src = IMG_BASE + fallback;
+              img.onload = function () {
+                imageCache[path] = img;
+                imageBounds[path] = { x: 0, y: 0, w: 1, h: 1 };
+                resolve(img);
+              };
+              img.onerror = function () { reject(new Error('Failed: ' + path)); };
+            } else {
+              reject(new Error('Failed: ' + path));
+            }
+          };
+          img.src = src;
+        });
+      }
+
+      /** 按实际图案边界裁剪显示，只放大「有图案」部分，不整张缩小 */
+      function createCroppedImg(path, displaySize) {
+        var bounds = imageBounds[path];
+        if (!bounds) bounds = { x: 0, y: 0, w: 1, h: 1 };
+        var wrap = document.createElement('div');
+        wrap.className = 'img-crop';
+        var img = document.createElement('img');
+        img.src = IMG_BASE + path;
+        img.alt = path;
+        img.draggable = false;
+        var w = bounds.w, h = bounds.h, x = bounds.x, y = bounds.y;
+        if (w < 0.05) w = 0.05;
+        if (h < 0.05) h = 0.05;
+        var box = displaySize || 120;
+        wrap.style.width = box + 'px';
+        wrap.style.height = box + 'px';
+        var imgW = box / w, imgH = box / h;
+        img.style.width = imgW + 'px';
+        img.style.height = imgH + 'px';
+        img.style.left = (-x * imgW) + 'px';
+        img.style.top = (-y * imgH) + 'px';
+        wrap.appendChild(img);
+        return wrap;
+      }
+
+      function collectAllPaths() {
+        const set = new Set(IMG_MANIFEST.icon || []);
+        set.add(IMG_MANIFEST.chopstick.front);
+        set.add(IMG_MANIFEST.chopstick.back);
+        (IMG_MANIFEST.dishes || []).forEach(p => set.add(p));
+        (IMG_MANIFEST.sauce || []).forEach(p => set.add(p));
+        (IMG_MANIFEST.water || []).forEach(p => set.add(p));
+        (IMG_MANIFEST.sushiPlates || []).forEach(p => set.add(p));
+        (IMG_MANIFEST.conveyorSushi || []).forEach(p => set.add(p));
+        (IMG_MANIFEST.get || []).forEach(p => set.add(p));
+        return Array.from(set);
+      }
+
+      let gameMode = 'challenge';
+      let currentLevel = 1;
+      let satisfaction = 0;
+      let satisfactionMax = 5;
+      let timeLeft = 120;
+      let timerId = null;
+      let currentWants = [];
+      let nextWants = [];
+      let wantedDone = [];
+      const CONVEYOR_SLOTS = 3;
+      const tableSlots = [];
+      let conveyorOffset = 0;
+      let conveyorItems = [];
+      let pickRadius = 70;
+      let dragStart = null;
+      let heldFood = null;
+      let heldItem = null; // 手持饮料/茶杯/回转寿司时：{ type:'drink'|'conveyor', path, originalEl, placeholderEl, parent, index, beltItemEl?, sushiPath? }
+      let eatZoneHighlight = false;
+      let billTotal = 0;
+      var ENDLESS_WANT_POOL = [];
+
+      const dishToGet = {
+        'dish_salmonSlice.PNG': 'get_salmonSlice.PNG',
+        'dish_salmon_belly.PNG': 'get_salmonBelly.PNG',
+        'dish_salmon_noodle.PNG': 'get_salmonNoodle.PNG',
+        'dish_salmonCube.PNG': 'get_salmonCube.PNG',
+        'dish_beef.PNG': 'get_beef.PNG',
+        'dish_fryRice.PNG': 'get_fryRice.PNG'
       };
-      img.src = src;
-    });
-  }
+      const sauceToSuffix = {
+        'sauce_soy.PNG': '+soy',
+        'sauce_soyWasabi.PNG': '+soy+wb',
+        'sauce_mayo.PNG': '+mayo',
+        'sauce_on.PNG': '+on',
+        'sauce_laozhi.PNG': '+lz',
+        'sauce_egg.PNG': '+egg',
+        'sauce_seaweed.PNG': '+seaweed'
+      };
+      var suffixToSauce = { '+soy': 'sauce_soy.PNG', '+soy+wb': 'sauce_soyWasabi.PNG', '+mayo': 'sauce_mayo.PNG', '+on': 'sauce_on.PNG', '+lz': 'sauce_laozhi.PNG', '+egg': 'sauce_egg.PNG', '+seaweed': 'sauce_seaweed.PNG' };
+      var partToSauce = { soy: 'sauce_soy.PNG', wb: 'sauce_soyWasabi.PNG', mayo: 'sauce_mayo.PNG', on: 'sauce_on.PNG', lz: 'sauce_laozhi.PNG', egg: 'sauce_egg.PNG', seaweed: 'sauce_seaweed.PNG' };
+      function wantKeyToDisplayPaths(key) {
+        var path = key.indexOf('.PNG') !== -1 ? key : key + '.PNG';
+        var s = path.replace('.PNG', '');
+        var plusIdx = s.indexOf('+');
+        if (plusIdx === -1) return [{ path: path }];
+        var basePath = s.substring(0, plusIdx) + '.PNG';
+        var suffix = '+' + s.substring(plusIdx + 1);
+        var saucePath = suffixToSauce[suffix];
+        if (saucePath) return [{ path: basePath }, { path: saucePath }];
+        var parts = suffix.split('+').filter(Boolean);
+        var sauces = [];
+        for (var i = 0; i < parts.length; i++) {
+          var p = partToSauce[parts[i]];
+          if (p && sauces.indexOf(p) === -1) sauces.push(p);
+        }
+        if (sauces.length) return [{ path: basePath }].concat(sauces.map(function (p) { return { path: p }; }));
+        return [{ path: path }];
+      }
+      function getDippedKey(baseKey, saucePath) {
+        const suffix = sauceToSuffix[saucePath];
+        if (!suffix) return null;
+        const base = (baseKey || '').replace('.PNG', '');
+        const dipped = base + suffix + '.PNG';
+        return imageCache[dipped] ? dipped : null;
+      }
 
-  /** 按实际图案边界裁剪显示，只放大「有图案」部分，不整张缩小 */
-  function createCroppedImg(path, displaySize) {
-    var bounds = imageBounds[path];
-    if (!bounds) bounds = { x: 0, y: 0, w: 1, h: 1 };
-    var wrap = document.createElement('div');
-    wrap.className = 'img-crop';
-    var img = document.createElement('img');
-    img.src = IMG_BASE + path;
-    img.alt = path;
-    img.draggable = false;
-    var w = bounds.w, h = bounds.h, x = bounds.x, y = bounds.y;
-    if (w < 0.05) w = 0.05;
-    if (h < 0.05) h = 0.05;
-    var box = displaySize || 120;
-    wrap.style.width = box + 'px';
-    wrap.style.height = box + 'px';
-    var imgW = box / w, imgH = box / h;
-    img.style.width = imgW + 'px';
-    img.style.height = imgH + 'px';
-    img.style.left = (-x * imgW) + 'px';
-    img.style.top = (-y * imgH) + 'px';
-    wrap.appendChild(img);
-    return wrap;
-  }
+      function showScreen(id) {
+        document.getElementById('loading').classList.toggle('hidden', id !== 'loading');
+        document.getElementById('menu').classList.toggle('hidden', id !== 'menu');
+        document.getElementById('level-select').classList.toggle('visible', id === 'level-select');
+        document.getElementById('game').classList.toggle('visible', id === 'game');
+      }
 
-  function collectAllPaths() {
-    const set = new Set(IMG_MANIFEST.icon || []);
-    set.add(IMG_MANIFEST.chopstick.front);
-    set.add(IMG_MANIFEST.chopstick.back);
-    (IMG_MANIFEST.dishes || []).forEach(p => set.add(p));
-    (IMG_MANIFEST.sauce || []).forEach(p => set.add(p));
-    (IMG_MANIFEST.water || []).forEach(p => set.add(p));
-    (IMG_MANIFEST.sushiPlates || []).forEach(p => set.add(p));
-    (IMG_MANIFEST.conveyorSushi || []).forEach(p => set.add(p));
-    (IMG_MANIFEST.get || []).forEach(p => set.add(p));
-    return Array.from(set);
-  }
+      function showGameModal(msg, buttons) {
+        var el = document.getElementById('game-modal');
+        var msgEl = document.getElementById('gameModalMsg');
+        var btnsEl = document.getElementById('gameModalBtns');
+        if (!el || !msgEl || !btnsEl) return;
+        msgEl.textContent = msg;
+        btnsEl.innerHTML = '';
+        (buttons || []).forEach(function (b) {
+          var btn = document.createElement('button');
+          btn.textContent = b.text || '确定';
+          btn.onclick = function () { el.classList.add('game-modal-hidden'); if (b.callback) b.callback(); };
+          btnsEl.appendChild(btn);
+        });
+        el.classList.remove('game-modal-hidden');
+      }
+      function closeGameModal() {
+        var el = document.getElementById('game-modal');
+        if (el) el.classList.add('game-modal-hidden');
+      }
 
-  let gameMode = 'challenge';
-  let currentLevel = 1;
-  let satisfaction = 0;
-  let satisfactionMax = 5;
-  let timeLeft = 120;
-  let timerId = null;
-  let currentWants = [];
-  let nextWants = [];
-  let wantedDone = [];
-  const CONVEYOR_SLOTS = 3;
-  const tableSlots = [];
-  let conveyorOffset = 0;
-  let conveyorItems = [];
-  let pickRadius = 70;
-  let dragStart = null;
-  let heldFood = null;
-  let heldItem = null; // 手持饮料/茶杯/回转寿司时：{ type:'drink'|'conveyor', path, originalEl, placeholderEl, parent, index, beltItemEl?, sushiPath? }
-  let eatZoneHighlight = false;
-  let billTotal = 0;
-  var ENDLESS_WANT_POOL = [];
+      function updateSatisfaction() {
+        var el = document.getElementById('satisfactionFill');
+        if (!el) return;
+        if (gameMode === 'endless') {
+          el.style.width = '0%';
+          updateTimer();
+        } else {
+          var pct = satisfactionMax ? Math.min(100, (satisfaction / satisfactionMax) * 100) : 0;
+          el.style.width = pct + '%';
+        }
+      }
 
-  const dishToGet = {
-    'dish_salmonSlice.PNG': 'get_salmonSlice.PNG',
-    'dish_salmon_belly.PNG': 'get_salmonBelly.PNG',
-    'dish_salmon_noodle.PNG': 'get_salmonNoodle.PNG',
-    'dish_salmonCube.PNG': 'get_salmonCube.PNG',
-    'dish_beef.PNG': 'get_beef.PNG',
-    'dish_fryRice.PNG': 'get_fryRice.PNG'
-  };
-  const sauceToSuffix = {
-    'sauce_soy.PNG': '+soy',
-    'sauce_soyWasabi.PNG': '+soy+wb',
-    'sauce_mayo.PNG': '+mayo',
-    'sauce_on.PNG': '+on',
-    'sauce_laozhi.PNG': '+lz',
-    'sauce_egg.PNG': '+egg',
-    'sauce_seaweed.PNG': '+seaweed'
-  };
-  var suffixToSauce = { '+soy': 'sauce_soy.PNG', '+soy+wb': 'sauce_soyWasabi.PNG', '+mayo': 'sauce_mayo.PNG', '+on': 'sauce_on.PNG', '+lz': 'sauce_laozhi.PNG', '+egg': 'sauce_egg.PNG', '+seaweed': 'sauce_seaweed.PNG' };
-  var partToSauce = { soy: 'sauce_soy.PNG', wb: 'sauce_soyWasabi.PNG', mayo: 'sauce_mayo.PNG', on: 'sauce_on.PNG', lz: 'sauce_laozhi.PNG', egg: 'sauce_egg.PNG', seaweed: 'sauce_seaweed.PNG' };
-  function wantKeyToDisplayPaths(key) {
-    var path = key.indexOf('.PNG') !== -1 ? key : key + '.PNG';
-    var s = path.replace('.PNG', '');
-    var plusIdx = s.indexOf('+');
-    if (plusIdx === -1) return [{ path: path }];
-    var basePath = s.substring(0, plusIdx) + '.PNG';
-    var suffix = '+' + s.substring(plusIdx + 1);
-    var saucePath = suffixToSauce[suffix];
-    if (saucePath) return [{ path: basePath }, { path: saucePath }];
-    var parts = suffix.split('+').filter(Boolean);
-    var sauces = [];
-    for (var i = 0; i < parts.length; i++) {
-      var p = partToSauce[parts[i]];
-      if (p && sauces.indexOf(p) === -1) sauces.push(p);
-    }
-    if (sauces.length) return [{ path: basePath }].concat(sauces.map(function(p) { return { path: p }; }));
-    return [{ path: path }];
-  }
-  function getDippedKey(baseKey, saucePath) {
-    const suffix = sauceToSuffix[saucePath];
-    if (!suffix) return null;
-    const base = (baseKey || '').replace('.PNG', '');
-    const dipped = base + suffix + '.PNG';
-    return imageCache[dipped] ? dipped : null;
-  }
+      function updateTimer() {
+        var el = document.getElementById('gameTimer');
+        if (!el) return;
+        var m = Math.floor(timeLeft / 60);
+        var s = timeLeft % 60;
+        var t = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        if (gameMode === 'endless') el.textContent = '剩余 ' + t + '  账单 ¥' + billTotal;
+        else el.textContent = t;
+      }
 
-  function showScreen(id) {
-    document.getElementById('loading').classList.toggle('hidden', id !== 'loading');
-    document.getElementById('menu').classList.toggle('hidden', id !== 'menu');
-    document.getElementById('level-select').classList.toggle('visible', id === 'level-select');
-    document.getElementById('game').classList.toggle('visible', id === 'game');
-  }
+      function getWantImagePath(key) {
+        if (!key) return '';
+        const k = key.indexOf('.PNG') !== -1 ? key : key + '.PNG';
+        if (k.startsWith('get_')) return IMG_BASE + k;
+        const dishKey = k.startsWith('dish_') ? k : 'dish_' + k.replace('.PNG', '') + '.PNG';
+        return IMG_BASE + (dishToGet[dishKey] || k);
+      }
 
-  function showGameModal(msg, buttons) {
-    var el = document.getElementById('game-modal');
-    var msgEl = document.getElementById('gameModalMsg');
-    var btnsEl = document.getElementById('gameModalBtns');
-    if (!el || !msgEl || !btnsEl) return;
-    msgEl.textContent = msg;
-    btnsEl.innerHTML = '';
-    (buttons || []).forEach(function(b) {
-      var btn = document.createElement('button');
-      btn.textContent = b.text || '确定';
-      btn.onclick = function() { el.classList.add('game-modal-hidden'); if (b.callback) b.callback(); };
-      btnsEl.appendChild(btn);
-    });
-    el.classList.remove('game-modal-hidden');
-  }
-  function closeGameModal() {
-    var el = document.getElementById('game-modal');
-    if (el) el.classList.add('game-modal-hidden');
-  }
+      /* 想吃区：裁剪图、横着2排（第1排组合图不换行，第2排 x数量），每次1-2个组合 */
+      var CURRENT_WANT_SIZE = 52;
+      var NEXT_WANT_SIZE = 40;
+      function refreshWants() {
+        var currentEl = document.getElementById('currentWant');
+        var nextEl = document.getElementById('nextWant');
+        if (!currentEl || !nextEl) return;
+        currentEl.innerHTML = '';
+        nextEl.innerHTML = '';
+        function buildTwoRows(container, wants, doneList, imgSize) {
+          var row1 = document.createElement('div');
+          row1.className = 'want-row';
+          var row2 = document.createElement('div');
+          row2.className = 'want-row';
+          for (var i = 0; i < wants.length; i++) {
+            var want = wants[i];
+            var key = want.key || want;
+            var count = (doneList && doneList[i] !== undefined) ? doneList[i] : (want.count || 1);
+            var isDone = doneList && doneList[i] === 0;
+            var parts = wantKeyToDisplayPaths(key);
+            var combo = document.createElement('div');
+            combo.className = 'want-combo' + (isDone ? ' done' : '');
+            for (var p = 0; p < parts.length; p++) {
+              combo.appendChild(createCroppedImg(parts[p].path, imgSize));
+              if (p < parts.length - 1) {
+                var plus = document.createElement('span');
+                plus.className = 'want-plus';
+                plus.textContent = '+';
+                combo.appendChild(plus);
+              }
+            }
+            row1.appendChild(combo);
+            var xSpan = document.createElement('span');
+            xSpan.className = 'want-x' + (isDone ? ' done' : '');
+            xSpan.textContent = 'x' + count;
+            row2.appendChild(xSpan);
+          }
+          container.appendChild(row1);
+          container.appendChild(row2);
+        }
+        buildTwoRows(currentEl, currentWants, wantedDone, CURRENT_WANT_SIZE);
+        buildTwoRows(nextEl, nextWants, null, NEXT_WANT_SIZE);
+      }
 
-  function updateSatisfaction() {
-    var el = document.getElementById('satisfactionFill');
-    if (!el) return;
-    if (gameMode === 'endless') {
-      el.style.width = '0%';
-      updateTimer();
-    } else {
-      var pct = satisfactionMax ? Math.min(100, (satisfaction / satisfactionMax) * 100) : 0;
-      el.style.width = pct + '%';
-    }
-  }
+      function pickRandomWants(dishes, count) {
+        var out = [];
+        if (gameMode === 'endless' && ENDLESS_WANT_POOL.length) {
+          for (var i = 0; i < count; i++) {
+            var key = ENDLESS_WANT_POOL[Math.floor(Math.random() * ENDLESS_WANT_POOL.length)];
+            out.push({ key: key, count: 1 + Math.floor(Math.random() * 3) });
+          }
+          return out;
+        }
+        var list = Object.keys(dishToGet).filter(function (d) { return dishes.indexOf(d) !== -1; });
+        for (var j = 0; j < count && list.length; j++) {
+          var idx = Math.floor(Math.random() * list.length);
+          var d = list[idx];
+          out.push({ key: dishToGet[d] || d, count: 1 + Math.floor(Math.random() * 2) });
+        }
+        return out;
+      }
 
-  function updateTimer() {
-    var el = document.getElementById('gameTimer');
-    if (!el) return;
-    var m = Math.floor(timeLeft / 60);
-    var s = timeLeft % 60;
-    var t = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-    if (gameMode === 'endless') el.textContent = '剩余 ' + t + '  账单 ¥' + billTotal;
-    else el.textContent = t;
-  }
+      function initLevel() {
+        if (gameMode === 'endless') {
+          billTotal = 0;
+          ENDLESS_WANT_POOL = (IMG_MANIFEST.get || []).slice();
+          currentWants = pickRandomWants([], 2);
+          nextWants = pickRandomWants([], 2);
+          wantedDone = currentWants.map(function (w) { return w.count; });
+          timeLeft = 120;
+          refreshWants();
+          updateSatisfaction();
+          updateTimer();
+          if (timerId) clearInterval(timerId);
+          timerId = setInterval(function () {
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) {
+              clearInterval(timerId);
+              timerId = null;
+              showGameModal('时间到！账单 ¥' + billTotal, [{ text: '确定' }]);
+            }
+          }, 1000);
+        } else {
+          var dishes = IMG_MANIFEST.dishes.slice(0, 2 + currentLevel);
+          currentWants = pickRandomWants(dishes, 2);
+          nextWants = pickRandomWants(dishes, 2);
+          wantedDone = currentWants.map(function (w) { return w.count; });
+          satisfaction = 0;
+          satisfactionMax = 5;
+          timeLeft = 120;
+          refreshWants();
+          updateSatisfaction();
+          updateTimer();
+          if (timerId) clearInterval(timerId);
+          timerId = setInterval(function () {
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) {
+              clearInterval(timerId);
+              timerId = null;
+              showGameModal('时间到！', [{ text: '确定' }]);
+            }
+          }, 1000);
+        }
+      }
 
-  function getWantImagePath(key) {
-    if (!key) return '';
-    const k = key.indexOf('.PNG') !== -1 ? key : key + '.PNG';
-    if (k.startsWith('get_')) return IMG_BASE + k;
-    const dishKey = k.startsWith('dish_') ? k : 'dish_' + k.replace('.PNG', '') + '.PNG';
-    return IMG_BASE + (dishToGet[dishKey] || k);
-  }
+      function buildTableSlots() {
+        const wrap = document.getElementById('tableSlots');
+        wrap.innerHTML = '';
+        tableSlots.length = 0;
+        for (let i = 0; i < CONVEYOR_SLOTS; i++) {
+          const slot = { el: null, food: null };
+          const div = document.createElement('div');
+          div.className = 'slot';
+          const inner = document.createElement('div');
+          inner.className = 'slot-inner';
+          div.appendChild(inner);
+          wrap.appendChild(div);
+          slot.el = div;
+          slot.inner = inner;
+          tableSlots.push(slot);
+        }
+      }
 
-  /* 想吃区：裁剪图、横着2排（第1排组合图不换行，第2排 x数量），每次1-2个组合 */
-  var CURRENT_WANT_SIZE = 52;
-  var NEXT_WANT_SIZE = 40;
-  function refreshWants() {
-    var currentEl = document.getElementById('currentWant');
-    var nextEl = document.getElementById('nextWant');
-    if (!currentEl || !nextEl) return;
-    currentEl.innerHTML = '';
-    nextEl.innerHTML = '';
-    function buildTwoRows(container, wants, doneList, imgSize) {
-      var row1 = document.createElement('div');
-      row1.className = 'want-row';
-      var row2 = document.createElement('div');
-      row2.className = 'want-row';
-      for (var i = 0; i < wants.length; i++) {
-        var want = wants[i];
-        var key = want.key || want;
-        var count = (doneList && doneList[i] !== undefined) ? doneList[i] : (want.count || 1);
-        var isDone = doneList && doneList[i] === 0;
-        var parts = wantKeyToDisplayPaths(key);
-        var combo = document.createElement('div');
-        combo.className = 'want-combo' + (isDone ? ' done' : '');
-        for (var p = 0; p < parts.length; p++) {
-          combo.appendChild(createCroppedImg(parts[p].path, imgSize));
-          if (p < parts.length - 1) {
-            var plus = document.createElement('span');
-            plus.className = 'want-plus';
-            plus.textContent = '+';
-            combo.appendChild(plus);
+      function buildPlates() {
+        var wrap = document.getElementById('platesRow');
+        wrap.innerHTML = '';
+        var dishes = gameMode === 'endless' ? (IMG_MANIFEST.dishes || []) : IMG_MANIFEST.dishes.slice(0, 2 + currentLevel);
+        dishes.forEach(function (path) {
+          var div = document.createElement('div');
+          div.className = 'plate-item';
+          div.dataset.dish = path;
+          div.appendChild(createCroppedImg(path, 140));
+          wrap.appendChild(div);
+        });
+      }
+
+      function buildSauce() {
+        const wrap = document.getElementById('sauceRow');
+        wrap.innerHTML = '';
+        var list = (IMG_MANIFEST.sauce || []).slice(0, 6);
+        list.forEach(function (path) {
+          var div = document.createElement('div');
+          div.className = 'sauce-item';
+          div.dataset.sauce = path;
+          div.appendChild(createCroppedImg(path, 60));
+          wrap.appendChild(div);
+        });
+      }
+
+      var CONVEYOR_PLATE = 'sushiPlate_grey.PNG';
+      function buildConveyor() {
+        var track = document.getElementById('conveyorTrack');
+        track.innerHTML = '';
+        conveyorItems = [];
+        var list = IMG_MANIFEST.conveyorSushi || [];
+        for (var r = 0; r < 3; r++) {
+          list.forEach(function (path) {
+            var div = document.createElement('div');
+            div.className = 'belt-item';
+            div.dataset.sushi = path;
+            var plateWrap = document.createElement('div');
+            plateWrap.className = 'belt-plate';
+            var plateImg = document.createElement('img');
+            plateImg.src = IMG_BASE + CONVEYOR_PLATE;
+            plateImg.alt = '';
+            plateWrap.appendChild(plateImg);
+            div.appendChild(plateWrap);
+            var sushiWrap = document.createElement('div');
+            sushiWrap.className = 'belt-sushi';
+            sushiWrap.appendChild(createCroppedImg(path, 70));
+            div.appendChild(sushiWrap);
+            track.appendChild(div);
+            conveyorItems.push({ el: div, path: path });
+          });
+        }
+        conveyorOffset = 0;
+        requestAnimationFrame(animateConveyor);
+      }
+
+      function animateConveyor() {
+        if (!document.getElementById('game').classList.contains('visible')) return;
+        conveyorOffset -= 0.6;
+        var track = document.getElementById('conveyorTrack');
+        if (track) {
+          var totalW = conveyorItems.length * 108;
+          if (totalW > 0 && conveyorOffset < -totalW) conveyorOffset += totalW;
+          track.style.transform = 'translateY(-50%) translateX(' + conveyorOffset + 'px)';
+        }
+        requestAnimationFrame(animateConveyor);
+      }
+
+      var DRINK_PLACEHOLDER_SIZE = 110;
+      function buildDrinks() {
+        const tea = document.getElementById('teaSide');
+        const drink = document.getElementById('drinkSide');
+        if (!tea || !drink) return;
+        tea.innerHTML = '';
+        drink.innerHTML = '';
+        var cupBei = createCroppedImg('water_bei_empty.PNG', DRINK_PLACEHOLDER_SIZE);
+        cupBei.classList.add('cup');
+        cupBei.dataset.path = 'water_bei_empty.PNG';
+        tea.appendChild(cupBei);
+        var hu = createCroppedImg('water_hu.PNG', DRINK_PLACEHOLDER_SIZE);
+        hu.classList.add('bottle');
+        hu.dataset.path = 'water_hu.PNG';
+        tea.appendChild(hu);
+        var cupGlass = createCroppedImg('water_glass_empty.PNG', DRINK_PLACEHOLDER_SIZE);
+        cupGlass.classList.add('cup');
+        cupGlass.dataset.path = 'water_glass_empty.PNG';
+        drink.appendChild(cupGlass);
+        var orange = createCroppedImg('water_orange.PNG', DRINK_PLACEHOLDER_SIZE);
+        orange.classList.add('bottle');
+        orange.dataset.path = 'water_orange.PNG';
+        drink.appendChild(orange);
+      }
+
+      function createSourcePlaceholder(w, h) {
+        var el = document.createElement('div');
+        el.className = 'source-placeholder';
+        el.style.width = w + 'px';
+        el.style.height = h + 'px';
+        return el;
+      }
+
+      function findDrinkUnder(clientX, clientY) {
+        var sides = [document.getElementById('teaSide'), document.getElementById('drinkSide')];
+        for (var i = 0; i < sides.length; i++) {
+          var parent = sides[i];
+          if (!parent) continue;
+          for (var j = 0; j < parent.children.length; j++) {
+            var el = parent.children[j];
+            var r = el.getBoundingClientRect();
+            if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom)
+              return { el: el, parent: parent, index: j, path: el.dataset.path };
           }
         }
-        row1.appendChild(combo);
-        var xSpan = document.createElement('span');
-        xSpan.className = 'want-x' + (isDone ? ' done' : '');
-        xSpan.textContent = 'x' + count;
-        row2.appendChild(xSpan);
+        return null;
       }
-      container.appendChild(row1);
-      container.appendChild(row2);
-    }
-    buildTwoRows(currentEl, currentWants, wantedDone, CURRENT_WANT_SIZE);
-    buildTwoRows(nextEl, nextWants, null, NEXT_WANT_SIZE);
-  }
 
-  function pickRandomWants(dishes, count) {
-    var out = [];
-    if (gameMode === 'endless' && ENDLESS_WANT_POOL.length) {
-      for (var i = 0; i < count; i++) {
-        var key = ENDLESS_WANT_POOL[Math.floor(Math.random() * ENDLESS_WANT_POOL.length)];
-        out.push({ key: key, count: 1 + Math.floor(Math.random() * 3) });
-      }
-      return out;
-    }
-    var list = Object.keys(dishToGet).filter(function(d) { return dishes.indexOf(d) !== -1; });
-    for (var j = 0; j < count && list.length; j++) {
-      var idx = Math.floor(Math.random() * list.length);
-      var d = list[idx];
-      out.push({ key: dishToGet[d] || d, count: 1 + Math.floor(Math.random() * 2) });
-    }
-    return out;
-  }
-
-  function initLevel() {
-    if (gameMode === 'endless') {
-      billTotal = 0;
-      ENDLESS_WANT_POOL = (IMG_MANIFEST.get || []).slice();
-      currentWants = pickRandomWants([], 2);
-      nextWants = pickRandomWants([], 2);
-      wantedDone = currentWants.map(function(w) { return w.count; });
-      timeLeft = 120;
-      refreshWants();
-      updateSatisfaction();
-      updateTimer();
-      if (timerId) clearInterval(timerId);
-      timerId = setInterval(function() {
-        timeLeft--;
-        updateTimer();
-        if (timeLeft <= 0) {
-          clearInterval(timerId);
-          timerId = null;
-          showGameModal('时间到！账单 ¥' + billTotal, [{ text: '确定' }]);
+      function findConveyorUnder(clientX, clientY) {
+        var track = document.getElementById('conveyorTrack');
+        if (!track) return null;
+        var items = track.querySelectorAll('.belt-item');
+        for (var i = 0; i < items.length; i++) {
+          var el = items[i];
+          if (el.classList.contains('placeholder')) continue;
+          var r = el.getBoundingClientRect();
+          if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom)
+            return { el: el, path: el.dataset.sushi };
         }
-      }, 1000);
-    } else {
-      var dishes = IMG_MANIFEST.dishes.slice(0, 2 + currentLevel);
-      currentWants = pickRandomWants(dishes, 2);
-      nextWants = pickRandomWants(dishes, 2);
-      wantedDone = currentWants.map(function(w) { return w.count; });
-      satisfaction = 0;
-      satisfactionMax = 5;
-      timeLeft = 120;
-      refreshWants();
-      updateSatisfaction();
-      updateTimer();
-      if (timerId) clearInterval(timerId);
-      timerId = setInterval(function() {
-        timeLeft--;
-        updateTimer();
-        if (timeLeft <= 0) {
-          clearInterval(timerId);
-          timerId = null;
-          showGameModal('时间到！', [{ text: '确定' }]);
-        }
-      }, 1000);
-    }
-  }
-
-  function buildTableSlots() {
-    const wrap = document.getElementById('tableSlots');
-    wrap.innerHTML = '';
-    tableSlots.length = 0;
-    for (let i = 0; i < CONVEYOR_SLOTS; i++) {
-      const slot = { el: null, food: null };
-      const div = document.createElement('div');
-      div.className = 'slot';
-      const inner = document.createElement('div');
-      inner.className = 'slot-inner';
-      div.appendChild(inner);
-      wrap.appendChild(div);
-      slot.el = div;
-      slot.inner = inner;
-      tableSlots.push(slot);
-    }
-  }
-
-  function buildPlates() {
-    var wrap = document.getElementById('platesRow');
-    wrap.innerHTML = '';
-    var dishes = gameMode === 'endless' ? (IMG_MANIFEST.dishes || []) : IMG_MANIFEST.dishes.slice(0, 2 + currentLevel);
-    dishes.forEach(function(path) {
-      var div = document.createElement('div');
-      div.className = 'plate-item';
-      div.dataset.dish = path;
-      div.appendChild(createCroppedImg(path, 140));
-      wrap.appendChild(div);
-    });
-  }
-
-  function buildSauce() {
-    const wrap = document.getElementById('sauceRow');
-    wrap.innerHTML = '';
-    var list = (IMG_MANIFEST.sauce || []).slice(0, 6);
-    list.forEach(function(path) {
-      var div = document.createElement('div');
-      div.className = 'sauce-item';
-      div.dataset.sauce = path;
-      div.appendChild(createCroppedImg(path, 60));
-      wrap.appendChild(div);
-    });
-  }
-
-  var CONVEYOR_PLATE = 'sushiPlate_grey.PNG';
-  function buildConveyor() {
-    var track = document.getElementById('conveyorTrack');
-    track.innerHTML = '';
-    conveyorItems = [];
-    var list = IMG_MANIFEST.conveyorSushi || [];
-    for (var r = 0; r < 3; r++) {
-      list.forEach(function(path) {
-        var div = document.createElement('div');
-        div.className = 'belt-item';
-        div.dataset.sushi = path;
-        var plateWrap = document.createElement('div');
-        plateWrap.className = 'belt-plate';
-        var plateImg = document.createElement('img');
-        plateImg.src = IMG_BASE + CONVEYOR_PLATE;
-        plateImg.alt = '';
-        plateWrap.appendChild(plateImg);
-        div.appendChild(plateWrap);
-        var sushiWrap = document.createElement('div');
-        sushiWrap.className = 'belt-sushi';
-        sushiWrap.appendChild(createCroppedImg(path, 70));
-        div.appendChild(sushiWrap);
-        track.appendChild(div);
-        conveyorItems.push({ el: div, path: path });
-      });
-    }
-    conveyorOffset = 0;
-    requestAnimationFrame(animateConveyor);
-  }
-
-  function animateConveyor() {
-    if (!document.getElementById('game').classList.contains('visible')) return;
-    conveyorOffset -= 0.6;
-    var track = document.getElementById('conveyorTrack');
-    if (track) {
-      var totalW = conveyorItems.length * 108;
-      if (totalW > 0 && conveyorOffset < -totalW) conveyorOffset += totalW;
-      track.style.transform = 'translateY(-50%) translateX(' + conveyorOffset + 'px)';
-    }
-    requestAnimationFrame(animateConveyor);
-  }
-
-  var DRINK_PLACEHOLDER_SIZE = 110;
-  function buildDrinks() {
-    const tea = document.getElementById('teaSide');
-    const drink = document.getElementById('drinkSide');
-    if (!tea || !drink) return;
-    tea.innerHTML = '';
-    drink.innerHTML = '';
-    var cupBei = createCroppedImg('water_bei_empty.PNG', DRINK_PLACEHOLDER_SIZE);
-    cupBei.classList.add('cup');
-    cupBei.dataset.path = 'water_bei_empty.PNG';
-    tea.appendChild(cupBei);
-    var hu = createCroppedImg('water_hu.PNG', DRINK_PLACEHOLDER_SIZE);
-    hu.classList.add('bottle');
-    hu.dataset.path = 'water_hu.PNG';
-    tea.appendChild(hu);
-    var cupGlass = createCroppedImg('water_glass_empty.PNG', DRINK_PLACEHOLDER_SIZE);
-    cupGlass.classList.add('cup');
-    cupGlass.dataset.path = 'water_glass_empty.PNG';
-    drink.appendChild(cupGlass);
-    var orange = createCroppedImg('water_orange.PNG', DRINK_PLACEHOLDER_SIZE);
-    orange.classList.add('bottle');
-    orange.dataset.path = 'water_orange.PNG';
-    drink.appendChild(orange);
-  }
-
-  function createSourcePlaceholder(w, h) {
-    var el = document.createElement('div');
-    el.className = 'source-placeholder';
-    el.style.width = w + 'px';
-    el.style.height = h + 'px';
-    return el;
-  }
-
-  function findDrinkUnder(clientX, clientY) {
-    var sides = [document.getElementById('teaSide'), document.getElementById('drinkSide')];
-    for (var i = 0; i < sides.length; i++) {
-      var parent = sides[i];
-      if (!parent) continue;
-      for (var j = 0; j < parent.children.length; j++) {
-        var el = parent.children[j];
-        var r = el.getBoundingClientRect();
-        if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom)
-          return { el: el, parent: parent, index: j, path: el.dataset.path };
+        return null;
       }
-    }
-    return null;
-  }
 
-  function findConveyorUnder(clientX, clientY) {
-    var track = document.getElementById('conveyorTrack');
-    if (!track) return null;
-    var items = track.querySelectorAll('.belt-item');
-    for (var i = 0; i < items.length; i++) {
-      var el = items[i];
-      if (el.classList.contains('placeholder')) continue;
-      var r = el.getBoundingClientRect();
-      if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom)
-        return { el: el, path: el.dataset.sushi };
-    }
-    return null;
-  }
+      function findEmptyTableSlotUnder(clientX, clientY) {
+        for (var i = 0; i < tableSlots.length; i++) {
+          var slot = tableSlots[i];
+          if (slot.food) continue;
+          var r = slot.el.getBoundingClientRect();
+          if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom)
+            return slot;
+        }
+        return null;
+      }
 
-  function findEmptyTableSlotUnder(clientX, clientY) {
-    for (var i = 0; i < tableSlots.length; i++) {
-      var slot = tableSlots[i];
-      if (slot.food) continue;
-      var r = slot.el.getBoundingClientRect();
-      if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom)
-        return slot;
-    }
-    return null;
-  }
+      function setHeldItem(item) {
+        heldItem = item;
+        var layer = document.getElementById('heldItemLayer');
+        var chopLayer = document.getElementById('chopstickLayer');
+        if (!layer || !chopLayer) return;
+        layer.innerHTML = '';
+        if (item) {
+          chopLayer.style.display = 'none';
+          layer.style.display = 'flex';
+          if (item.type === 'drink') {
+            layer.appendChild(createCroppedImg(item.path, 100));
+          } else if (item.type === 'conveyor') {
+            var wrap = document.createElement('div');
+            wrap.style.position = 'relative';
+            wrap.style.width = '100px';
+            wrap.style.height = '100px';
+            var plate = document.createElement('img');
+            plate.src = IMG_BASE + CONVEYOR_PLATE;
+            plate.style.position = 'absolute';
+            plate.style.width = '70%';
+            plate.style.height = '70%';
+            plate.style.left = '15%';
+            plate.style.top = '15%';
+            plate.alt = '';
+            wrap.appendChild(plate);
+            var sushi = createCroppedImg(item.sushiPath, 56);
+            sushi.style.position = 'absolute';
+            sushi.style.left = '50%';
+            sushi.style.top = '50%';
+            sushi.style.transform = 'translate(-50%, -50%)';
+            wrap.appendChild(sushi);
+            layer.appendChild(wrap);
+          }
+        } else {
+          layer.style.display = 'none';
+          chopLayer.style.display = 'block';
+        }
+      }
 
-  function setHeldItem(item) {
-    heldItem = item;
-    var layer = document.getElementById('heldItemLayer');
-    var chopLayer = document.getElementById('chopstickLayer');
-    if (!layer || !chopLayer) return;
-    layer.innerHTML = '';
-    if (item) {
-      chopLayer.style.display = 'none';
-      layer.style.display = 'flex';
-      if (item.type === 'drink') {
-        layer.appendChild(createCroppedImg(item.path, 100));
-      } else if (item.type === 'conveyor') {
-        var wrap = document.createElement('div');
-        wrap.style.position = 'relative';
-        wrap.style.width = '100px';
-        wrap.style.height = '100px';
+      function clearHeldItem(returnToSource) {
+        if (!heldItem) return;
+        var item = heldItem;
+        if (item.placeholderEl && item.placeholderEl.parentNode)
+          item.placeholderEl.parentNode.removeChild(item.placeholderEl);
+        if (returnToSource) {
+          if (item.type === 'drink' && item.parent && item.originalEl) {
+            var insertBefore = item.parent.children[item.index] || null;
+            item.parent.insertBefore(item.originalEl, insertBefore);
+          } else if (item.type === 'conveyor' && item.beltItemEl && document.getElementById('conveyorTrack')) {
+            document.getElementById('conveyorTrack').appendChild(item.beltItemEl);
+          }
+        }
+        if (item.originalEl && !returnToSource && item.type === 'drink')
+          item.originalEl = null;
+        heldItem = null;
+        setHeldItem(null);
+      }
+
+      function putConveyorOnSlot(slot, sushiPath) {
+        if (!slot || slot.food) return;
+        slot.food = sushiPath;
+        slot.el.classList.add('filled');
+        slot.inner.innerHTML = '';
         var plate = document.createElement('img');
         plate.src = IMG_BASE + CONVEYOR_PLATE;
-        plate.style.position = 'absolute';
-        plate.style.width = '70%';
-        plate.style.height = '70%';
-        plate.style.left = '15%';
-        plate.style.top = '15%';
         plate.alt = '';
-        wrap.appendChild(plate);
-        var sushi = createCroppedImg(item.sushiPath, 56);
-        sushi.style.position = 'absolute';
-        sushi.style.left = '50%';
-        sushi.style.top = '50%';
-        sushi.style.transform = 'translate(-50%, -50%)';
-        wrap.appendChild(sushi);
-        layer.appendChild(wrap);
+        plate.style.position = 'absolute';
+        plate.style.width = '100%';
+        plate.style.height = '100%';
+        plate.style.left = '0';
+        plate.style.top = '0';
+        plate.style.objectFit = 'contain';
+        slot.inner.appendChild(plate);
+        var sushiWrap = document.createElement('div');
+        sushiWrap.style.position = 'absolute';
+        sushiWrap.style.width = '70%';
+        sushiWrap.style.height = '70%';
+        sushiWrap.style.left = '50%';
+        sushiWrap.style.top = '50%';
+        sushiWrap.style.transform = 'translate(-50%, -50%)';
+        sushiWrap.style.display = 'flex';
+        sushiWrap.style.alignItems = 'center';
+        sushiWrap.style.justifyContent = 'center';
+        sushiWrap.appendChild(createCroppedImg(sushiPath, 60));
+        slot.inner.appendChild(sushiWrap);
       }
-    } else {
-      layer.style.display = 'none';
-      chopLayer.style.display = 'block';
-    }
-  }
 
-  function clearHeldItem(returnToSource) {
-    if (!heldItem) return;
-    var item = heldItem;
-    if (item.placeholderEl && item.placeholderEl.parentNode)
-      item.placeholderEl.parentNode.removeChild(item.placeholderEl);
-    if (returnToSource) {
-      if (item.type === 'drink' && item.parent && item.originalEl) {
-        var insertBefore = item.parent.children[item.index] || null;
-        item.parent.insertBefore(item.originalEl, insertBefore);
-      } else if (item.type === 'conveyor' && item.beltItemEl && document.getElementById('conveyorTrack')) {
-        document.getElementById('conveyorTrack').appendChild(item.beltItemEl);
+      function getChopstickEl() {
+        return document.getElementById('chopstick-cursor');
       }
-    }
-    if (item.originalEl && !returnToSource && item.type === 'drink')
-      item.originalEl = null;
-    heldItem = null;
-    setHeldItem(null);
-  }
 
-  function putConveyorOnSlot(slot, sushiPath) {
-    if (!slot || slot.food) return;
-    slot.food = sushiPath;
-    slot.el.classList.add('filled');
-    slot.inner.innerHTML = '';
-    var plate = document.createElement('img');
-    plate.src = IMG_BASE + CONVEYOR_PLATE;
-    plate.alt = '';
-    plate.style.position = 'absolute';
-    plate.style.width = '100%';
-    plate.style.height = '100%';
-    plate.style.left = '0';
-    plate.style.top = '0';
-    plate.style.objectFit = 'contain';
-    slot.inner.appendChild(plate);
-    var sushiWrap = document.createElement('div');
-    sushiWrap.style.position = 'absolute';
-    sushiWrap.style.width = '70%';
-    sushiWrap.style.height = '70%';
-    sushiWrap.style.left = '50%';
-    sushiWrap.style.top = '50%';
-    sushiWrap.style.transform = 'translate(-50%, -50%)';
-    sushiWrap.style.display = 'flex';
-    sushiWrap.style.alignItems = 'center';
-    sushiWrap.style.justifyContent = 'center';
-    sushiWrap.appendChild(createCroppedImg(sushiPath, 60));
-    slot.inner.appendChild(sushiWrap);
-  }
+      function getEatZoneEl() {
+        return document.getElementById('eatZone');
+      }
 
-  function getChopstickEl() {
-    return document.getElementById('chopstick-cursor');
-  }
+      function distance(x1, y1, x2, y2) {
+        return Math.hypot(x2 - x1, y2 - y1);
+      }
 
-  function getEatZoneEl() {
-    return document.getElementById('eatZone');
-  }
+      function elementCenter(el) {
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      }
 
-  function distance(x1, y1, x2, y2) {
-    return Math.hypot(x2 - x1, y2 - y1);
-  }
+      function isOverEatZone(clientX, clientY) {
+        const zone = getEatZoneEl();
+        if (!zone) return false;
+        const r = zone.getBoundingClientRect();
+        return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+      }
 
-  function elementCenter(el) {
-    const r = el.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-  }
+      // 根据图片实际内容边界（透明底裁剪）判断点是否在元素“图案”内
+      function isPointInImageContent(el, clientX, clientY, imagePath) {
+        const r = el.getBoundingClientRect();
+        const bounds = imageBounds[imagePath] || { x: 0, y: 0, w: 1, h: 1 };
+        const left = r.left + r.width * bounds.x;
+        const top = r.top + r.height * bounds.y;
+        const w = r.width * bounds.w;
+        const h = r.height * bounds.h;
+        return clientX >= left && clientX <= left + w && clientY >= top && clientY <= top + h;
+      }
 
-  function isOverEatZone(clientX, clientY) {
-    const zone = getEatZoneEl();
-    if (!zone) return false;
-    const r = zone.getBoundingClientRect();
-    return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
-  }
-
-  // 根据图片实际内容边界（透明底裁剪）判断点是否在元素“图案”内
-  function isPointInImageContent(el, clientX, clientY, imagePath) {
-    const r = el.getBoundingClientRect();
-    const bounds = imageBounds[imagePath] || { x: 0, y: 0, w: 1, h: 1 };
-    const left = r.left + r.width * bounds.x;
-    const top = r.top + r.height * bounds.y;
-    const w = r.width * bounds.w;
-    const h = r.height * bounds.h;
-    return clientX >= left && clientX <= left + w && clientY >= top && clientY <= top + h;
-  }
-
-  function findPlateUnder(x, y) {
-    const plates = document.querySelectorAll('#platesRow .plate-item');
-    for (const p of plates) {
-      const dishPath = p.dataset.dish;
-      if (dishPath && isPointInImageContent(p, x, y, dishPath)) return p;
-    }
-    return null;
-  }
-
-  function findSauceUnder(x, y) {
-    const sauces = document.querySelectorAll('#sauceRow .sauce-item');
-    for (const s of sauces) {
-      const path = s.dataset.sauce;
-      if (path && isPointInImageContent(s, x, y, path)) return s;
-    }
-    return null;
-  }
-
-  function grabFromPlate(plateEl) {
-    const dish = plateEl.dataset.dish;
-    const getPath = dishToGet[dish] || dish;
-    if (!imageCache[getPath]) return null;
-    return { type: 'dish', key: getPath, src: IMG_BASE + getPath };
-  }
-
-  function setHeldFood(food) {
-    heldFood = food;
-    var wrap = document.getElementById('heldFoodWrap');
-    if (!wrap) return;
-    wrap.innerHTML = '';
-    if (food) {
-      var path = food.key.indexOf('.PNG') !== -1 ? food.key : food.key + '.PNG';
-      wrap.appendChild(createCroppedImg(path, 100));
-      wrap.style.display = 'block';
-    } else {
-      wrap.style.display = 'none';
-    }
-  }
-
-  function baseWantKey(key) {
-    if (!key) return '';
-    const s = key.replace('.PNG', '');
-    const plus = s.indexOf('+');
-    return (plus !== -1 ? s.substring(0, plus) : s) + '.PNG';
-  }
-
-  function onEat(foodKey) {
-    if (gameMode === 'endless') {
-      billTotal += 8 + Math.floor(Math.random() * 12);
-      updateSatisfaction();
-    }
-    var base = baseWantKey(foodKey);
-    var idx = -1;
-    for (var i = 0; i < currentWants.length; i++) {
-      var w = currentWants[i];
-      var wantKey = w.key || w;
-      if (baseWantKey(wantKey) === base && wantedDone[i] > 0) { idx = i; break; }
-    }
-    if (idx !== -1) {
-      wantedDone[idx]--;
-      if (gameMode === 'challenge') satisfaction++;
-      updateSatisfaction();
-      refreshWants();
-      if (gameMode === 'challenge' && satisfaction >= satisfactionMax) {
-        if (timerId) clearInterval(timerId);
-        timerId = null;
-        setTimeout(function() {
-          showGameModal('过关！进入下一关？', [
-            { text: '下一关', callback: function() { currentLevel++; document.getElementById('gameTitle').textContent = '闯关 · 第' + currentLevel + '关'; initLevel(); buildPlates(); buildConveyor(); unlockLevel(currentLevel); } },
-            { text: '重玩', callback: function() { initLevel(); } }
-          ]);
-        }, 300);
-      } else {
-        var allDone = wantedDone.every(function(c) { return c === 0; });
-        if (allDone) {
-          currentWants = nextWants.slice();
-          nextWants = pickRandomWants(gameMode === 'endless' ? [] : IMG_MANIFEST.dishes.slice(0, 2 + currentLevel), 2);
-          wantedDone = currentWants.map(function(w) { return w.count; });
-          refreshWants();
+      function findPlateUnder(x, y) {
+        const plates = document.querySelectorAll('#platesRow .plate-item');
+        for (const p of plates) {
+          const dishPath = p.dataset.dish;
+          if (dishPath && isPointInImageContent(p, x, y, dishPath)) return p;
         }
+        return null;
       }
-    }
-    setHeldFood(null);
-  }
 
-  function setupChopstickDrag() {
-    const chop = getChopstickEl();
-    const app = document.getElementById('app');
-    if (!chop || !app) return;
-
-    let pos = { x: 0, y: 0 };
-    let isDragging = false;
-
-    function moveTo(x, y) {
-      pos.x = x;
-      pos.y = y;
-      chop.style.left = x + 'px';
-      chop.style.top = y + 'px';
-      const zone = getEatZoneEl();
-      const over = zone && isOverEatZone(x, y);
-      if (over !== eatZoneHighlight) {
-        eatZoneHighlight = over;
-        zone.classList.toggle('highlight', over);
+      function findSauceUnder(x, y) {
+        const sauces = document.querySelectorAll('#sauceRow .sauce-item');
+        for (const s of sauces) {
+          const path = s.dataset.sauce;
+          if (path && isPointInImageContent(s, x, y, path)) return s;
+        }
+        return null;
       }
-    }
 
-    function onPointerDown(e) {
-      if (!document.getElementById('game').classList.contains('visible')) return;
-      e.preventDefault();
-      isDragging = true;
-      const x = e.clientX != null ? e.clientX : e.touches[0].clientX;
-      const y = e.clientY != null ? e.clientY : e.touches[0].clientY;
-      moveTo(x, y);
-      if (heldItem) return;
-      if (!heldFood) {
-        var drinkHit = findDrinkUnder(x, y);
-        if (drinkHit) {
-          var parent = drinkHit.parent;
-          var idx = drinkHit.index;
-          var el = drinkHit.el;
-          parent.removeChild(el);
-          var ph = createSourcePlaceholder(DRINK_PLACEHOLDER_SIZE, DRINK_PLACEHOLDER_SIZE);
-          ph.classList.add('drink-placeholder');
-          parent.insertBefore(ph, parent.children[idx] || null);
-          heldItem = { type: 'drink', path: drinkHit.path, originalEl: el, placeholderEl: ph, parent: parent, index: idx };
-          setHeldItem(heldItem);
-          return;
-        }
-        var conveyorHit = findConveyorUnder(x, y);
-        if (conveyorHit) {
-          var track = document.getElementById('conveyorTrack');
-          var beltEl = conveyorHit.el;
-          var sushiPath = conveyorHit.path;
-          var beltIdx = Array.prototype.indexOf.call(track.children, beltEl);
-          track.removeChild(beltEl);
-          var ph = createSourcePlaceholder(100, 100);
-          ph.className = 'source-placeholder belt-item placeholder';
-          track.insertBefore(ph, track.children[beltIdx] || null);
-          heldItem = { type: 'conveyor', sushiPath: sushiPath, beltItemEl: beltEl, placeholderEl: ph };
-          setHeldItem(heldItem);
-          return;
-        }
-        const plate = findPlateUnder(x, y);
-        if (plate) setHeldFood(grabFromPlate(plate));
+      function grabFromPlate(plateEl) {
+        const dish = plateEl.dataset.dish;
+        const getPath = dishToGet[dish] || dish;
+        if (!imageCache[getPath]) return null;
+        return { type: 'dish', key: getPath, src: IMG_BASE + getPath };
       }
-    }
 
-    function onPointerMove(e) {
-      const x = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : pos.x);
-      const y = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : pos.y);
-      if (isDragging) e.preventDefault();
-      moveTo(x, y);
-    }
-
-    function onPointerUp(e) {
-      if (!isDragging) return;
-      e.preventDefault();
-      isDragging = false;
-      const x = e.clientX != null ? e.clientX : e.changedTouches[0].clientX;
-      const y = e.clientY != null ? e.clientY : e.changedTouches[0].clientY;
-      if (heldItem) {
-        if (heldItem.type === 'drink') {
-          if (isOverEatZone(x, y)) {
-            clearHeldItem(false);
-          } else {
-            clearHeldItem(true);
-          }
-          return;
-        }
-        if (heldItem.type === 'conveyor') {
-          var slot = findEmptyTableSlotUnder(x, y);
-          if (slot) {
-            putConveyorOnSlot(slot, heldItem.sushiPath);
-            clearHeldItem(false);
-          } else {
-            clearHeldItem(true);
-          }
-          return;
-        }
-      }
-      if (heldFood) {
-        if (isOverEatZone(x, y)) {
-          onEat(heldFood.key);
+      function setHeldFood(food) {
+        heldFood = food;
+        var wrap = document.getElementById('heldFoodWrap');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        if (food) {
+          var path = food.key.indexOf('.PNG') !== -1 ? food.key : food.key + '.PNG';
+          wrap.appendChild(createCroppedImg(path, 100));
+          wrap.style.display = 'block';
         } else {
-          const sauceEl = findSauceUnder(x, y);
-          if (sauceEl) {
-            const saucePath = sauceEl.dataset.sauce;
-            const dippedKey = getDippedKey(heldFood.key, saucePath);
-            if (dippedKey) {
-              setHeldFood({ type: 'dish', key: dippedKey, src: IMG_BASE + dippedKey });
+          wrap.style.display = 'none';
+        }
+      }
+
+      function baseWantKey(key) {
+        if (!key) return '';
+        const s = key.replace('.PNG', '');
+        const plus = s.indexOf('+');
+        return (plus !== -1 ? s.substring(0, plus) : s) + '.PNG';
+      }
+
+      function onEat(foodKey) {
+        if (gameMode === 'endless') {
+          billTotal += 8 + Math.floor(Math.random() * 12);
+          updateSatisfaction();
+        }
+        var base = baseWantKey(foodKey);
+        var idx = -1;
+        for (var i = 0; i < currentWants.length; i++) {
+          var w = currentWants[i];
+          var wantKey = w.key || w;
+          if (baseWantKey(wantKey) === base && wantedDone[i] > 0) { idx = i; break; }
+        }
+        if (idx !== -1) {
+          wantedDone[idx]--;
+          if (gameMode === 'challenge') satisfaction++;
+          updateSatisfaction();
+          refreshWants();
+          if (gameMode === 'challenge' && satisfaction >= satisfactionMax) {
+            if (timerId) clearInterval(timerId);
+            timerId = null;
+            setTimeout(function () {
+              showGameModal('过关！进入下一关？', [
+                { text: '下一关', callback: function () { currentLevel++; document.getElementById('gameTitle').textContent = '闯关 · 第' + currentLevel + '关'; initLevel(); buildPlates(); buildConveyor(); unlockLevel(currentLevel); } },
+                { text: '重玩', callback: function () { initLevel(); } }
+              ]);
+            }, 300);
+          } else {
+            var allDone = wantedDone.every(function (c) { return c === 0; });
+            if (allDone) {
+              currentWants = nextWants.slice();
+              nextWants = pickRandomWants(gameMode === 'endless' ? [] : IMG_MANIFEST.dishes.slice(0, 2 + currentLevel), 2);
+              wantedDone = currentWants.map(function (w) { return w.count; });
+              refreshWants();
             }
           }
         }
+        setHeldFood(null);
       }
-    }
 
-    document.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('mousemove', onPointerMove);
-    document.addEventListener('mouseup', onPointerUp);
-    document.addEventListener('touchstart', onPointerDown, { passive: false });
-    document.addEventListener('touchmove', onPointerMove, { passive: false });
-    document.addEventListener('touchend', onPointerUp, { passive: false });
-  }
+      function setupChopstickDrag() {
+        const chop = getChopstickEl();
+        const app = document.getElementById('app');
+        if (!chop || !app) return;
 
-  function startGame() {
-    document.getElementById('gameTitle').textContent = gameMode === 'challenge' ? ('闯关 · 第' + currentLevel + '关') : '无尽自助';
-    var btnLevel = document.getElementById('btnLevel');
-    if (btnLevel) btnLevel.style.display = gameMode === 'endless' ? 'none' : '';
-    buildTableSlots();
-    buildPlates();
-    buildSauce();
-    buildConveyor();
-    buildDrinks();
-    initLevel();
-    showScreen('game');
-    var chop = getChopstickEl();
-    if (chop) {
-      var app = document.getElementById('app');
-      var r = app.getBoundingClientRect();
-      chop.style.left = (r.left + r.width / 2) + 'px';
-      chop.style.top = (r.top + r.height / 2) + 'px';
-    }
-  }
+        let pos = { x: 0, y: 0 };
+        let isDragging = false;
 
-  let unlockedLevel = 1;
-  function unlockLevel(level) {
-    if (level > unlockedLevel) unlockedLevel = level;
-    document.querySelectorAll('#levelList .level-btn').forEach(btn => {
-      const n = parseInt(btn.dataset.level, 10);
-      if (n <= unlockedLevel) btn.classList.remove('locked'); else btn.classList.add('locked');
-    });
-  }
-  function initLevelSelect() {
-    const list = document.getElementById('levelList');
-    list.innerHTML = '';
-    for (let i = 1; i <= 10; i++) {
-      const btn = document.createElement('button');
-      btn.className = 'level-btn' + (i > unlockedLevel ? ' locked' : '');
-      btn.textContent = i;
-      btn.dataset.level = i;
-      btn.onclick = () => {
-        if (i <= unlockedLevel) {
-          currentLevel = i;
-          showScreen('game');
-          startGame();
+        function moveTo(x, y) {
+          pos.x = x;
+          pos.y = y;
+          chop.style.left = x + 'px';
+          chop.style.top = y + 'px';
+          const zone = getEatZoneEl();
+          const over = zone && isOverEatZone(x, y);
+          if (over !== eatZoneHighlight) {
+            eatZoneHighlight = over;
+            zone.classList.toggle('highlight', over);
+          }
         }
-      };
-      list.appendChild(btn);
-    }
-  }
 
-  document.getElementById('menu').querySelectorAll('.mode-btn').forEach(function(btn) {
-    btn.onclick = function() {
-      if (btn.disabled) return;
-      gameMode = btn.dataset.mode;
-      if (gameMode === 'challenge') showScreen('level-select');
-      else { gameMode = 'endless'; currentLevel = 1; startGame(); }
-    };
-  });
+        function onPointerDown(e) {
+          if (!document.getElementById('game').classList.contains('visible')) return;
+          e.preventDefault();
+          isDragging = true;
+          const x = e.clientX != null ? e.clientX : e.touches[0].clientX;
+          const y = e.clientY != null ? e.clientY : e.touches[0].clientY;
+          moveTo(x, y);
+          if (heldItem) return;
+          if (!heldFood) {
+            var drinkHit = findDrinkUnder(x, y);
+            if (drinkHit) {
+              var parent = drinkHit.parent;
+              var idx = drinkHit.index;
+              var el = drinkHit.el;
+              parent.removeChild(el);
+              var ph = createSourcePlaceholder(DRINK_PLACEHOLDER_SIZE, DRINK_PLACEHOLDER_SIZE);
+              ph.classList.add('drink-placeholder');
+              parent.insertBefore(ph, parent.children[idx] || null);
+              heldItem = { type: 'drink', path: drinkHit.path, originalEl: el, placeholderEl: ph, parent: parent, index: idx };
+              setHeldItem(heldItem);
+              return;
+            }
+            var conveyorHit = findConveyorUnder(x, y);
+            if (conveyorHit) {
+              var track = document.getElementById('conveyorTrack');
+              var beltEl = conveyorHit.el;
+              var sushiPath = conveyorHit.path;
+              var beltIdx = Array.prototype.indexOf.call(track.children, beltEl);
+              track.removeChild(beltEl);
+              var ph = createSourcePlaceholder(100, 100);
+              ph.className = 'source-placeholder belt-item placeholder';
+              track.insertBefore(ph, track.children[beltIdx] || null);
+              heldItem = { type: 'conveyor', sushiPath: sushiPath, beltItemEl: beltEl, placeholderEl: ph };
+              setHeldItem(heldItem);
+              return;
+            }
+            const plate = findPlateUnder(x, y);
+            if (plate) setHeldFood(grabFromPlate(plate));
+          }
+        }
 
-  document.getElementById('backFromLevel').onclick = () => showScreen('menu');
-  document.getElementById('btnExit').onclick = () => { if (timerId) clearInterval(timerId); showScreen('menu'); };
-  document.getElementById('btnLevel').onclick = function() { if (gameMode === 'challenge') showScreen('level-select'); };
-  document.getElementById('btnRestart').onclick = () => initLevel();
+        function onPointerMove(e) {
+          const x = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : pos.x);
+          const y = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : pos.y);
+          if (isDragging) e.preventDefault();
+          moveTo(x, y);
+        }
 
-  const allPaths = collectAllPaths();
-  let loaded = 0;
-  Promise.allSettled(allPaths.map(function(path) {
-    return loadImage(path).then(function() {
-      loaded++;
-      var bar = document.getElementById('loadBar');
-      var tip = document.getElementById('loadTip');
-      if (bar) bar.style.width = (loaded / allPaths.length * 100) + '%';
-      if (tip) tip.textContent = '加载中 ' + loaded + '/' + allPaths.length;
-    });
-  })).then(function(results) {
-    var failed = results.map(function(r, i) { return r.status === 'rejected' ? allPaths[i] : null; }).filter(Boolean);
-    var tipEl = document.getElementById('loadTip');
-    if (failed.length) {
-      tipEl.textContent = '部分图片未加载，可继续游戏。请用本地服务器打开（如 npx serve）以正常加载。';
-      tipEl.style.fontSize = '0.8rem';
-    } else {
-      tipEl.textContent = '加载完成';
-    }
-    setTimeout(function() {
-      showScreen('menu');
-      initLevelSelect();
-      setupChopstickDrag();
-    }, 500);
-  });
-})();
+        function onPointerUp(e) {
+          if (!isDragging) return;
+          e.preventDefault();
+          isDragging = false;
+          const x = e.clientX != null ? e.clientX : e.changedTouches[0].clientX;
+          const y = e.clientY != null ? e.clientY : e.changedTouches[0].clientY;
+          if (heldItem) {
+            if (heldItem.type === 'drink') {
+              if (isOverEatZone(x, y)) {
+                clearHeldItem(false);
+              } else {
+                clearHeldItem(true);
+              }
+              return;
+            }
+            if (heldItem.type === 'conveyor') {
+              var slot = findEmptyTableSlotUnder(x, y);
+              if (slot) {
+                putConveyorOnSlot(slot, heldItem.sushiPath);
+                clearHeldItem(false);
+              } else {
+                clearHeldItem(true);
+              }
+              return;
+            }
+          }
+          if (heldFood) {
+            if (isOverEatZone(x, y)) {
+              onEat(heldFood.key);
+            } else {
+              const sauceEl = findSauceUnder(x, y);
+              if (sauceEl) {
+                const saucePath = sauceEl.dataset.sauce;
+                const dippedKey = getDippedKey(heldFood.key, saucePath);
+                if (dippedKey) {
+                  setHeldFood({ type: 'dish', key: dippedKey, src: IMG_BASE + dippedKey });
+                }
+              }
+            }
+          }
+        }
+
+        document.addEventListener('mousedown', onPointerDown);
+        document.addEventListener('mousemove', onPointerMove);
+        document.addEventListener('mouseup', onPointerUp);
+        document.addEventListener('touchstart', onPointerDown, { passive: false });
+        document.addEventListener('touchmove', onPointerMove, { passive: false });
+        document.addEventListener('touchend', onPointerUp, { passive: false });
+      }
+
+      function startGame() {
+        document.getElementById('gameTitle').textContent = gameMode === 'challenge' ? ('闯关 · 第' + currentLevel + '关') : '无尽自助';
+        var btnLevel = document.getElementById('btnLevel');
+        if (btnLevel) btnLevel.style.display = gameMode === 'endless' ? 'none' : '';
+        buildTableSlots();
+        buildPlates();
+        buildSauce();
+        buildConveyor();
+        buildDrinks();
+        initLevel();
+        showScreen('game');
+        var chop = getChopstickEl();
+        if (chop) {
+          var app = document.getElementById('app');
+          var r = app.getBoundingClientRect();
+          chop.style.left = (r.left + r.width / 2) + 'px';
+          chop.style.top = (r.top + r.height / 2) + 'px';
+        }
+      }
+
+      let unlockedLevel = 1;
+      function unlockLevel(level) {
+        if (level > unlockedLevel) unlockedLevel = level;
+        document.querySelectorAll('#levelList .level-btn').forEach(btn => {
+          const n = parseInt(btn.dataset.level, 10);
+          if (n <= unlockedLevel) btn.classList.remove('locked'); else btn.classList.add('locked');
+        });
+      }
+      function initLevelSelect() {
+        const list = document.getElementById('levelList');
+        list.innerHTML = '';
+        for (let i = 1; i <= 10; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'level-btn' + (i > unlockedLevel ? ' locked' : '');
+          btn.textContent = i;
+          btn.dataset.level = i;
+          btn.onclick = () => {
+            if (i <= unlockedLevel) {
+              currentLevel = i;
+              showScreen('game');
+              startGame();
+            }
+          };
+          list.appendChild(btn);
+        }
+      }
+
+      document.getElementById('menu').querySelectorAll('.mode-btn').forEach(function (btn) {
+        btn.onclick = function () {
+          if (btn.disabled) return;
+          gameMode = btn.dataset.mode;
+          if (gameMode === 'challenge') showScreen('level-select');
+          else { gameMode = 'endless'; currentLevel = 1; startGame(); }
+        };
+      });
+
+      document.getElementById('backFromLevel').onclick = () => showScreen('menu');
+      document.getElementById('btnExit').onclick = () => { if (timerId) clearInterval(timerId); showScreen('menu'); };
+      document.getElementById('btnLevel').onclick = function () { if (gameMode === 'challenge') showScreen('level-select'); };
+      document.getElementById('btnRestart').onclick = () => initLevel();
+
+      const allPaths = collectAllPaths();
+      let loaded = 0;
+      Promise.allSettled(allPaths.map(function (path) {
+        return loadImage(path).then(function () {
+          loaded++;
+          var bar = document.getElementById('loadBar');
+          var tip = document.getElementById('loadTip');
+          if (bar) bar.style.width = (loaded / allPaths.length * 100) + '%';
+          if (tip) tip.textContent = '加载中 ' + loaded + '/' + allPaths.length;
+        });
+      })).then(function (results) {
+        var failed = results.map(function (r, i) { return r.status === 'rejected' ? allPaths[i] : null; }).filter(Boolean);
+        var tipEl = document.getElementById('loadTip');
+        if (failed.length) {
+          tipEl.textContent = '部分图片未加载，可继续游戏。请用本地服务器打开（如 npx serve）以正常加载。';
+          tipEl.style.fontSize = '0.8rem';
+        } else {
+          tipEl.textContent = '加载完成';
+        }
+        setTimeout(function () {
+          showScreen('menu');
+          initLevelSelect();
+          setupChopstickDrag();
+        }, 500);
+      });
+    })();
   </script>
 </body>
+
 </html>
