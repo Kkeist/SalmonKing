@@ -1,7 +1,11 @@
- [build]
-   publish = "."
-   command = ""
+[build]
+  publish = "."
+  command = ""
 
 [context.production.environment]
-  APP_VERSION = "1.0.1"
+  APP_VERSION = "1.0.2"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
