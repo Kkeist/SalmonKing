@@ -372,6 +372,15 @@
       position: relative;
       z-index: 10;
     }
+    /* 标题页右下角版本号 */
+    #menu-title::after {
+      content: attr(data-version);
+      position: absolute;
+      right: -8px;
+      bottom: -6px;
+      font-size: 0.6rem;
+      color: rgba(139, 69, 26, 0.7);
+    }
 
     #menu-buttons {
       display: flex;
@@ -3303,6 +3312,7 @@
         if (!el || !title || !btnLevel || !btnSpecial) return;
         function apply() {
           title.textContent = t("三文鱼之神", "Salmon Lover");
+          try { title.setAttribute("data-version", "v" + APP_VERSION); } catch (e) { }
           btnLevel.textContent = t("开始闯关", "Level Mode");
           btnSpecial.textContent = t("无尽挑战", "Endless Challenge");
           el.textContent = isEN() ? "EN / 中" : "中 / EN";
