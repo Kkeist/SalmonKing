@@ -6,6 +6,10 @@
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <!-- 强制浏览器不要缓存 HTML -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>三文鱼之神</title>
   <link rel="icon" href="img_trimmed/192icon.PNG">
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
@@ -3059,7 +3063,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.2";
+    const APP_VERSION = "1.0.3";
     // 禁止页面放大缩小（iOS 双指缩放由 gesturestart 阻止）
     document.addEventListener("gesturestart", e => e.preventDefault());
 
