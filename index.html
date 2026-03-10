@@ -372,14 +372,16 @@
       position: relative;
       z-index: 10;
     }
-    /* 标题页右下角版本号 */
-    #menu-title::after {
-      content: attr(data-version);
+
+    /* 标题页右下角版本号（整个画面右下角） */
+    #version-badge {
       position: absolute;
-      right: -8px;
-      bottom: -6px;
+      right: 10px;
+      bottom: 8px;
       font-size: 0.6rem;
-      color: rgba(139, 69, 26, 0.7);
+      color: rgba(139, 69, 26, 0.8);
+      z-index: 5200;
+      pointer-events: none;
     }
 
     #menu-buttons {
@@ -2788,6 +2790,7 @@
           <img src="img_trimmed/sushiPlate_black.PNG" alt="">
         </button>
       </div>
+      <div id="version-badge"></div>
     </div>
 
     <!-- 特殊关卡选择页：无限自助 / 快吃吧你 / 饥饿饭友 -->
@@ -3312,7 +3315,10 @@
         if (!el || !title || !btnLevel || !btnSpecial) return;
         function apply() {
           title.textContent = t("三文鱼之神", "Salmon Lover");
-          try { title.setAttribute("data-version", "v" + APP_VERSION); } catch (e) { }
+          try {
+            const badge = document.getElementById("version-badge");
+            if (badge) badge.textContent = "v" + APP_VERSION;
+          } catch (e) { }
           btnLevel.textContent = t("开始闯关", "Level Mode");
           btnSpecial.textContent = t("无尽挑战", "Endless Challenge");
           el.textContent = isEN() ? "EN / 中" : "中 / EN";
