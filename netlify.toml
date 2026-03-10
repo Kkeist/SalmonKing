@@ -2,8 +2,10 @@
   publish = "."
   command = ""
 
+# 每次修改游戏逻辑 / 布局 / 资源时，务必同步更新 APP_VERSION，
+# 方便 Netlify 触发重新部署，并在标题页右下角看到最新版本号。
 [context.production.environment]
-  APP_VERSION = "1.0.3"
+  APP_VERSION = "1.0.4"
 
 [[headers]]
   for = "/*"

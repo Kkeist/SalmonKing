@@ -3063,7 +3063,10 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.3";
+    // 注意：每次更新游戏逻辑 / 布局 / 资源，都要同步修改这里的 APP_VERSION，
+    // 并与 netlify.toml 中 [context.production.environment].APP_VERSION 保持一致，
+    // 以便通过标题页右下角和 Netlify 部署版本来确认是否是最新版本。
+    const APP_VERSION = "1.0.4";
     // 禁止页面放大缩小（iOS 双指缩放由 gesturestart 阻止）
     document.addEventListener("gesturestart", e => e.preventDefault());
 
