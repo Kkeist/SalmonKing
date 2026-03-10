@@ -1,0 +1,3 @@
+# 仅用于透明边裁剪脚本 trim_transparent.py
+Pillow>=9.0.0
+numpy>=1.20.0

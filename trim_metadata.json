@@ -1,0 +1,1482 @@
+{
+  "192icon.PNG": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 192,
+    "origW": 192,
+    "origH": 192
+  },
+  "512icon.PNG": {
+    "x": 0,
+    "y": 0,
+    "w": 512,
+    "h": 512,
+    "origW": 512,
+    "origH": 512
+  },
+  "backChopstick_black.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_blue.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_brown.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_gold.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_green.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_grey.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_pink.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_red.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "backChopstick_silver.PNG": {
+    "x": 655,
+    "y": 544,
+    "w": 799,
+    "h": 703,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "dish_beef.PNG": {
+    "x": 459,
+    "y": 755,
+    "w": 1148,
+    "h": 658,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "dish_fryRice.PNG": {
+    "x": 397,
+    "y": 703,
+    "w": 1242,
+    "h": 862,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "dish_salmon_belly.PNG": {
+    "x": 254,
+    "y": 596,
+    "w": 1522,
+    "h": 743,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "dish_salmon_noodle.PNG": {
+    "x": 543,
+    "y": 497,
+    "w": 967,
+    "h": 947,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "dish_salmonCube.PNG": {
+    "x": 350,
+    "y": 559,
+    "w": 1334,
+    "h": 993,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "dish_salmonSlice.PNG": {
+    "x": 400,
+    "y": 366,
+    "w": 1267,
+    "h": 1273,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_black.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_blue.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_brown.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_gold.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_green.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_grey.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_pink.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_red.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "frontChopstick_sliver.PNG": {
+    "x": 679,
+    "y": 681,
+    "w": 891,
+    "h": 616,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_beef+egg.PNG": {
+    "x": 460,
+    "y": 1068,
+    "w": 577,
+    "h": 335,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_beef.PNG": {
+    "x": 460,
+    "y": 1068,
+    "w": 577,
+    "h": 335,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_fryRice.PNG": {
+    "x": 626,
+    "y": 1122,
+    "w": 199,
+    "h": 191,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+egg.PNG": {
+    "x": 462,
+    "y": 977,
+    "w": 650,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+lz+egg.PNG": {
+    "x": 458,
+    "y": 977,
+    "w": 654,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+lz+mayo.PNG": {
+    "x": 458,
+    "y": 905,
+    "w": 654,
+    "h": 670,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+lz+on.PNG": {
+    "x": 458,
+    "y": 933,
+    "w": 654,
+    "h": 642,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+lz.PNG": {
+    "x": 458,
+    "y": 977,
+    "w": 654,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+mayo.PNG": {
+    "x": 462,
+    "y": 905,
+    "w": 650,
+    "h": 670,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+on.PNG": {
+    "x": 462,
+    "y": 933,
+    "w": 650,
+    "h": 642,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+egg.PNG": {
+    "x": 462,
+    "y": 977,
+    "w": 650,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+mayo.PNG": {
+    "x": 462,
+    "y": 905,
+    "w": 650,
+    "h": 670,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+on.PNG": {
+    "x": 462,
+    "y": 933,
+    "w": 650,
+    "h": 642,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+wb+egg.PNG": {
+    "x": 462,
+    "y": 977,
+    "w": 650,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+wb+mayo.PNG": {
+    "x": 462,
+    "y": 905,
+    "w": 650,
+    "h": 670,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+wb+on.PNG": {
+    "x": 462,
+    "y": 933,
+    "w": 650,
+    "h": 642,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy+wb.PNG": {
+    "x": 462,
+    "y": 977,
+    "w": 650,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly+soy.PNG": {
+    "x": 462,
+    "y": 977,
+    "w": 650,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonBelly.PNG": {
+    "x": 462,
+    "y": 977,
+    "w": 650,
+    "h": 598,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+egg.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+lz+egg.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+lz+mayo.PNG": {
+    "x": 606,
+    "y": 1066,
+    "w": 298,
+    "h": 358,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+lz+on.PNG": {
+    "x": 606,
+    "y": 1038,
+    "w": 298,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+lz.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+mayo.PNG": {
+    "x": 606,
+    "y": 1066,
+    "w": 298,
+    "h": 358,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+on.PNG": {
+    "x": 606,
+    "y": 1038,
+    "w": 298,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+egg.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+mayo.PNG": {
+    "x": 606,
+    "y": 1066,
+    "w": 298,
+    "h": 358,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+on.PNG": {
+    "x": 606,
+    "y": 1038,
+    "w": 298,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+wb+egg.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+wb+mayo.PNG": {
+    "x": 606,
+    "y": 1066,
+    "w": 298,
+    "h": 358,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+wb+on.PNG": {
+    "x": 606,
+    "y": 1038,
+    "w": 298,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy+wb.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube+soy.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonCube.PNG": {
+    "x": 606,
+    "y": 1075,
+    "w": 298,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+egg.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 397,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+lz+egg.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 408,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+lz+mayo.PNG": {
+    "x": 567,
+    "y": 977,
+    "w": 408,
+    "h": 900,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+lz+on.PNG": {
+    "x": 567,
+    "y": 1016,
+    "w": 408,
+    "h": 861,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+lz.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 408,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+mayo.PNG": {
+    "x": 567,
+    "y": 977,
+    "w": 392,
+    "h": 900,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+on.PNG": {
+    "x": 567,
+    "y": 1016,
+    "w": 392,
+    "h": 861,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+egg.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 397,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+mayo.PNG": {
+    "x": 567,
+    "y": 977,
+    "w": 392,
+    "h": 900,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+on.PNG": {
+    "x": 567,
+    "y": 1016,
+    "w": 392,
+    "h": 861,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+wb+egg.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 397,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+wb+mayo.PNG": {
+    "x": 567,
+    "y": 977,
+    "w": 392,
+    "h": 900,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+wb+on.PNG": {
+    "x": 567,
+    "y": 1016,
+    "w": 392,
+    "h": 861,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy+wb.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 392,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle+soy.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 392,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonNoodle.PNG": {
+    "x": 567,
+    "y": 1043,
+    "w": 392,
+    "h": 834,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+egg.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+lz+egg.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+lz+on.PNG": {
+    "x": 480,
+    "y": 933,
+    "w": 541,
+    "h": 666,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+lz.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+mayo.PNG": {
+    "x": 480,
+    "y": 905,
+    "w": 541,
+    "h": 694,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+on.PNG": {
+    "x": 480,
+    "y": 933,
+    "w": 541,
+    "h": 666,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+egg.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+mayo.PNG": {
+    "x": 480,
+    "y": 905,
+    "w": 541,
+    "h": 694,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+on.PNG": {
+    "x": 480,
+    "y": 933,
+    "w": 541,
+    "h": 666,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+wb+egg.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+wb+mayo.PNG": {
+    "x": 480,
+    "y": 905,
+    "w": 541,
+    "h": 694,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+wb+on.PNG": {
+    "x": 480,
+    "y": 933,
+    "w": 541,
+    "h": 666,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy+wb.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice+soy.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_salmonSlice.PNG": {
+    "x": 480,
+    "y": 967,
+    "w": 541,
+    "h": 632,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_seaweed.PNG": {
+    "x": 286,
+    "y": 831,
+    "w": 899,
+    "h": 847,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_corn+soy+wb.PNG": {
+    "x": 506,
+    "y": 923,
+    "w": 547,
+    "h": 396,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_corn+soy.PNG": {
+    "x": 506,
+    "y": 923,
+    "w": 547,
+    "h": 396,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_corn.PNG": {
+    "x": 506,
+    "y": 923,
+    "w": 547,
+    "h": 396,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_crab+soy+wb.PNG": {
+    "x": 414,
+    "y": 897,
+    "w": 734,
+    "h": 412,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_crab+soy.PNG": {
+    "x": 414,
+    "y": 897,
+    "w": 734,
+    "h": 412,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_crab.PNG": {
+    "x": 414,
+    "y": 897,
+    "w": 734,
+    "h": 412,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_eel+soy+wb.PNG": {
+    "x": 379,
+    "y": 909,
+    "w": 727,
+    "h": 400,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_eel+soy.PNG": {
+    "x": 379,
+    "y": 909,
+    "w": 727,
+    "h": 400,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_eel.PNG": {
+    "x": 379,
+    "y": 909,
+    "w": 727,
+    "h": 400,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_egg+soy+wb.PNG": {
+    "x": 417,
+    "y": 880,
+    "w": 721,
+    "h": 429,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_egg+soy.PNG": {
+    "x": 417,
+    "y": 880,
+    "w": 721,
+    "h": 429,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_egg.PNG": {
+    "x": 417,
+    "y": 880,
+    "w": 721,
+    "h": 429,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_ikura+soy+wb.PNG": {
+    "x": 506,
+    "y": 923,
+    "w": 547,
+    "h": 396,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_ikura+soy.PNG": {
+    "x": 506,
+    "y": 923,
+    "w": 547,
+    "h": 396,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_ikura.PNG": {
+    "x": 506,
+    "y": 923,
+    "w": 547,
+    "h": 396,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon+soy+wb.PNG": {
+    "x": 486,
+    "y": 939,
+    "w": 587,
+    "h": 363,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon+soy.PNG": {
+    "x": 486,
+    "y": 939,
+    "w": 587,
+    "h": 363,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon.PNG": {
+    "x": 486,
+    "y": 939,
+    "w": 587,
+    "h": 363,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburi+soy+wb.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburi+soy.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburi.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburiMayIkura+soy+wb.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburiMayIkura+soy.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburiMayIkura.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburiMayo+soy+wb.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburiMayo+soy.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_salmon_aburiMayo.PNG": {
+    "x": 490,
+    "y": 922,
+    "w": 583,
+    "h": 380,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_seaweed+soy+wb.PNG": {
+    "x": 506,
+    "y": 944,
+    "w": 547,
+    "h": 375,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_seaweed+soy.PNG": {
+    "x": 506,
+    "y": 944,
+    "w": 547,
+    "h": 375,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_seaweed.PNG": {
+    "x": 506,
+    "y": 946,
+    "w": 547,
+    "h": 373,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_shirmp+soy+wb.PNG": {
+    "x": 473,
+    "y": 916,
+    "w": 672,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_shirmp+soy.PNG": {
+    "x": 473,
+    "y": 916,
+    "w": 672,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_shirmp.PNG": {
+    "x": 473,
+    "y": 916,
+    "w": 672,
+    "h": 386,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_tuna+soy+wb.PNG": {
+    "x": 480,
+    "y": 942,
+    "w": 594,
+    "h": 360,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_tuna+soy.PNG": {
+    "x": 480,
+    "y": 942,
+    "w": 594,
+    "h": 360,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_norm_tuna.PNG": {
+    "x": 480,
+    "y": 942,
+    "w": 594,
+    "h": 360,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_salmonLover+soy+wb.PNG": {
+    "x": 430,
+    "y": 942,
+    "w": 609,
+    "h": 488,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_salmonLover+soy.PNG": {
+    "x": 430,
+    "y": 942,
+    "w": 609,
+    "h": 488,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_salmonLover.PNG": {
+    "x": 433,
+    "y": 942,
+    "w": 606,
+    "h": 488,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "get_sushi_tempera.PNG": {
+    "x": 416,
+    "y": 982,
+    "w": 869,
+    "h": 448,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_egg.PNG": {
+    "x": 647,
+    "y": 852,
+    "w": 707,
+    "h": 397,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_laozhi.PNG": {
+    "x": 646,
+    "y": 667,
+    "w": 685,
+    "h": 587,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_mayo.PNG": {
+    "x": 646,
+    "y": 667,
+    "w": 685,
+    "h": 587,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_on.PNG": {
+    "x": 647,
+    "y": 842,
+    "w": 707,
+    "h": 407,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_seaweed.PNG": {
+    "x": 647,
+    "y": 723,
+    "w": 709,
+    "h": 526,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_soy.PNG": {
+    "x": 724,
+    "y": 750,
+    "w": 537,
+    "h": 387,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sauce_soyWasabi.PNG": {
+    "x": 724,
+    "y": 750,
+    "w": 537,
+    "h": 387,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_california_crab.PNG": {
+    "x": 664,
+    "y": 806,
+    "w": 297,
+    "h": 382,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_california_tempera.PNG": {
+    "x": 664,
+    "y": 806,
+    "w": 297,
+    "h": 382,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_corn.PNG": {
+    "x": 727,
+    "y": 859,
+    "w": 316,
+    "h": 305,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_crab.PNG": {
+    "x": 712,
+    "y": 851,
+    "w": 388,
+    "h": 299,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_eel.PNG": {
+    "x": 725,
+    "y": 868,
+    "w": 351,
+    "h": 282,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_egg.PNG": {
+    "x": 707,
+    "y": 850,
+    "w": 362,
+    "h": 300,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_ikura.PNG": {
+    "x": 727,
+    "y": 833,
+    "w": 316,
+    "h": 331,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_salmon.PNG": {
+    "x": 724,
+    "y": 856,
+    "w": 340,
+    "h": 294,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_salmon_aburi.PNG": {
+    "x": 725,
+    "y": 858,
+    "w": 342,
+    "h": 292,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_salmon_aburiMayIkura.PNG": {
+    "x": 725,
+    "y": 858,
+    "w": 342,
+    "h": 292,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_salmon_aburiMayo.PNG": {
+    "x": 725,
+    "y": 858,
+    "w": 342,
+    "h": 292,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_seaweed.PNG": {
+    "x": 727,
+    "y": 862,
+    "w": 316,
+    "h": 302,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_shirmp.PNG": {
+    "x": 732,
+    "y": 840,
+    "w": 318,
+    "h": 310,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_norm_tuna.PNG": {
+    "x": 722,
+    "y": 842,
+    "w": 335,
+    "h": 308,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_roll_cucum.PNG": {
+    "x": 660,
+    "y": 857,
+    "w": 235,
+    "h": 298,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_roll_salmon.PNG": {
+    "x": 660,
+    "y": 857,
+    "w": 235,
+    "h": 298,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_roll_salmonAvoca.PNG": {
+    "x": 660,
+    "y": 857,
+    "w": 235,
+    "h": 298,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_salmonLove.PNG": {
+    "x": 749,
+    "y": 776,
+    "w": 479,
+    "h": 408,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_tempera_left.PNG": {
+    "x": 715,
+    "y": 895,
+    "w": 276,
+    "h": 338,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_tempera_mid.PNG": {
+    "x": 881,
+    "y": 865,
+    "w": 244,
+    "h": 357,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushi_tempera_right.PNG": {
+    "x": 1041,
+    "y": 855,
+    "w": 228,
+    "h": 352,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_black.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_blue.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_brown.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_dark.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_gold.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_green.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_grey.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_pink.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "sushiPlate_red.PNG": {
+    "x": 500,
+    "y": 918,
+    "w": 1042,
+    "h": 349,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_bei_cha.PNG": {
+    "x": 812,
+    "y": 812,
+    "w": 375,
+    "h": 478,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_bei_empty.PNG": {
+    "x": 812,
+    "y": 812,
+    "w": 375,
+    "h": 478,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_bei_hu.PNG": {
+    "x": 812,
+    "y": 812,
+    "w": 375,
+    "h": 478,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_calpis.PNG": {
+    "x": 868,
+    "y": 620,
+    "w": 250,
+    "h": 623,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_cha.PNG": {
+    "x": 878,
+    "y": 770,
+    "w": 290,
+    "h": 490,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_coke.PNG": {
+    "x": 868,
+    "y": 620,
+    "w": 250,
+    "h": 623,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_calpis_full.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_calpis_half.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_coke_full.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_coke_half.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_empty.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_orange_full.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_glass_orange_half.PNG": {
+    "x": 812,
+    "y": 683,
+    "w": 344,
+    "h": 586,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_hu.PNG": {
+    "x": 615,
+    "y": 720,
+    "w": 761,
+    "h": 515,
+    "origW": 2000,
+    "origH": 2000
+  },
+  "water_orange.PNG": {
+    "x": 868,
+    "y": 620,
+    "w": 250,
+    "h": 623,
+    "origW": 2000,
+    "origH": 2000
+  }
+}
