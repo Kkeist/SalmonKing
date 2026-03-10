@@ -1268,6 +1268,16 @@
       color: #8b451a;
       font-weight: bold;
       margin: 0;
+      position: relative;
+    }
+    /* 右下角版本号（使用 data-version） */
+    #game-title::after {
+      content: attr(data-version);
+      position: absolute;
+      right: -4px;
+      bottom: -6px;
+      font-size: 0.55rem;
+      color: rgba(139, 69, 26, 0.7);
     }
     .top-bar-right {
       width: 40px;
@@ -3049,6 +3059,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
+    const APP_VERSION = "1.0.2";
     // 禁止页面放大缩小（iOS 双指缩放由 gesturestart 阻止）
     document.addEventListener("gesturestart", e => e.preventDefault());
 
@@ -3125,7 +3136,10 @@
 
       // 游戏顶部标题（当前模式）
       const gameTitle = document.getElementById("game-title");
-      if (gameTitle) gameTitle.textContent = t("无限自助", "Buffet");
+      if (gameTitle) {
+        gameTitle.textContent = t("无限自助", "Buffet");
+        try { gameTitle.setAttribute("data-version", "v" + APP_VERSION); } catch (e) { }
+      }
 
       // 无尽挑战模式选择页
       const specialTitle = document.getElementById("special-screen-title");
@@ -5591,6 +5605,7 @@
         } else {
           titleEl.innerText = t("无限自助", "Endless Buffet");
         }
+        try { titleEl.setAttribute("data-version", "v" + APP_VERSION); } catch (e) { }
       }
       var st = document.getElementById("star-thresholds");
       if (st) {
