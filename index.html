@@ -2262,55 +2262,52 @@
     }
 
     /* === 移动端专用排版：整体更窄、更紧凑 ===
-       用“宽高比例 + 实际宽度”一起判断：
-       - 仅在视口宽/高 比例 <= 9/16 且 宽度 < 560px 时，才使用移动端布局（典型手机竖屏）
-       - 只要宽度够 560px，即使是 9:16 的 iPad 之类，也保持 PC 版当前比例与所有间隔，只拉伸外围背景 */
-    @media (max-aspect-ratio: 9/16) and (max-width: 559px) {
-      /* 基础画布变窄：让桌面内容整体更集中，避免“太宽” */
-      #app {
-        max-width: 420px;
-      }
+       通过 JS 在 <html> 上加 layout-mobile 类来控制：
+       - 仅在窄且小的竖屏（典型手机）时启用；
+       - iPad / 平板无论竖横都保持 PC 版比例。 */
+    .layout-mobile #app {
+      max-width: 420px;
+    }
 
-      /* 传送带区略微变矮，腾出更多空间给下方桌面 */
-      #conveyor-row {
-        height: 78px;
-        margin-top: 10px;
-        margin-bottom: 0;
-      }
-      .belt-item {
-        width: 82px;
-        height: 82px;
-        margin-left: 8px;
-      }
+    /* 传送带区略微变矮，腾出更多空间给下方桌面 */
+    .layout-mobile #conveyor-row {
+      height: 78px;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+    .layout-mobile .belt-item {
+      width: 82px;
+      height: 82px;
+      margin-left: 8px;
+    }
 
-      /* 寿司盘位 + 饮料行：整体稍微压低高度，左右留白减少一点 */
-      #desk-row {
-        height: 82px;
-        padding: 0 40px;
-        margin-top: 10px;
-      }
-      .side-items.left-drinks {
-        left: 20px;
-        top: -18px;
-      }
-      .side-items.right-drinks {
-        right: 40px;
-        top: -26px;
-      }
+    /* 寿司盘位 + 饮料行：整体稍微压低高度，左右留白减少一点 */
+    .layout-mobile #desk-row {
+      height: 82px;
+      padding: 0 40px;
+      margin-top: 10px;
+    }
+    .layout-mobile .side-items.left-drinks {
+      left: 20px;
+      top: -18px;
+    }
+    .layout-mobile .side-items.right-drinks {
+      right: 40px;
+      top: -26px;
+    }
 
-      /* 盘装菜区：高度略减、内部 padding 更窄 */
-      #dishes-row {
-        height: 150px;
-        padding: 0 2px;
-        gap: 3px 2px;
-      }
+    /* 盘装菜区：高度略减、内部 padding 更窄 */
+    .layout-mobile #dishes-row {
+      height: 150px;
+      padding: 0 2px;
+      gap: 3px 2px;
+    }
 
-      /* 底排（酱料 + 杯子）也稍微紧凑一点 */
-      #bottom-row {
-        height: 118px;
-        padding: 0 2px;
-        gap: 4px;
-      }
+    /* 底排（酱料 + 杯子）也稍微紧凑一点 */
+    .layout-mobile #bottom-row {
+      height: 118px;
+      padding: 0 2px;
+      gap: 4px;
     }
 
     /* 【修改】黑杯/透明杯 大小 */
@@ -3095,6 +3092,23 @@
         }
       }
     });
+
+    // 响应式布局：仅在窄小手机竖屏时启用 layout-mobile，iPad/平板一律按 PC 布局
+    function applyResponsiveLayout() {
+      try {
+        const root = document.documentElement;
+        const w = window.innerWidth || document.documentElement.clientWidth || 0;
+        const h = window.innerHeight || document.documentElement.clientHeight || 1;
+        const ratio = h ? (w / h) : 1;
+        // 典型手机竖屏：宽度不超过 540 且竖屏且相对较窄
+        const isNarrowPhone = (w > 0 && w <= 540 && w < h && ratio <= 0.7);
+        if (isNarrowPhone) root.classList.add("layout-mobile");
+        else root.classList.remove("layout-mobile");
+      } catch (e) { }
+    }
+    applyResponsiveLayout();
+    window.addEventListener("resize", applyResponsiveLayout);
+    window.addEventListener("orientationchange", applyResponsiveLayout);
 
     // ===== 简单中/英切换工具：t(中文, 英文) =====
     let SWS_LANG = (function () {
