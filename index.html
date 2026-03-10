@@ -2256,9 +2256,6 @@
        通过 JS 在 <html> 上加 layout-mobile 类来控制：
        - 仅在窄且小的竖屏（典型手机）时启用；
        - iPad / 平板无论竖横都保持 PC 版比例。 */
-    .layout-mobile #app {
-      max-width: 420px;
-    }
 
     /* 传送带区略微变矮，腾出更多空间给下方桌面 */
     .layout-mobile #conveyor-row {
@@ -2287,13 +2284,13 @@
       top: -26px;
     }
 
-    /* 盘装菜区：在窄屏下改成 2 列 x 3 行（2x3） */
+    /* 盘装菜区：在窄屏下改成 3 列 x 2 行（3x2） */
     .layout-mobile #dishes-row {
       height: 150px;
       padding: 0 2px;
       gap: 3px 4px;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: repeat(2, 1fr);
     }
     .layout-mobile #dishes-row .dish-item:nth-child(1) {
       grid-column: 1; grid-row: 1;
@@ -2304,21 +2301,20 @@
       transform: translate(0, 0) scale(0.95);
     }
     .layout-mobile #dishes-row .dish-item:nth-child(3) {
-      grid-column: 1; grid-row: 2;
+      grid-column: 3; grid-row: 1;
       transform: translate(0, 0) scale(0.95);
     }
     .layout-mobile #dishes-row .dish-item:nth-child(4) {
+      grid-column: 1; grid-row: 2;
+      transform: translate(0, 0) scale(0.95);
+    }
+    .layout-mobile #dishes-row .dish-item:nth-child(5) {
       grid-column: 2; grid-row: 2;
       transform: translate(0, 0) scale(0.95);
     }
-    /* 最下面一行两只“大盘”，居中排列 */
-    .layout-mobile #dishes-row .dish-item:nth-child(5) {
-      grid-column: 1; grid-row: 3;
-      transform: translate(10px, 0) scale(1);
-    }
     .layout-mobile #dishes-row .dish-item:nth-child(6) {
-      grid-column: 2; grid-row: 3;
-      transform: translate(-10px, 0) scale(1);
+      grid-column: 3; grid-row: 2;
+      transform: translate(0, 0) scale(0.95);
     }
 
     /* 底排（酱料 + 杯子）也稍微紧凑一点，保持在吃饭区域上方 */
@@ -3101,10 +3097,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    // 注意：每次更新游戏逻辑 / 布局 / 资源，都要同步修改这里的 APP_VERSION，
-    // 并与 netlify.toml 中 [context.production.environment].APP_VERSION 保持一致，
-    // 以便通过标题页右下角和 Netlify 部署版本来确认是否是最新版本。
-    const APP_VERSION = "1.0.4";
+    const APP_VERSION = "1.0.5";
     // 禁止页面放大缩小（iOS 双指缩放由 gesturestart 阻止）
     document.addEventListener("gesturestart", e => e.preventDefault());
 
