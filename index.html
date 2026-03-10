@@ -2275,7 +2275,7 @@
     /* 寿司盘位 + 饮料行：整体稍微压低高度，左右留白减少一点 */
     .layout-mobile #desk-row {
       height: 82px;
-      padding: 0 40px;
+      padding: 0 56px; /* 仍然在深红色椅子之间 */
       margin-top: 10px;
     }
     .layout-mobile .side-items.left-drinks {
@@ -2287,18 +2287,56 @@
       top: -26px;
     }
 
-    /* 盘装菜区：高度略减、内部 padding 更窄 */
+    /* 盘装菜区：在窄屏下改成 2 列 x 3 行（2x3） */
     .layout-mobile #dishes-row {
       height: 150px;
       padding: 0 2px;
-      gap: 3px 2px;
+      gap: 3px 4px;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(3, 1fr);
+    }
+    .layout-mobile #dishes-row .dish-item:nth-child(1) {
+      grid-column: 1; grid-row: 1;
+      transform: translate(0, 0) scale(0.95);
+    }
+    .layout-mobile #dishes-row .dish-item:nth-child(2) {
+      grid-column: 2; grid-row: 1;
+      transform: translate(0, 0) scale(0.95);
+    }
+    .layout-mobile #dishes-row .dish-item:nth-child(3) {
+      grid-column: 1; grid-row: 2;
+      transform: translate(0, 0) scale(0.95);
+    }
+    .layout-mobile #dishes-row .dish-item:nth-child(4) {
+      grid-column: 2; grid-row: 2;
+      transform: translate(0, 0) scale(0.95);
+    }
+    /* 最下面一行两只“大盘”，居中排列 */
+    .layout-mobile #dishes-row .dish-item:nth-child(5) {
+      grid-column: 1; grid-row: 3;
+      transform: translate(10px, 0) scale(1);
+    }
+    .layout-mobile #dishes-row .dish-item:nth-child(6) {
+      grid-column: 2; grid-row: 3;
+      transform: translate(-10px, 0) scale(1);
     }
 
-    /* 底排（酱料 + 杯子）也稍微紧凑一点 */
+    /* 底排（酱料 + 杯子）也稍微紧凑一点，保持在吃饭区域上方 */
     .layout-mobile #bottom-row {
       height: 118px;
       padding: 0 2px;
       gap: 4px;
+    }
+
+    /* 窄屏下：酱料改为 2x2，并取消原本针对 4x2 的偏移 */
+    .layout-mobile #sauce-grid {
+      grid-template-columns: repeat(2, 64px);
+      grid-template-rows: repeat(2, 64px);
+      gap: 4px 8px;
+      margin-top: -4px;
+    }
+    .layout-mobile #sauce-grid .sauce-item {
+      transform: none !important;
     }
 
     /* 【修改】黑杯/透明杯 大小 */
@@ -3087,15 +3125,16 @@
       }
     });
 
-    // 响应式布局：仅在窄小手机竖屏时启用 layout-mobile，iPad/平板一律按 PC 布局
+    // 响应式布局：仅在比 9:16 更窄的手机竖屏时启用 layout-mobile，9:16 及更宽（含 iPad）一律按 PC 布局
     function applyResponsiveLayout() {
       try {
         const root = document.documentElement;
         const w = window.innerWidth || document.documentElement.clientWidth || 0;
         const h = window.innerHeight || document.documentElement.clientHeight || 1;
         const ratio = h ? (w / h) : 1;
-        // 典型手机竖屏：宽度不超过 540 且竖屏且相对较窄
-        const isNarrowPhone = (w > 0 && w <= 540 && w < h && ratio <= 0.7);
+        // 典型手机竖屏：宽度不超过 540 且竖屏，且宽高比严格“小于” 9:16
+        const NINE_SIXTEEN = 9 / 16;
+        const isNarrowPhone = (w > 0 && w <= 540 && w < h && ratio < NINE_SIXTEEN);
         if (isNarrowPhone) root.classList.add("layout-mobile");
         else root.classList.remove("layout-mobile");
       } catch (e) { }
