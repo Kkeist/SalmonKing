@@ -2,6 +2,6 @@
    publish = "."
    command = ""
 
- [context.production.environment]
-   APP_VERSION = "1.0.0"
+[context.production.environment]
+  APP_VERSION = "1.0.1"
 
