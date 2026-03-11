@@ -1287,6 +1287,9 @@
     /* mobile：SVG 再压一层，game-inner 独立堆叠且保持无 transform，避免 scale 下 SVG 灰线盖住寿司 */
     .layout-mobile #game > .bg-svg { z-index: -2; }
     .layout-mobile #game-inner { transform: none; z-index: 2; isolation: isolate; }
+    /* iPad 横屏（layout-pad）同样需要这套层级：否则回转寿司灰色背景/分隔条可能被覆盖成纯白 */
+    .layout-pad #game > .bg-svg { z-index: -2; }
+    .layout-pad #game-inner { transform: none; z-index: 2; isolation: isolate; }
 
     /* 标题页里的 SVG 背景下降一层，让自定义点阵纹理覆盖在其上方可见 */
     #menu > .bg-svg {
@@ -1336,6 +1339,18 @@
       transform: translate(-50%, -50%);
     }
 
+    /* iPad 横屏：用 16:9 的“竖向盒子”（高度 16、宽度 9）居中显示，避免被当成手机竖屏布局 */
+    .layout-pad #game {
+      top: 50%;
+      left: 50%;
+      bottom: auto;
+      right: auto;
+      width: min(100vw, calc(100vh * 9 / 16));
+      height: min(100vh, calc(100vw * 16 / 9));
+      max-width: none;
+      transform: translate(-50%, -50%);
+    }
+
     /* 【修改】顶栏 位置: 最上 高50px 左右padding */
     #top-bar {
       height: 50px;
@@ -1350,8 +1365,13 @@
 
     /* 移动端顶栏：略矮一些，标题和按钮整体更紧凑，避免挤占桌面高度 */
     .layout-mobile #top-bar {
-      height: 44px;
-      padding: 0 10px;
+      height: calc(44px + env(safe-area-inset-top, 0px));
+      padding: env(safe-area-inset-top, 0px) 10px 0;
+    }
+    /* iPad：同样给标题留出安全区，避免被裁掉半个字 */
+    .layout-pad #top-bar {
+      height: calc(44px + env(safe-area-inset-top, 0px));
+      padding: env(safe-area-inset-top, 0px) 10px 0;
     }
 
     /* 【修改】顶栏标题 居中，防止长标题撑破排版 */
@@ -2546,14 +2566,24 @@
       gap: 3px 4px;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, 1fr);
-      justify-items: center;
-      align-items: center;
-      width: max-content;
+      place-items: center;
+      width: 100%;
       max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
+      margin-left: 0;
+      margin-right: 0;
       margin-top: var(--mobile-gap-after-desk, 0px); /* 仅在“有余量”时由 JS 增加 */
       margin-bottom: 0;
+    }
+
+    /* iPad 横屏（layout-pad）同样复用 mobile 的 2x3 dish 布局与居中 */
+    .layout-pad #dishes-row {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      place-items: center;
+      width: 100%;
+      padding: 0 2px;
+      gap: 3px 4px;
+      margin-top: var(--mobile-gap-after-desk, 0px);
     }
     /* dish1：单独 XY / 缩放（仅 mobile） */
     .layout-mobile #dishes-row .dish-item:nth-child(1) { /* 第 1 行第 1 个：dish1 */
@@ -3408,7 +3438,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.7";
+    const APP_VERSION = "1.0.8";
     // 移动端锁死缩放：Safari/iOS 必须阻止 gesture 三件套，否则双指/双击仍会放大
     document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
     document.addEventListener("gesturechange", e => e.preventDefault(), { passive: false });
@@ -3453,27 +3483,30 @@
       return null;
     })();
 
-    // 响应式布局：所有「不比 16:9 宽」的视口（即宽高比 <= 16:9）都启用 20:9 的 mobile 模板；
-    // 比 16:9 更宽的视口用 PC 布局。mobile 下为全屏，可通过拉动/调节间距适配，20:9 盒子由 CSS 控制。
+    // 响应式布局：低于 16:9 一律进 mobile（不套额外框）。
+    // 判定按 w/h：w/h <= 16/9 => mobile；更宽则桌面布局。
     function applyResponsiveLayout() {
       try {
         const root = document.documentElement;
         if (DEV_FORCE_LAYOUT === "mobile") {
           root.classList.add("layout-mobile");
+          root.classList.remove("layout-pad");
           return;
         }
         if (DEV_FORCE_LAYOUT === "desktop") {
           root.classList.remove("layout-mobile");
+          root.classList.remove("layout-pad");
           return;
         }
         const w = window.innerWidth || document.documentElement.clientWidth || 0;
         const h = window.innerHeight || document.documentElement.clientHeight || 1;
         const ratio = h ? (w / h) : 1;
-        // 只要不比 16:9 宽（ratio <= 16/9），一律用 20:9 mobile 模板，全屏、可拉间距适配
         const SIXTEEN_NINE = 16 / 9;
         const useMobile = w > 0 && ratio <= SIXTEEN_NINE;
         if (useMobile) root.classList.add("layout-mobile");
         else root.classList.remove("layout-mobile");
+        // 禁用 layout-pad（避免低于 16:9 还套框）
+        root.classList.remove("layout-pad");
 
         // 关键：切换 layout class 后强制重算（部分机型 rotate 时样式应用有延迟）
         const force = function () {
@@ -5502,6 +5535,8 @@
       let highest = -1;
       let maxSeen = -1; // 当前已合成到的最高等级
 
+      // 防闪烁：top 三个槽位只有在内容变化时才更新
+      let _topCache = { bestKey: null, nowKey: null, nextKey: null, lang: null };
       function rngItemIndex() {
         // 新图案最高允许出现到“当前最高等级的前一级”，并让低级鱼出现概率更高
         const cap = Math.max(0, maxSeen - 1);
@@ -5527,30 +5562,28 @@
 
       function updateTop() {
         // 左：最高；中：当前；右：下一个（图 + 标签）
-        slotBest.innerHTML = "";
         const bestKey = (highest >= 0 && CHAIN[highest]) ? CHAIN[highest].key : CHAIN[0].key;
-        const bestImg = cloneAssetToImgEl(bestKey);
-        if (bestImg) slotBest.appendChild(bestImg);
-        const bestTxt = document.createElement("div");
-        bestTxt.className = "slot-label";
-        bestTxt.innerText = t("最高", "Best");
-        slotBest.appendChild(bestTxt);
+        const nowKey = CHAIN[current] ? CHAIN[current].key : bestKey;
+        const nextKey = CHAIN[next] ? CHAIN[next].key : bestKey;
+        const langKey = isEN() ? "en" : "zh";
+        if (_topCache.bestKey === bestKey && _topCache.nowKey === nowKey && _topCache.nextKey === nextKey && _topCache.lang === langKey) {
+          return;
+        }
+        _topCache = { bestKey, nowKey, nextKey, lang: langKey };
 
-        slotNow.innerHTML = "";
-        const nowImg = cloneAssetToImgEl(CHAIN[current].key);
-        if (nowImg) slotNow.appendChild(nowImg);
-        const nowTxt = document.createElement("div");
-        nowTxt.className = "slot-label";
-        nowTxt.innerText = t("当前", "Now");
-        slotNow.appendChild(nowTxt);
-
-        slotNext.innerHTML = "";
-        const nextImg = cloneAssetToImgEl(CHAIN[next].key);
-        if (nextImg) slotNext.appendChild(nextImg);
-        const nextTxt = document.createElement("div");
-        nextTxt.className = "slot-label";
-        nextTxt.innerText = t("下一个", "Next");
-        slotNext.appendChild(nextTxt);
+        function buildSlot(imgKey, labelText) {
+          const frag = document.createDocumentFragment();
+          const im = cloneAssetToImgEl(imgKey);
+          if (im) frag.appendChild(im);
+          const txt = document.createElement("div");
+          txt.className = "slot-label";
+          txt.innerText = labelText;
+          frag.appendChild(txt);
+          return frag;
+        }
+        slotBest.replaceChildren(buildSlot(bestKey, t("最高", "Best")));
+        slotNow.replaceChildren(buildSlot(nowKey, t("当前", "Now")));
+        slotNext.replaceChildren(buildSlot(nextKey, t("下一个", "Next")));
       }
 
       let merging = false;
@@ -5930,29 +5963,38 @@
       showView("menu");
     }
 
-    /** 返回关卡选择：整页刷新后自动打开关卡选择页 */
+    /** 返回关卡选择：软切换，不刷新页面（避免再次进入 loading） */
     function goToLevelSelect() {
       STATE.paused = false;
       STATE.playing = false;
       if (typeof resetHolding === "function") resetHolding();
       if (typeof stopRewardInGame === "function") stopRewardInGame();
+      if (typeof stopSpecialMiniGame === "function") stopSpecialMiniGame();
       closeAllModals();
-      try { sessionStorage.setItem(EXIT_VIEW_KEY, "level"); } catch (e) { }
-      window.location.reload();
+      try { sessionStorage.removeItem(EXIT_VIEW_KEY); sessionStorage.removeItem(EXIT_NEXT_LEVEL_INDEX_KEY); } catch (e) { }
+      STATE.hardStopLoop = true;
+      openLevelScreen();
     }
 
-    /** 下一关：整页刷新后自动进入指定关卡 */
+    /** 下一关：软切换，不刷新页面（避免再次进入 loading） */
     function goToNextLevel(nextIdx) {
       STATE.paused = false;
       STATE.playing = false;
       if (typeof resetHolding === "function") resetHolding();
       if (typeof stopRewardInGame === "function") stopRewardInGame();
+      if (typeof stopSpecialMiniGame === "function") stopSpecialMiniGame();
       closeAllModals();
-      try {
-        sessionStorage.setItem(EXIT_VIEW_KEY, "nextLevel");
-        sessionStorage.setItem(EXIT_NEXT_LEVEL_INDEX_KEY, String(nextIdx));
-      } catch (e) { }
-      window.location.reload();
+      try { sessionStorage.removeItem(EXIT_VIEW_KEY); sessionStorage.removeItem(EXIT_NEXT_LEVEL_INDEX_KEY); } catch (e) { }
+      STATE.hardStopLoop = false;
+      const idx = Math.max(1, Math.min(TOTAL_LEVELS, nextIdx | 0));
+      STATE.currentLevelIndex = idx;
+      if (REWARD_LEVELS.indexOf(idx) !== -1) {
+        openRewardScreen(idx);
+      } else {
+        showView("game");
+        startGame("level", { startTimer: false });
+        showLevelStartModal(idx);
+      }
     }
     function startBuffetFromSpecial() {
       showView("game");
@@ -6068,18 +6110,9 @@
           }
         }
       ];
+      // 只有闯关模式（mode === "level"）才允许“选择关卡”，特殊模式一律不能选关卡
       if (STATE.mode === "level") {
-        buttons.push({
-          text: t("选择关卡", "Select Level"),
-          cb: () => {
-            STATE.paused = false;
-            STATE.playing = false;
-            if (typeof resetHolding === "function") resetHolding();
-            const modal = document.getElementById("custom-modal");
-            if (modal) modal.classList.remove("visible");
-            openLevelScreen();
-          }
-        });
+        buttons.push({ text: t("选择关卡", "Select Level"), cb: goToLevelSelect });
       }
       buttons.push({
         text: t("返回标题", "Back to Title"),
@@ -6429,11 +6462,25 @@
     function renderFriendsBubbles() {
       if (!isFriendsActive() || !STATE.friendsWants) return;
       const cooldown = STATE.friendsCooldown || [0, 0];
+      if (!window.__friendsBubbleCache) window.__friendsBubbleCache = {};
       function renderOne(wantId, timerId, want, remaining, cooldownSec) {
         const el = document.getElementById(wantId);
         if (!el) return;
-        el.innerHTML = "";
-        if (cooldownSec > 0) {
+        // 防闪烁：内容没变不重绘；重绘用 replaceChildren 一次性替换，避免“先空再出现”
+        let wantKey = "";
+        try {
+          const items = want && want.items ? want.items.slice() : [];
+          const count = (want && want.count != null) ? want.count : 1;
+          wantKey = JSON.stringify({ items, count, cd: cooldownSec > 0 });
+        } catch (e) {
+          wantKey = String(cooldownSec > 0) + "|" + (want && want.count);
+        }
+        const needRender = window.__friendsBubbleCache[wantId] !== wantKey;
+        if (needRender) window.__friendsBubbleCache[wantId] = wantKey;
+
+        if (needRender) {
+          const frag = document.createDocumentFragment();
+          if (cooldownSec > 0) {
           // 在吃饭：不显示 bar，只在格子里竖排写大字「吃吃吃中...」
           var eatWrap = document.createElement("div");
           eatWrap.style.display = "flex";
@@ -6448,8 +6495,8 @@
           eatText.style.color = "#c45c3e";
           eatText.style.fontWeight = "bold";
           eatWrap.appendChild(eatText);
-          el.appendChild(eatWrap);
-        } else if (want && want.items && want.items.length) {
+            frag.appendChild(eatWrap);
+          } else if (want && want.items && want.items.length) {
           var items = normalizeItemsForDisplay(want.items);
           var count = (want.count != null && want.count > 0) ? want.count : 1;
           var isDrink = items.length && ["hu", "cha", "orange", "coke", "calpis"].includes(items[0]);
@@ -6465,20 +6512,22 @@
             if (wrap.childNodes && wrap.childNodes.length) nodes.push(wrap);
           });
           nodes.forEach((wrap, idx) => {
-            el.appendChild(wrap);
+              frag.appendChild(wrap);
             if (nodes.length > 1 && idx < nodes.length - 1) {
               var plus = document.createElement("span");
               plus.className = "friend-want-plus";
               plus.textContent = "+";
-              el.appendChild(plus);
+                frag.appendChild(plus);
             }
           });
           if (count > 1 && !isDrink) {
             var xn = document.createElement("span");
             xn.className = "friend-want-xn";
             xn.textContent = "×" + count;
-            el.appendChild(xn);
+              frag.appendChild(xn);
           }
+          }
+          el.replaceChildren(frag);
         }
         const timerEl = document.getElementById(timerId);
         if (timerEl) {
