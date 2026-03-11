@@ -79,15 +79,27 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent; /* 移动端点击不显示蓝色/灰色高亮 */
     }
 
     html {
       /* 移动端锁死缩放：禁止双指/双击/点击放大，Safari 必加 */
       touch-action: none;
+      -webkit-tap-highlight-color: transparent;
       -ms-touch-action: none;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
+    /* 禁止选中时出现蓝色/灰色块（移动端点击“复制”那种效果） */
+    ::selection {
+      background: transparent;
+      color: inherit;
+    }
+    ::-moz-selection {
+      background: transparent;
+      color: inherit;
+    }
+
     html,
     body {
       width: 100%;
@@ -95,14 +107,14 @@
       overflow: hidden; /* 禁止滚动，由上下背景高度来适配多余空间 */
       touch-action: none; /* 整页禁止缩放与手势缩放 */
       -ms-touch-action: none;
+      -webkit-tap-highlight-color: transparent; /* 点击不出现选中高亮 */
+      -webkit-touch-callout: none; /* 移动端长按不弹出“复制/粘贴”菜单 */
       /* 整体背景换成更贴合当前木纹主题的深色渐变，而不是纯黑 */
       background: linear-gradient(180deg, #2b1710 0%, #3b2216 40%, #1a0e08 100%);
       font-family: "ZCOOL KuaiLe", sans-serif;
     }
 
-    /* 【修改】整页容器 位置: 居中，逻辑画布最大宽度 560px
-       宽度用百分比，内部布局自己等比例缩放；多出来的上下高度由
-       回转寿司背景(#conveyor-row 区域)和下方桌面背景(#game-below-conveyor)拉伸来填充。 */
+    /* 【修改】整页容器 位置: 居中，逻辑画布最大宽度 560px；桌面左右留间距，mobile 基准保持原样。 */
     #app {
       width: 100%;
       height: 100%;
@@ -111,10 +123,12 @@
       position: relative;
       background: linear-gradient(180deg, #fffaf5 0%, #fff0e8 30%, #ffebe0 70%, #ffe4d6 100%);
       overflow: visible;
+      box-sizing: border-box;
+      padding: 0 12px;
     }
-    /* mobile：整页铺满视口，不再限制 max-width，避免「大背景里一小块手机」 */
     .layout-mobile #app {
       max-width: none;
+      padding: 0;
     }
 
     /* 自定义弹窗 */
@@ -2101,6 +2115,7 @@
       flex-direction: column;
       min-height: 0;
       z-index: 1;
+      /* mobile 的填满/间隙由 JS 动态控制（避免挤进吃饭区） */
     }
 
     /* 移动端：桌面大 box 水平居中，两侧为饭友竖条和红色座位条预留安全间隙，
@@ -2109,6 +2124,10 @@
       width: 100%;
       max-width: calc(100% - 80px); /* 双侧各预留约 40px 安全区 */
       margin: 0 auto;
+      gap: 0;
+      --mobile-gap-after-desk: 0px;
+      --mobile-gap-after-dishes: 0px;
+      --mobile-fill-scale: 1;
     }
 
     /* 【修改】寿司盘位+饮料行：在回转灰色下方不重叠，整行居中；左右留出椅子宽，可乐等不压椅子 */
@@ -2132,7 +2151,7 @@
     .layout-mobile #desk-row .side-items,
     .layout-mobile #dishes-row .dish-item,
     .layout-mobile #bottom-row .cup-zone {
-      transform: translate(0px, 0px) scale(0.9);
+      transform: translate(0px, 0px) scale(calc(0.9 * var(--mobile-fill-scale, 1)));
       transform-origin: center center;
     }
     /* 调料单独整体 0.7，不跟上面 0.9 叠加 */
@@ -2463,10 +2482,10 @@
       margin-left: 8px;
     }
 
-    /* 寿司盘位 + 饮料行：整体高度稍微拉长一点（仅 mobile），并整体往下挪一点，让虚线盘位区与回转寿司之间多留空隙 */
+    /* 寿司盘位 + 饮料行：整体高度稍微拉长一点（仅 mobile），并整体往下挪一点，让虚线盘位区与回转寿司之间多留空 */
     .layout-mobile #desk-row {
       height: 115px;
-      padding: 0 32px; /* 为 3 行盘子留出垂直空间，同时整体更瘦一圈 */
+      padding: 0 32px; /* 给 3 行盘子留出垂直空间，同时整体更瘦一点 */
       margin-top: 14px;
       align-items: flex-start;
     }
@@ -2520,9 +2539,7 @@
       transform-origin: center center;
     }
 
-    /* 盘装菜区（dish）：移动端改成“2 行 3 列”（⚠ 仅 mobile，下方 XY/scale 可随便改，不影响 PC）：
-       - 第 1 行：dish 1, 2, 4
-       - 第 2 行：dish 5, 3, 6 */
+    /* 盘装菜区（dish）：移动端改成“2 行 3 列”，整块居中，留间隙铺满桌子 */
     .layout-mobile #dishes-row {
       height: 165px;
       padding: 0 2px;
@@ -2531,6 +2548,12 @@
       grid-template-rows: repeat(2, 1fr);
       justify-items: center;
       align-items: center;
+      width: max-content;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: var(--mobile-gap-after-desk, 0px); /* 仅在“有余量”时由 JS 增加 */
+      margin-bottom: 0;
     }
     /* dish1：单独 XY / 缩放（仅 mobile） */
     .layout-mobile #dishes-row .dish-item:nth-child(1) { /* 第 1 行第 1 个：dish1 */
@@ -2564,11 +2587,12 @@
       transform: translate(-130px, -50px) scale(0.77);
     }
 
-    /* 底排（酱料 + 杯子）也稍微拉长一点高度，但仍保持在吃饭区域上方（⚠ 仅 mobile） */
+    /* 底排（酱料 + 杯子）：高度固定，与上方 dish 留间隙，铺满桌子到吃饭区上方 */
     .layout-mobile #bottom-row {
       height: 130px;
       padding: 0 2px;
       gap: 4px;
+      margin-top: var(--mobile-gap-after-dishes, 0px); /* 仅在“有余量”时由 JS 增加 */
     }
 
     /* 窄屏下：酱料仍然保持“第一排 3 个”的感觉，只是整体区域更紧凑。
@@ -3059,7 +3083,7 @@
       <div id="loading-items"></div>
       <div id="loading-combo"></div>
       <div id="loading-card">
-        <img class="logo" src="img_trimmed/512icon.PNG" alt="logo">
+        <img class="logo" data-img="512icon.PNG" alt="logo">
         <h2 style="color:#c45c3e; margin-bottom:10px;" id="loading-title">我要吃三文鱼</h2>
         <div class="bar-bg">
           <div class="bar-fill" id="loading-progress"></div>
@@ -3077,14 +3101,14 @@
           stroke-dasharray="4 4" />
       </svg>
       <div id="home-sushi">
-        <img src="img_trimmed/get_sushi_norm_salmon.PNG" alt="salmon">
+        <img data-img="get_sushi_norm_salmon.PNG" alt="salmon">
       </div>
       <h1 id="menu-title">我要吃三文鱼</h1>
       <div id="menu-buttons">
         <button id="btn-level">开始闯关</button>
         <button id="btn-special">无尽挑战</button>
         <button id="btn-shop" aria-label="皮肤商城">
-          <img src="img_trimmed/sushiPlate_black.PNG" alt="">
+          <img data-img="sushiPlate_black.PNG" alt="">
         </button>
       </div>
       <div id="version-badge"></div>
@@ -3282,12 +3306,12 @@
           <div class="shop-tabs">
             <button class="shop-tab active" id="shop-tab-chop" aria-label="筷子皮肤">
               <span class="chop-tab-icon" aria-hidden="true">
-                <img class="back" src="img_trimmed/backChopstick_black.PNG" alt="">
-                <img class="front" src="img_trimmed/frontChopstick_black.PNG" alt="">
+                <img class="back" data-img="backChopstick_black.PNG" alt="">
+                <img class="front" data-img="frontChopstick_black.PNG" alt="">
               </span>
             </button>
             <button class="shop-tab" id="shop-tab-plate" aria-label="盘子皮肤">
-              <img src="img_trimmed/sushiPlate_black.PNG" alt="">
+              <img data-img="sushiPlate_black.PNG" alt="">
             </button>
           </div>
           <div class="shop-stars">
@@ -3384,7 +3408,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.6";
+    const APP_VERSION = "1.0.7";
     // 移动端锁死缩放：Safari/iOS 必须阻止 gesture 三件套，否则双指/双击仍会放大
     document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
     document.addEventListener("gesturechange", e => e.preventDefault(), { passive: false });
@@ -3450,11 +3474,73 @@
         const useMobile = w > 0 && ratio <= SIXTEEN_NINE;
         if (useMobile) root.classList.add("layout-mobile");
         else root.classList.remove("layout-mobile");
+
+        // 关键：切换 layout class 后强制重算（部分机型 rotate 时样式应用有延迟）
+        const force = function () {
+          try { if (typeof window.__updateGameScaleByWidth === "function") window.__updateGameScaleByWidth(); } catch (e) { }
+          try { if (typeof window.__updateMobileTableFill === "function") window.__updateMobileTableFill(); } catch (e) { }
+        };
+        try {
+          requestAnimationFrame(() => requestAnimationFrame(force));
+          window.setTimeout(force, 200);
+        } catch (e) {
+          window.setTimeout(force, 0);
+        }
       } catch (e) { }
     }
     applyResponsiveLayout();
     window.addEventListener("resize", applyResponsiveLayout);
     window.addEventListener("orientationchange", applyResponsiveLayout);
+
+    // mobile：在“不改变你基准排版”的前提下，按可用空间动态拉开间隙/微放大，且不越过 eat-zone 上边缘
+    function updateMobileTableFill() {
+      try {
+        const root = document.documentElement;
+        if (!root.classList.contains("layout-mobile")) return;
+        const table = document.getElementById("table-area");
+        const desk = document.getElementById("desk-row");
+        const dishes = document.getElementById("dishes-row");
+        const bottom = document.getElementById("bottom-row");
+        const eat = document.getElementById("eat-zone");
+        if (!table || !desk || !dishes || !bottom || !eat) return;
+
+        // 先恢复到“基准排版”（gap=0, scale=1），再测量余量
+        table.style.setProperty("--mobile-gap-after-desk", "0px");
+        table.style.setProperty("--mobile-gap-after-dishes", "0px");
+        table.style.setProperty("--mobile-fill-scale", "1");
+
+        const eatTop = eat.getBoundingClientRect().top;
+        const bottomRect0 = bottom.getBoundingClientRect();
+        const overflow0 = bottomRect0.bottom - eatTop;
+        // 已经溢出：说明屏幕太矮，只能保持基准（不再加间隙/放大）
+        if (overflow0 > 0) return;
+
+        let extra = eatTop - bottomRect0.bottom; // 可用余量（越大越能拉开/放大）
+        if (extra < 0) extra = 0;
+
+        // 1) 先把余量分配给两段间隙（上限 14px），让桌面更“铺满”
+        const gapEach = Math.max(0, Math.min(14, extra / 3));
+        table.style.setProperty("--mobile-gap-after-desk", gapEach.toFixed(1) + "px");
+        table.style.setProperty("--mobile-gap-after-dishes", gapEach.toFixed(1) + "px");
+
+        // 2) 再尝试微放大（二分找最大不越界的 scale），上限 1.12
+        let lo = 1, hi = 1.12, best = 1;
+        for (let i = 0; i < 10; i++) {
+          const mid = (lo + hi) / 2;
+          table.style.setProperty("--mobile-fill-scale", mid.toFixed(4));
+          const b = bottom.getBoundingClientRect().bottom;
+          if (b <= eatTop) { best = mid; lo = mid; } else { hi = mid; }
+        }
+        table.style.setProperty("--mobile-fill-scale", best.toFixed(4));
+      } catch (e) { }
+    }
+    // 初次与每次切换/缩放都尝试一次
+    window.addEventListener("resize", updateMobileTableFill);
+    window.addEventListener("orientationchange", updateMobileTableFill);
+    // applyResponsiveLayout 后也跑一次（有些设备 rotate 时 class 切换先发生）
+    window.setTimeout(updateMobileTableFill, 0);
+    // 暴露给 applyResponsiveLayout 强制重算
+    window.__updateMobileTableFill = updateMobileTableFill;
 
     // ===== 简单中/英切换工具：t(中文, 英文) =====
     let SWS_LANG = (function () {
@@ -3641,10 +3727,14 @@
         img.setAttribute("data-src", src);
         img.onload = function () {
           registerImg(img, src);
+          // loading 界面 logo 一旦 512icon 加载完就显示，其余 data-img 在 finishLoading 统一赋值
+          if (src === "512icon.PNG") {
+            const logo = document.querySelector("#loading-card .logo");
+            if (logo && img.src) logo.src = img.src;
+          }
           onOneLoaded();
         };
         img.onerror = function () {
-          // 只允许使用 img_trimmed/，加载失败也要计数，避免卡在 loading
           onOneLoaded();
         };
         img.src = "img_trimmed/" + encodeURIComponent(src);
@@ -3655,6 +3745,14 @@
     function finishLoading() {
       document.getElementById("loading").classList.add("hidden");
       document.getElementById("menu").classList.remove("hidden");
+
+      // 所有图片已在 loading 阶段预加载，此处从缓存给静态 img[data-img] 赋值，不再请求网络
+      document.querySelectorAll("[data-img]").forEach(function (el) {
+        const name = el.getAttribute("data-img");
+        if (name && g_CroppedCanvas[name] && g_CroppedCanvas[name].src) {
+          el.src = g_CroppedCanvas[name].src;
+        }
+      });
 
       // 从本地存储恢复星星、皮肤与闯关进度，再应用当前皮肤并初始化皮肤商城
       loadProgressFromStorage();
@@ -3706,12 +3804,39 @@
 
       const inter = document.getElementById("interaction-layer");
       if (inter) inter.classList.add("menu-hidden");
+
+      // 刷新后恢复：返回关卡 / 下一关 会写 sessionStorage，此处恢复对应视图
+      try {
+        const exitView = sessionStorage.getItem(EXIT_VIEW_KEY);
+        if (exitView === "level") {
+          sessionStorage.removeItem(EXIT_VIEW_KEY);
+          openLevelScreen();
+        } else if (exitView === "nextLevel") {
+          const nextIdx = Math.max(1, Math.min(TOTAL_LEVELS, parseInt(sessionStorage.getItem(EXIT_NEXT_LEVEL_INDEX_KEY) || "1", 10)));
+          sessionStorage.removeItem(EXIT_VIEW_KEY);
+          sessionStorage.removeItem(EXIT_NEXT_LEVEL_INDEX_KEY);
+          STATE.currentLevelIndex = nextIdx;
+          if (REWARD_LEVELS.indexOf(nextIdx) !== -1) {
+            openRewardScreen(nextIdx);
+          } else {
+            showView("game");
+            startGame("level", { startTimer: false });
+            showLevelStartModal(nextIdx);
+          }
+        }
+      } catch (e) { }
     }
 
     function showCustomModal(msg, buttons) {
       const modal = document.getElementById("custom-modal");
       document.querySelector("#custom-modal .modal-box")?.classList.remove("modal-box-level-start");
-      document.getElementById("modal-msg").innerHTML = msg;
+      const msgEl = document.getElementById("modal-msg");
+      msgEl.innerHTML = "";
+      if (typeof msg === "string") {
+        msgEl.innerHTML = msg;
+      } else if (msg && msg.nodeType) {
+        msgEl.appendChild(msg);
+      }
       const btnGroup = document.getElementById("modal-btns");
       btnGroup.innerHTML = "";
       buttons.forEach(b => {
@@ -3793,13 +3918,7 @@
           box.className = "modal-new-item";
           if (typeof cloneCanvas === "function" && g_CroppedCanvas && g_CroppedCanvas[imgName]) {
             const c = cloneCanvas(imgName);
-            if (c && c.childNodes.length) box.appendChild(c);
-            else { const img = document.createElement("img"); img.src = "img_trimmed/" + imgName; img.alt = ""; box.appendChild(img); }
-          } else {
-            const img = document.createElement("img");
-            img.src = "img_trimmed/" + imgName;
-            img.alt = "";
-            box.appendChild(img);
+            if (c) box.appendChild(c);
           }
           wrap.appendChild(box);
         });
@@ -3815,6 +3934,7 @@
           // 规则教学：不进入真正游戏，不开计时，但要让回转寿司转起来
           STATE.playing = false;
           STATE.paused = false;
+          STATE.hardStopLoop = false;
           lastTime = 0;
           if (window.TUTORIAL && typeof TUTORIAL.start === "function") {
             TUTORIAL.start();
@@ -3835,6 +3955,7 @@
         if (modal) modal.classList.remove("visible");
         STATE.playing = true;
         STATE.paused = false;
+        STATE.hardStopLoop = false;
         lastTime = 0;
         if (typeof renderWants === "function") renderWants();
         if (typeof isFriendsActive === "function" && isFriendsActive() && typeof renderFriendsBubbles === "function") renderFriendsBubbles();
@@ -3872,13 +3993,7 @@
       box.className = "modal-new-item";
       if (typeof cloneCanvas === "function" && g_CroppedCanvas && g_CroppedCanvas[imgName]) {
         const c = cloneCanvas(imgName);
-        if (c && c.childNodes.length) box.appendChild(c);
-        else { const img = document.createElement("img"); img.src = "img_trimmed/" + imgName; img.alt = ""; box.appendChild(img); }
-      } else {
-        const img = document.createElement("img");
-        img.src = "img_trimmed/" + imgName;
-        img.alt = "";
-        box.appendChild(img);
+        if (c) box.appendChild(c);
       }
       wrap.appendChild(box);
       msgEl.appendChild(wrap);
@@ -4322,37 +4437,15 @@
         btns.push({
           text: t("下一关", "Next Level"),
           cb: () => {
-            let nextIdx = Math.min(TOTAL_LEVELS, idx + 1);
-            // 当前是奖励关（10 或 20）：“下一关”一律进正常闯关页面（11 或 21），不再跳到另一个奖励关壳
-            const isReward = REWARD_LEVELS.indexOf(idx) !== -1;
-            STATE.currentLevelIndex = nextIdx;
-            STATE.playing = false;
-            STATE.paused = false;
-            if (typeof resetHolding === "function") resetHolding();
-            document.getElementById("custom-modal").classList.remove("visible");
-            if (!isReward && REWARD_LEVELS.indexOf(nextIdx) !== -1) {
-              // 正常关通关 → 下一关刚好是奖励关（例如 9→10、19→20）：进入奖励关专用页
-              openRewardScreen(nextIdx);
-            } else {
-              // 奖励关通关 或 正常关→正常关：统一走正常闯关 HUD
-              showView("game");
-              startGame("level", { startTimer: false });
-              showLevelStartModal(nextIdx);
-            }
+            const nextIdx = Math.min(TOTAL_LEVELS, idx + 1);
+            goToNextLevel(nextIdx);
           }
         });
       }
 
       btns.push({
         text: t("选择关卡", "Select Level"),
-        cb: () => {
-          STATE.paused = false;
-          STATE.playing = false;
-          if (typeof resetHolding === "function") resetHolding();
-          const modal = document.getElementById("custom-modal");
-          if (modal) modal.classList.remove("visible");
-          openLevelScreen();
-        }
+        cb: goToLevelSelect
       });
 
       btns.push({
@@ -4383,12 +4476,7 @@
         },
         {
           text: t("选择关卡", "Select Level"),
-          cb: () => {
-            STATE.paused = false;
-            STATE.playing = false;
-            if (typeof resetHolding === "function") resetHolding();
-            openLevelScreen();
-          }
+          cb: goToLevelSelect
         },
         { text: t("返回标题", "Back to Title"), fullWidth: true, cb: goToTitle }
       ]);
@@ -4749,32 +4837,55 @@
         ? t("能接多少接多少", "Catch as many as you can")
         : t("夹住他们！", "Grab them all!");
       const titleLine = t(`第 ${levelIndex} 关`, `Stage ${levelIndex}`);
-      let msgHtml =
-        `<div style="font-weight:bold;margin-bottom:8px;">${titleLine}</div>` +
-        `<p style="margin:8px 0 4px;">${desc}</p>`;
+      const msgWrap = document.createElement("div");
+      const titleDiv = document.createElement("div");
+      titleDiv.style.fontWeight = "bold";
+      titleDiv.style.marginBottom = "8px";
+      titleDiv.textContent = titleLine;
+      msgWrap.appendChild(titleDiv);
+      const descP = document.createElement("p");
+      descP.style.margin = "8px 0 4px";
+      descP.textContent = desc;
+      msgWrap.appendChild(descP);
       if (levelIndex === 20) {
-        // 第20关：显示筷子图标
         const names = getChopImgNamesByColor(STATE.currentChopSkin || "black");
-        msgHtml +=
-          `<div class="modal-new-items">` +
-          `<div class="modal-new-item">` +
-          `<div style="position:relative;width:96px;height:96px;margin:0 auto;">` +
-          `<img src="img_trimmed/${names.back}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">` +
-          `<img src="img_trimmed/${names.front}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">` +
-          `</div>` +
-          `</div>` +
-          `</div>`;
+        const itemsWrap = document.createElement("div");
+        itemsWrap.className = "modal-new-items";
+        const itemBox = document.createElement("div");
+        itemBox.className = "modal-new-item";
+        const inner = document.createElement("div");
+        inner.style.cssText = "position:relative;width:96px;height:96px;margin:0 auto;";
+        if (g_CroppedCanvas[names.back]) {
+          const backEl = cloneAssetToImgEl(names.back);
+          if (backEl) {
+            backEl.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:contain;";
+            inner.appendChild(backEl);
+          }
+        }
+        if (g_CroppedCanvas[names.front]) {
+          const frontEl = cloneAssetToImgEl(names.front);
+          if (frontEl) {
+            frontEl.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:contain;";
+            inner.appendChild(frontEl);
+          }
+        }
+        itemBox.appendChild(inner);
+        itemsWrap.appendChild(itemBox);
+        msgWrap.appendChild(itemsWrap);
       } else {
-        // 第10关：显示盘子图标
         const plateColor = (STATE.currentPlateSkin === "random")
           ? getRandomUnlockedPlateColor()
           : (STATE.currentPlateSkin || "black");
         const plateImgName = getPlateImgNameByColor(plateColor);
-        if (plateImgName) {
-          msgHtml +=
-            `<div class="modal-new-items">` +
-            `<div class="modal-new-item"><img src="img_trimmed/${plateImgName}" alt=""></div>` +
-            `</div>`;
+        if (plateImgName && g_CroppedCanvas[plateImgName]) {
+          const itemsWrap = document.createElement("div");
+          itemsWrap.className = "modal-new-items";
+          const itemBox = document.createElement("div");
+          itemBox.className = "modal-new-item";
+          const c = cloneCanvas(plateImgName);
+          if (c) itemBox.appendChild(c);
+          itemsWrap.appendChild(itemBox);
+          msgWrap.appendChild(itemsWrap);
         }
       }
       // 进入奖励关时重置内容与进度条
@@ -4788,8 +4899,7 @@
         text.style.color = "#8b451a";
       }
       showView("reward");
-      // 直接在奖励关页弹“开始游戏”弹窗（不是中转页按钮）
-      showCustomModal(msgHtml, [
+      showCustomModal(msgWrap, [
         {
           text: t("开始游戏", "Start"),
           primary: true,
@@ -4952,6 +5062,7 @@
       g_SpecialCleanup = null;
     }
 
+    /** 仅从预加载缓存取图，不发起网络请求 */
     function cloneAssetToImgEl(imgName) {
       const asset = g_CroppedCanvas[imgName];
       if (!asset) return null;
@@ -4960,11 +5071,7 @@
         im.alt = "";
         return im;
       }
-      // 兜底：用原始路径（同名资源必然在 img_trimmed 里）
-      const im = document.createElement("img");
-      im.src = "img_trimmed/" + encodeURIComponent(imgName);
-      im.alt = "";
-      return im;
+      return null;
     }
 
     function getRewardAssetPool() {
@@ -5035,7 +5142,7 @@
         if (!win) {
           showCustomModal("游戏失败，再试一次吧！", [
             { text: "再试一次", primary: true, cb: () => startRewardLevelMiniGame(levelIndex) },
-            { text: "选择关卡", cb: () => openLevelScreen() }
+            { text: "选择关卡", cb: goToLevelSelect }
           ]);
           return;
         }
@@ -5654,7 +5761,7 @@
         const msg = `${title}<br>` + starHtml;
         showCustomModal(msg, [
           { text: t("再玩一次", "Play Again"), primary: true, cb: () => startChallengeMergeGame() },
-          { text: t("选择关卡", "Select Level"), cb: () => openLevelScreen() },
+          { text: t("选择关卡", "Select Level"), cb: goToLevelSelect },
           { text: t("返回标题", "Back to Title"), fullWidth: true, cb: goToTitle }
         ]);
       }
@@ -5701,21 +5808,29 @@
         cells.forEach(c => { try { c.onpointerdown = null; } catch (e) { } });
       };
 
-      // 开始弹窗：带 salmon roll 图标
+      // 开始弹窗：带 salmon roll 图标（仅用预加载图）
       const iconKey = "sushi_roll_salmon.PNG";
-      let modalHtml = `<div style="font-weight:bold;margin-bottom:8px;">${t("鱼鱼合成", "Fish Fusion")}</div>`;
+      const modalWrap = document.createElement("div");
+      const titleDiv = document.createElement("div");
+      titleDiv.style.fontWeight = "bold";
+      titleDiv.style.marginBottom = "8px";
+      titleDiv.textContent = t("鱼鱼合成", "Fish Fusion");
+      modalWrap.appendChild(titleDiv);
       if (g_CroppedCanvas[iconKey]) {
-        modalHtml += `<div class="modal-new-items"><div class="modal-new-item">`;
-        const c = cloneAssetToImgEl(iconKey);
-        if (c && c.childNodes && c.childNodes.length) {
-          const wrapper = document.createElement("div");
-          wrapper.className = "modal-new-items";
-        }
-        modalHtml += `<img src="img_trimmed/${iconKey}" alt="">`;
-        modalHtml += `</div></div>`;
+        const itemsWrap = document.createElement("div");
+        itemsWrap.className = "modal-new-items";
+        const itemBox = document.createElement("div");
+        itemBox.className = "modal-new-item";
+        const iconEl = cloneCanvas(iconKey);
+        if (iconEl) itemBox.appendChild(iconEl);
+        itemsWrap.appendChild(itemBox);
+        modalWrap.appendChild(itemsWrap);
       }
-      modalHtml += `<p style="margin-top:8px;">${t("3 个以上相同会合成！", "3 or more identical tiles will merge!")}</p>`;
-      showCustomModal(modalHtml, [
+      const tipP = document.createElement("p");
+      tipP.style.marginTop = "8px";
+      tipP.textContent = t("3 个以上相同会合成！", "3 or more identical tiles will merge!");
+      modalWrap.appendChild(tipP);
+      showCustomModal(modalWrap, [
         { text: t("开始游戏", "Start Game"), primary: true, cb: () => { document.getElementById("custom-modal").classList.remove("visible"); } }
       ]);
     }
@@ -5743,6 +5858,7 @@
     }
     /** 统一页面切换：只显示指定视图，其余全部隐藏。避免多屏同时存在导致“没真正跳转”。 */
     function showView(viewId) {
+      closeAllModals();
       const menu = document.getElementById("menu");
       const game = document.getElementById("game");
       const levelScreen = document.getElementById("level-screen");
@@ -5790,14 +5906,53 @@
         }
       }
     }
+    /** 关闭所有弹窗（结算/暂停/商城等），避免退出后仍显示 */
+    function closeAllModals() {
+      const customModal = document.getElementById("custom-modal");
+      const shopModal = document.getElementById("shop-modal");
+      if (customModal) customModal.classList.remove("visible");
+      if (shopModal) shopModal.classList.remove("visible");
+    }
+
+    const EXIT_VIEW_KEY = "sws_exit_view";
+    const EXIT_NEXT_LEVEL_INDEX_KEY = "sws_next_level_index";
+
     function goToTitle() {
+      STATE.paused = false;
+      STATE.playing = false;
+      // 返回标题时彻底停掉主循环（gameLoop 否则会一直 requestAnimationFrame 自转）
+      STATE.hardStopLoop = true;
+      if (typeof resetHolding === "function") resetHolding();
+      if (typeof stopRewardInGame === "function") stopRewardInGame();
+      if (typeof stopSpecialMiniGame === "function") stopSpecialMiniGame();
+      closeAllModals();
+      try { sessionStorage.removeItem(EXIT_VIEW_KEY); sessionStorage.removeItem(EXIT_NEXT_LEVEL_INDEX_KEY); } catch (e) { }
+      showView("menu");
+    }
+
+    /** 返回关卡选择：整页刷新后自动打开关卡选择页 */
+    function goToLevelSelect() {
       STATE.paused = false;
       STATE.playing = false;
       if (typeof resetHolding === "function") resetHolding();
       if (typeof stopRewardInGame === "function") stopRewardInGame();
-      const modal = document.getElementById("custom-modal");
-      if (modal) modal.classList.remove("visible");
-      showView("menu");
+      closeAllModals();
+      try { sessionStorage.setItem(EXIT_VIEW_KEY, "level"); } catch (e) { }
+      window.location.reload();
+    }
+
+    /** 下一关：整页刷新后自动进入指定关卡 */
+    function goToNextLevel(nextIdx) {
+      STATE.paused = false;
+      STATE.playing = false;
+      if (typeof resetHolding === "function") resetHolding();
+      if (typeof stopRewardInGame === "function") stopRewardInGame();
+      closeAllModals();
+      try {
+        sessionStorage.setItem(EXIT_VIEW_KEY, "nextLevel");
+        sessionStorage.setItem(EXIT_NEXT_LEVEL_INDEX_KEY, String(nextIdx));
+      } catch (e) { }
+      window.location.reload();
     }
     function startBuffetFromSpecial() {
       showView("game");
@@ -5885,6 +6040,7 @@
         // 真正开始计时和游戏循环
         STATE.playing = true;
         STATE.paused = false;
+        STATE.hardStopLoop = false;
         lastTime = 0;
         requestAnimationFrame(gameLoop);
       };
@@ -5945,7 +6101,7 @@
         const buttons = [
           { text: t("继续游戏", "Continue"), primary: true, fullWidth: true, cb: () => { STATE.paused = false; } },
           { text: t("重新开始", "Restart"), cb: () => { STATE.paused = false; startRewardLevelMiniGame(idx); } },
-          { text: t("选择关卡", "Select Level"), cb: () => { STATE.paused = false; closeRewardScreen(); } },
+          { text: t("选择关卡", "Select Level"), cb: goToLevelSelect },
           { text: t("返回标题", "Back to Title"), fullWidth: true, cb: () => { STATE.paused = false; goToTitle(); } }
         ];
         showCustomModal(t("游戏暂停", "Paused"), buttons);
@@ -5961,7 +6117,7 @@
         const buttons = [
           { text: t("继续游戏", "Continue"), primary: true, fullWidth: true, cb: () => { STATE.paused = false; } },
           { text: t("重新开始", "Restart"), cb: () => { STATE.paused = false; startChallengeMergeGame(); } },
-          { text: t("选择关卡", "Select Level"), cb: () => { STATE.paused = false; closeChallengeScreen(); } },
+          { text: t("选择关卡", "Select Level"), cb: goToLevelSelect },
           { text: t("返回标题", "Back to Title"), fullWidth: true, cb: () => { STATE.paused = false; goToTitle(); } }
         ];
         showCustomModal(t("游戏暂停", "Paused"), buttons);
@@ -6099,7 +6255,8 @@
         sauceGrid.appendChild(el);
       });
 
-      // Setup Drinks visuals
+      // Setup Drinks visuals（新局开始时清缓存，确保首次完整渲染）
+      g_LastDrinksVisuals = { blackCup: null, glassCup: null, slots: {} };
       updateDrinksVisuals();
 
       // Setup Conveyor
@@ -6159,6 +6316,7 @@
       updateTopInfo();
 
       if (!window.gameLoopStarted) window.gameLoopStarted = true;
+      STATE.hardStopLoop = false;
       if (startTimer) requestAnimationFrame(gameLoop);
     }
     
@@ -6822,19 +6980,32 @@
       renderList(STATE.wantsNext, "want-next");
     }
 
+    // 缓存上次渲染的饮料/杯子状态，仅在实际变化时更新 DOM，避免移动端整块重绘卡顿
+    let g_LastDrinksVisuals = { blackCup: null, glassCup: null, slots: {} };
+
     function updateDrinksVisuals() {
-      const blackCup = document.getElementById("zone-black-cup");
-      blackCup.innerHTML = "";
       let bImg = "water_bei_empty.PNG";
       if (STATE.blackCupLevel > 0) bImg = STATE.blackCupType === "cha" ? "water_bei_cha.PNG" : "water_bei_hu.PNG";
-      blackCup.appendChild(cloneCanvas(bImg));
+      if (g_LastDrinksVisuals.blackCup !== bImg) {
+        g_LastDrinksVisuals.blackCup = bImg;
+        const blackCup = document.getElementById("zone-black-cup");
+        if (blackCup) {
+          blackCup.innerHTML = "";
+          if (g_CroppedCanvas[bImg]) blackCup.appendChild(cloneCanvas(bImg));
+        }
+      }
 
-      const glassCup = document.getElementById("zone-glass-cup");
-      glassCup.innerHTML = "";
       let gImg = "water_glass_empty.PNG";
       if (STATE.glassCupLevel === 2) gImg = `water_glass_${STATE.glassCupType || "orange"}_full.PNG`;
       else if (STATE.glassCupLevel === 1) gImg = `water_glass_${STATE.glassCupType || "orange"}_half.PNG`;
-      glassCup.appendChild(cloneCanvas(gImg));
+      if (g_LastDrinksVisuals.glassCup !== gImg) {
+        g_LastDrinksVisuals.glassCup = gImg;
+        const glassCup = document.getElementById("zone-glass-cup");
+        if (glassCup) {
+          glassCup.innerHTML = "";
+          if (g_CroppedCanvas[gImg]) glassCup.appendChild(cloneCanvas(gImg));
+        }
+      }
 
       const cfg = STATE.mode === "level" ? getLevelConfig(STATE.currentLevelIndex || 1) : null;
       const unlockedDrinks = cfg && Array.isArray(cfg.unlockedDrinks) ? new Set(cfg.unlockedDrinks) : null;
@@ -6842,18 +7013,23 @@
       function renderDrinkSlot(id, type, imgName) {
         const slot = document.getElementById(id);
         if (!slot) return;
+        const isLocked = !!(STATE.mode === "level" && unlockedDrinks && !unlockedDrinks.has(type));
+        const key = id;
+        const last = g_LastDrinksVisuals.slots[key];
+        if (last && last.imgName === imgName && last.locked === isLocked) return;
+        g_LastDrinksVisuals.slots[key] = { imgName: imgName, locked: isLocked };
+
         slot.classList.remove("locked");
         slot.innerHTML = "";
-        if (STATE.mode === "level" && unlockedDrinks && !unlockedDrinks.has(type)) {
+        if (isLocked) {
           slot.dataset.type = "";
           slot.classList.add("locked");
           return;
         }
         slot.dataset.type = type;
-        slot.appendChild(cloneCanvasSafe(imgName));
+        if (g_CroppedCanvas[imgName]) slot.appendChild(cloneCanvasSafe(imgName));
       }
 
-      // Update drag sources
       renderDrinkSlot("slot-hu", "hu", "water_hu.PNG");
       renderDrinkSlot("slot-cha", "cha", "water_cha.PNG");
       renderDrinkSlot("slot-orange", "orange", "water_orange.PNG");
@@ -6968,6 +7144,10 @@
     const CONVEYOR_TRACK_PC_X = 0;
     const CONVEYOR_TRACK_PC_Y = -10;
     function gameLoop(time) {
+      if (STATE && STATE.hardStopLoop) {
+        lastTime = time;
+        return;
+      }
       if (!STATE.playing || STATE.paused) {
         lastTime = time;
         return requestAnimationFrame(gameLoop);
@@ -8454,23 +8634,20 @@
     // Start sequence
     initLoading();
 
-    // ------------- 宽度驱动的等比缩放：所有内容只跟宽度走，禁止不同比例变形 -------------
-    // 基准宽度按照当前设计宽度 560px 来算：
-    // - 屏幕比 560 宽：不放大，保持 1:1 原始效果，只是左右留空/背景补齐。
-    // - 屏幕比 560 窄：整块 #game 以「宽度比例」整体缩小，寿司/杯子/盘子间距和大小完全等比缩小。
-    //   高度方向不单独挤压任何一块，禁止只改高度的压缩。
+    // ------------- 桌面：保持你排好的上边缘基准；缩放时以「拿到这里吃掉」上边缘为边界，可放大填满；mobile 不动 -------------
     (function () {
       const BASE_WIDTH_DESKTOP = 560;
+      const DESKTOP_MARGIN = 24;
 
       function updateGameScaleByWidth() {
         const game = document.getElementById("game");
         if (!game) return;
+        const eatZone = document.getElementById("eat-zone");
 
         const docEl = document.documentElement;
         const isMobileLayout = docEl.classList.contains("layout-mobile");
         const inner = document.getElementById("game-inner");
 
-        // 移动端：20:9 盒子已按视口撑满，不再对 #game 做 scale，保持 1:1，由布局/间距自适应填满。
         if (isMobileLayout) {
           game.style.transformOrigin = "center center";
           game.style.transform = "translate(-50%, -50%) scale(1)";
@@ -8478,23 +8655,32 @@
           return;
         }
 
-        // PC：保持原来的 560px 基准宽度等比缩放逻辑，同时还原 inner 的缩放
-        if (inner) {
-          inner.style.transform = "";
-        }
+        if (inner) inner.style.transform = "";
         const vw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
-        let scale = 1;
-        if (vw > 0 && vw < BASE_WIDTH_DESKTOP) {
-          scale = vw / BASE_WIDTH_DESKTOP;
-        }
+        const vh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 1;
+        const availW = Math.max(0, vw - DESKTOP_MARGIN);
+        const scaleByW = availW / BASE_WIDTH_DESKTOP;
+
         game.style.transformOrigin = "top center";
-        game.style.transform = "translateX(-50%) scale(" + scale + ")";
+        game.style.transform = "translateX(-50%) scale(1)";
+        const gameRect = game.getBoundingClientRect();
+        const eatRect = eatZone ? eatZone.getBoundingClientRect() : null;
+        const contentH = eatRect ? (eatRect.top - gameRect.top) : gameRect.height;
+        const maxH = Math.max(1, vh - gameRect.top);
+        const scaleByBoundary = contentH > 0 ? maxH / contentH : 1;
+        // 横屏高度过矮时的兜底：按视口高度再缩一次，避免底部被裁切（只缩小不放大）
+        const scaleByH = gameRect.height > 0 ? (vh / gameRect.height) : 1;
+
+        const s = Math.max(0.1, Math.min(Math.min(scaleByW, scaleByBoundary, scaleByH, 1), 2));
+        game.style.transformOrigin = "top center";
+        game.style.transform = "translateX(-50%) scale(" + s + ")";
       }
 
       window.addEventListener("resize", updateGameScaleByWidth);
       window.addEventListener("orientationchange", updateGameScaleByWidth);
-      // 初次进入页面时也执行一次
       updateGameScaleByWidth();
+      // 暴露给 applyResponsiveLayout：切换横竖屏时强制重算，避免残留 mobile transform
+      window.__updateGameScaleByWidth = updateGameScaleByWidth;
     })();
   </script>
 </body>
