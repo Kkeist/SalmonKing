@@ -127,6 +127,15 @@
       #app canvas {
         image-rendering: -webkit-optimize-contrast;
       }
+      /* iOS：避免对“想吃”容器再次缩放，减少二次缩放导致的模糊 */
+      .layout-mobile #bubble-current {
+        transform: none;
+      }
+      /* iOS：加强回转带寿司清晰度 */
+      #conveyor-row img,
+      #conveyor-row canvas {
+        image-rendering: -webkit-optimize-contrast;
+      }
     }
 
     /* 舞台承载层：铺满视口，不再用 560px 外壳（避免粉边/外框） */
@@ -2038,6 +2047,7 @@
       gap: 0;
       pointer-events: none;
       z-index: 10; /* 明显高于 #conveyor-row-bg(0)，寿司和盘子在灰色前面 */
+      will-change: transform;
     }
 
     /* 【修改】传送带每格 同比例放大 */
@@ -2097,6 +2107,7 @@
       gap: 0;
       z-index: 2;
       pointer-events: none;
+      will-change: transform;
     }
 
     .belt-item .food .pc {
@@ -3521,7 +3532,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.11";
+    const APP_VERSION = "1.0.12";
     const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
     function updateVersionBadge() {
       try {
@@ -5575,6 +5586,11 @@
       let lastTs = 0;
       function tickChop(ts) {
         if (!running) return;
+        // 暂停时：保持下一帧调度，但不更新任何位置/物理，真正“停住画面”
+        if (STATE.paused) {
+          raf = requestAnimationFrame(tickChop);
+          return;
+        }
         if (!lastTs) lastTs = ts;
         const dt = Math.min(0.03, (ts - lastTs) / 1000);
         lastTs = ts;
@@ -6765,19 +6781,7 @@
       inner.className = "hold-inner";
       inner.style.width = Math.max(1, Math.round(baseW * scale)) + "px";
       inner.style.height = Math.max(1, Math.round(baseH * scale)) + "px";
-      // mobile 下 #chopsticks-wrap 会整体按 --chopsticks-scale 缩小（为了筷子），
-      // 但拿起物体也在这个容器里，会被连带缩小；这里抵消掉，保证“拿起态”最终倍率稳定。
-      const wanted = (typeof sizeScale === "number" ? sizeScale : 1);
-      let s = wanted;
-      try {
-        const docEl = document.documentElement;
-        const isMobileLayout = docEl.classList.contains("layout-mobile") || (typeof isNarrowViewport === "function" && isNarrowViewport());
-        if (isMobileLayout) {
-          const cssV = getComputedStyle(docEl).getPropertyValue("--chopsticks-scale");
-          const chopScale = Math.max(0.1, parseFloat(cssV) || 1);
-          s = wanted / chopScale;
-        }
-      } catch (e) { }
+      const s = (typeof sizeScale === "number" ? sizeScale : 1);
       inner.style.transform = `scale(${s})`;
       inner.style.transformOrigin = "center top";
 
@@ -6808,17 +6812,6 @@
       if (!og) return document.createElement("div");
 
       if (og.tagName && og.tagName.toLowerCase() === "img") {
-        // Android：尽量减轻“图片出现时”的 DOM 体积与布局开销——直接克隆已预加载 img，而不是再套一层容器
-        if (IS_ANDROID) {
-          const im = og.cloneNode(false);
-          im.alt = "";
-          try { im.decoding = "async"; } catch (e) { }
-          if (og.src) im.src = og.src;
-          im.style.width = "100%";
-          im.style.height = "100%";
-          im.style.objectFit = "contain";
-          return im;
-        }
         const wrap = document.createElement("div");
         wrap.className = "canvas-placeholder";
         wrap.style.width = "100%"; wrap.style.height = "100%";
@@ -7697,6 +7690,23 @@
     let movedSinceDown = false;
     const TAP_MOVE_THRESHOLD = 10; // 移动超过该像素认为是“拖动”，不触发夹取
 
+    // Android：pointermove 过于频繁会导致卡顿，这里用 rAF 做节流
+    let _moveScheduled = false;
+    let _pendingMove = null;
+
+    function handlePointerMoveLogic(x, y) {
+      if (!STATE.playing || STATE.paused) {
+        if (!(window.TUTORIAL && TUTORIAL.active)) return;
+      }
+      if (!isDown) wrap.style.transition = "transform 0.05s linear, left 0.1s linear, top 0.1s linear";
+      else wrap.style.transition = "none";
+      updateWrapPosition(x, y);
+      if (isDown) {
+        const dx = x - downX, dy = y - downY;
+        if ((dx * dx + dy * dy) >= (TAP_MOVE_THRESHOLD * TAP_MOVE_THRESHOLD)) movedSinceDown = true;
+      }
+    }
+
     window.addEventListener("pointerdown", e => {
       const x = e.clientX, y = e.clientY;
       // 让新手引导先决定是否拦截本次点击
@@ -7719,15 +7729,18 @@
 
     window.addEventListener("pointermove", e => {
       const x = e.clientX, y = e.clientY;
-      if (!STATE.playing || STATE.paused) {
-        if (!(window.TUTORIAL && TUTORIAL.active)) return;
-      }
-      if (!isDown) wrap.style.transition = "transform 0.05s linear, left 0.1s linear, top 0.1s linear";
-      else wrap.style.transition = "none";
-      updateWrapPosition(x, y);
-      if (isDown) {
-        const dx = x - downX, dy = y - downY;
-        if ((dx * dx + dy * dy) >= (TAP_MOVE_THRESHOLD * TAP_MOVE_THRESHOLD)) movedSinceDown = true;
+      if (IS_ANDROID) {
+        _pendingMove = { x, y };
+        if (_moveScheduled) return;
+        _moveScheduled = true;
+        requestAnimationFrame(() => {
+          _moveScheduled = false;
+          const pm = _pendingMove;
+          if (!pm) return;
+          handlePointerMoveLogic(pm.x, pm.y);
+        });
+      } else {
+        handlePointerMoveLogic(x, y);
       }
     });
 
