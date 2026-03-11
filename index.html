@@ -121,16 +121,10 @@
       font-family: "ZCOOL KuaiLe", sans-serif;
     }
 
-    /* 缩放舞台时：尽量让位图（PNG）采样更清晰，减少“发糊” */
-    img,
-    canvas {
-      image-rendering: auto;
-      -ms-interpolation-mode: bicubic;
-    }
-    /* iOS Safari：可用时用更锐利的采样；Android 上可能导致闪烁，避免启用 */
+    /* iOS：让所有游戏内图片/canvas 尽量“高清锐利”（不影响 Android） */
     @supports (-webkit-overflow-scrolling: touch) and (image-rendering: -webkit-optimize-contrast) {
-      img,
-      canvas {
+      #app img,
+      #app canvas {
         image-rendering: -webkit-optimize-contrast;
       }
     }
@@ -3527,7 +3521,8 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.10";
+    const APP_VERSION = "1.0.11";
+    const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
     function updateVersionBadge() {
       try {
         const badge = document.getElementById("version-badge");
@@ -6813,6 +6808,17 @@
       if (!og) return document.createElement("div");
 
       if (og.tagName && og.tagName.toLowerCase() === "img") {
+        // Android：尽量减轻“图片出现时”的 DOM 体积与布局开销——直接克隆已预加载 img，而不是再套一层容器
+        if (IS_ANDROID) {
+          const im = og.cloneNode(false);
+          im.alt = "";
+          try { im.decoding = "async"; } catch (e) { }
+          if (og.src) im.src = og.src;
+          im.style.width = "100%";
+          im.style.height = "100%";
+          im.style.objectFit = "contain";
+          return im;
+        }
         const wrap = document.createElement("div");
         wrap.className = "canvas-placeholder";
         wrap.style.width = "100%"; wrap.style.height = "100%";
