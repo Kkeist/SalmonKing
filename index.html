@@ -87,8 +87,12 @@
       touch-action: none;
       -webkit-tap-highlight-color: transparent;
       -ms-touch-action: none;
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
+      -webkit-text-size-adjust: none;
+      text-size-adjust: none;
+      /* 允许窄到 9:21：根不超出视口，横向溢出裁剪 */
+      max-width: 100vw;
+      overflow-x: hidden;
+      min-width: 0;
     }
     /* 禁止选中时出现蓝色/灰色块（移动端点击“复制”那种效果） */
     ::selection {
@@ -103,8 +107,11 @@
     html,
     body {
       width: 100%;
+      max-width: 100vw; /* 不超出视口，支持窄到 9:21 */
       height: 100%;
-      overflow: hidden; /* 禁止滚动，由上下背景高度来适配多余空间 */
+      min-width: 0; /* 允许窗口继续变窄，不卡在内容最小宽度 */
+      overflow: hidden;
+      overflow-x: hidden;
       touch-action: none; /* 整页禁止缩放与手势缩放 */
       -ms-touch-action: none;
       -webkit-tap-highlight-color: transparent; /* 点击不出现选中高亮 */
@@ -114,22 +121,20 @@
       font-family: "ZCOOL KuaiLe", sans-serif;
     }
 
-    /* 【修改】整页容器 位置: 居中，逻辑画布最大宽度 560px；桌面左右留间距，mobile 基准保持原样。 */
+    /* 舞台承载层：铺满视口，不再用 560px 外壳（避免粉边/外框） */
     #app {
-      width: 100%;
-      height: 100%;
-      max-width: 560px;
-      margin: 0 auto;
-      position: relative;
-      background: linear-gradient(180deg, #fffaf5 0%, #fff0e8 30%, #ffebe0 70%, #ffe4d6 100%);
-      overflow: visible;
-      box-sizing: border-box;
-      padding: 0 12px;
-    }
-    .layout-mobile #app {
+      width: 100vw;
+      height: 100vh;
+      min-width: 0; /* 允许窗口继续变窄 */
       max-width: none;
+      margin: 0;
+      position: relative;
+      background: transparent;
+      overflow: hidden;
+      box-sizing: border-box;
       padding: 0;
     }
+    /* mobile 也同样由舞台缩放控制，这里无需额外外壳规则 */
 
     /* 自定义弹窗 */
     #custom-modal {
@@ -275,11 +280,16 @@
       pointer-events: none;
     }
 
-    /* 【修改】加载页 logo 大小 */
+    /* 【修改】加载页 logo 大小；初始透明，等 onload 后再显示，避免 Android 下出现“png”或裂图一闪 */
     #loading-card img.logo {
       width: 120px;
       height: 120px;
       margin-bottom: 10px;
+      opacity: 0;
+      transition: opacity 0.25s ease-out;
+    }
+    #loading-card img.logo.logo-visible {
+      opacity: 1;
     }
 
     /* 【修改】加载条 宽高 */
@@ -675,11 +685,13 @@
 
     /* 关卡选择页：同色系可爱风，居中排版 */
     #level-screen {
-      position: absolute;
+      /* 选关页必须以视口为基准，避免被舞台缩放/父级 overflow 裁切 */
+      position: fixed;
       inset: 0;
       z-index: 10500;
       display: none;
       background: #fff8f5;
+      overflow: visible;
     }
     #level-screen.visible {
       display: flex;
@@ -707,7 +719,14 @@
       border-radius: 24px;
       box-shadow: 0 8px 32px rgba(196, 92, 62, 0.12), 0 2px 12px rgba(139, 69, 26, 0.08);
       border: 1px solid rgba(232, 196, 176, 0.8);
-      max-width: 94%;
+      /* 恢复“正常全屏状态下”的固定排版尺寸，避免先被压窄再缩放 */
+      width: 520px;
+      max-width: none;
+      /* 选关卡片：整块同比例缩放（卡片+内部按钮一起变大/变小），避免被截断 */
+      --level-scale: 1;
+      transform: scale(var(--level-scale));
+      transform-origin: center center;
+      overflow: visible;
     }
     #level-title {
       font-size: 1.35rem;
@@ -724,9 +743,11 @@
     }
     #level-screen .level-grid {
       display: grid;
+      /* 固定排版，缩放交给 --level-scale（保持真正同比例） */
       grid-template-columns: repeat(5, 64px);
       gap: 8px;
       justify-content: center;
+      width: auto;
     }
     .level-cell {
       border: none;
@@ -793,7 +814,7 @@
     .level-cell.level-cell-challenge .level-stars span { color: #d4942c; }
     .level-cell.level-cell-challenge .level-stars span.empty { color: #e8d4b8; }
     .level-cell .level-num {
-      font-size: 1rem;
+      font-size: 0.95rem;
       margin-bottom: 2px;
     }
     .level-cell .level-stars {
@@ -905,13 +926,14 @@
       justify-content: center;
     }
 
-    /* 奖励关/挑战关：实际玩法容器 */
+    /* 奖励关/挑战关：实际玩法容器；translateZ(0) 保证 Android 下鱼鱼合成等图片稳定 */
     .special-game-wrap {
       width: min(520px, 86vw);
       margin: 0 auto 18px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      transform: translateZ(0);
     }
     .special-hud {
       display: flex;
@@ -1008,7 +1030,7 @@
       opacity: 0;
     }
 
-    /* 挑战关：合成棋盘 */
+    /* 挑战关：合成棋盘；translateZ(0) 保证 Android 下鱼鱼关卡图片稳定显示 */
     .merge-top {
       display: flex;
       justify-content: space-between;
@@ -1022,6 +1044,7 @@
       user-select: none;
       -webkit-user-select: none;
       font-size: 0.9rem;
+      transform: translateZ(0);
     }
     .merge-top .slot {
       display: flex;
@@ -1049,6 +1072,7 @@
       border: 1px solid rgba(232, 196, 176, 0.85);
       touch-action: manipulation;
       position: relative;
+      transform: translateZ(0);
     }
     .merge-cell {
       aspect-ratio: 1 / 1;
@@ -1063,6 +1087,7 @@
       overflow: hidden;
       position: relative;
       --flow-pos: 0%;
+      transform: translateZ(0);
       background-image:
         linear-gradient(135deg, rgba(255, 220, 210, 0.4), rgba(255, 245, 240, 0.9)),
         linear-gradient(90deg, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.5) 40%, rgba(255, 255, 255, 0.0) 80%);
@@ -1084,12 +1109,13 @@
     }
 
     /* 奖励关里的倒计时条：放在掉落区域上方居中 */
-    /* 奖励关页：顶部 HUD（暂停/标题/进度）——排版跟正常游戏页面一致 */
+    /* 奖励关页：顶部 HUD（暂停/标题/进度）；translateZ(0) 避免 Android 下不重绘 */
     .reward-hud {
       width: min(560px, 100%);
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
+      transform: translateZ(0);
     }
     .reward-top-row {
       height: 50px;
@@ -1174,6 +1200,7 @@
       overflow: hidden;
       border: 1px solid rgba(232, 196, 176, 0.85);
       background: #fff;
+      transform: translateZ(0);
     }
     /* 倒计时：放在掉落区域内部居中 */
     .reward-timer {
@@ -1287,33 +1314,33 @@
     /* mobile：SVG 再压一层，game-inner 独立堆叠且保持无 transform，避免 scale 下 SVG 灰线盖住寿司 */
     .layout-mobile #game > .bg-svg { z-index: -2; }
     .layout-mobile #game-inner { transform: none; z-index: 2; isolation: isolate; }
-    /* iPad 横屏（layout-pad）同样需要这套层级：否则回转寿司灰色背景/分隔条可能被覆盖成纯白 */
-    .layout-pad #game > .bg-svg { z-index: -2; }
-    .layout-pad #game-inner { transform: none; z-index: 2; isolation: isolate; }
 
     /* 标题页里的 SVG 背景下降一层，让自定义点阵纹理覆盖在其上方可见 */
     #menu > .bg-svg {
       z-index: -2;
     }
 
-    /* 游戏视图区：以 560px 为设计基准宽度，所有内容按这个宽度排版；
-       宽度变窄时整块等比缩小（JS 里通过 scale 实现），禁止只改高度或左右被压缩。 */
+    /* 游戏视图区：默认铺满不套盒子；仅宽视口（能达成 9:16）时才用 560px 居中 */
     #game {
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 50%;
-      width: 560px;
-      max-width: 560px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
       z-index: 1000;
       display: flex;
       flex-direction: column;
-      transform: translateX(-50%);
+      transform: none;
     }
 
     #game.hidden {
       display: none;
     }
+
+    /* 宽/窄屏的“展示方式”不再靠 CSS 尺寸裁切，而是统一由 JS 按 700×880 整体缩放 */
 
     /* 可缩放的游戏内容内层容器：用于在移动端按宽度整体等比例缩小标题/想吃条/桌面等内容 */
     #game-inner {
@@ -1323,35 +1350,14 @@
       flex-direction: column;
       width: 100%;
       height: 100%;
+      min-width: 0; /* 允许窗口变窄，Firefox 等需显式覆盖 flex 默认 min-width:auto */
       transform-origin: top center;
     }
+    #game-inner > * { min-width: 0; }
 
-    /* 移动端：20:9 竖屏盒子上下撑满视口，左右按比例留白或铺满；盒子随视口放大缩小，内容用间距自适应填满。 */
-    .layout-mobile #game {
-      top: 50%;
-      left: 50%;
-      bottom: auto;
-      right: auto;
-      /* 以视口为基准：先保证上下撑满 100vh，宽度按 9/20；若会超出 100vw 则改为左右撑满、高度按 20/9 */
-      width: min(100vw, calc(100vh * 9 / 20));
-      height: min(100vh, calc(100vw * 20 / 9));
-      max-width: none;
-      transform: translate(-50%, -50%);
-    }
+    /* 窗口不能达成 9:16 时由媒体查询自己适应，不套盒子、不限制宽度（见下方 @media） */
 
-    /* iPad 横屏：用 16:9 的“竖向盒子”（高度 16、宽度 9）居中显示，避免被当成手机竖屏布局 */
-    .layout-pad #game {
-      top: 50%;
-      left: 50%;
-      bottom: auto;
-      right: auto;
-      width: min(100vw, calc(100vh * 9 / 16));
-      height: min(100vh, calc(100vw * 16 / 9));
-      max-width: none;
-      transform: translate(-50%, -50%);
-    }
-
-    /* 【修改】顶栏 位置: 最上 高50px 左右padding */
+    /* 【修改】顶栏 位置: 最上 高50px 左右padding；translateZ(0) 避免 Android 下顶栏不重绘 */
     #top-bar {
       height: 50px;
       flex-shrink: 0;
@@ -1361,20 +1367,19 @@
       padding: 0 15px;
       position: relative;
       z-index: 10;
+      /* 标题+暂停按钮：PC/mobile 一起整体下移一点点（仅视觉位移，不影响其他布局） */
+      transform: translateY(10px) translateZ(0);
     }
 
-    /* 移动端顶栏：略矮一些，标题和按钮整体更紧凑，避免挤占桌面高度 */
+    /* 移动端顶栏：略矮一些，标题和按钮整体更紧凑；仅用 game-title 的 padding-top 留标题上缘，不抢整体高度避免挤进吃饭区 */
     .layout-mobile #top-bar {
-      height: calc(44px + env(safe-area-inset-top, 0px));
-      padding: env(safe-area-inset-top, 0px) 10px 0;
-    }
-    /* iPad：同样给标题留出安全区，避免被裁掉半个字 */
-    .layout-pad #top-bar {
-      height: calc(44px + env(safe-area-inset-top, 0px));
-      padding: env(safe-area-inset-top, 0px) 10px 0;
+      /* mobile：标题/暂停按钮位置与 PC 保持一致 */
+      height: 50px;
+      padding: 0 15px;
+      transform: translateZ(0);
     }
 
-    /* 【修改】顶栏标题 居中，防止长标题撑破排版 */
+    /* 【修改】顶栏标题 居中，防止长标题撑破排版；留出标题上方空间避免被裁半个字 */
     #game-title {
       flex: 1;
       min-width: 0;
@@ -1383,6 +1388,7 @@
       color: #8b451a;
       font-weight: bold;
       margin: 0;
+      padding-top: 6px;
       position: relative;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1416,7 +1422,15 @@
       font-size: 1rem;
     }
 
-    /* 【修改】信息栏 进度条+金额/分数占满整宽 */
+    /* mobile：暂停/设置按钮 XY 微调（默认不移动；需要时只改这里的数值） */
+    .layout-mobile #btn-set { transform: translate(0px, 8px); }
+    .layout-mobile #reward-pause-btn { transform: translate(0px, 8px); }
+    .layout-mobile #challenge-pause-btn { transform: translate(0px, 8px); }
+
+    /* mobile：标题（#game-title）XY 微调（默认不移动；需要时只改这里的数值） */
+    .layout-mobile #game-title { transform: translate(0px, 10px); }
+
+    /* 【修改】信息栏 进度条+金额/分数占满整宽；translateZ(0) 避免 Android 下进度条/分数不重绘 */
     #info-bar {
       height: 40px;
       flex-shrink: 0;
@@ -1427,9 +1441,10 @@
       z-index: 10;
       width: 100%;
       box-sizing: border-box;
+      transform: translateZ(0);
     }
     /* 移动端：只把进度条往上拉，和想吃保持 20px，不动机器/桌子 */
-    .layout-mobile #info-bar { margin-top: -14px; margin-bottom: 20px; }
+    .layout-mobile #info-bar { margin-top: -8px; margin-bottom: 10px; }
 
     /* 金钱/分数区：进度条 + 旁边金额(自助)或分数(闯关) */
     #money-area {
@@ -1496,6 +1511,8 @@
 
     /* 【修改】计时 位置/内边距/字号；固定宽高避免外框乱动，文字居中 */
     #timer {
+      --timer-tx: 0px;
+      --timer-ty: 0px;
       background: rgba(255, 255, 255, 0.7);
       border-radius: 12px;
       padding: 4px 12px;
@@ -1509,6 +1526,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transform: translate(var(--timer-tx), var(--timer-ty));
     }
 
     #timer.timer-warning {
@@ -1520,11 +1538,11 @@
     }
 
     @keyframes timer-blink {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.08); opacity: 0.4; }
+      0%, 100% { transform: translate(var(--timer-tx), var(--timer-ty)) scale(1); opacity: 1; }
+      50% { transform: translate(var(--timer-tx), var(--timer-ty)) scale(1.08); opacity: 0.4; }
     }
 
-    /* 【修改】气泡区 撑满一行：时钟|想吃(flex:1)|下一个 */
+    /* 【修改】气泡区 撑满一行：时钟|想吃(flex:1)|下一个；桌面端也加 translateZ(0) 保证与饭友区一致的合成层行为 */
     #bubble-area {
       height: 72px;
       width: 100%;
@@ -1534,9 +1552,10 @@
       margin-top: 2px;
       pointer-events: none;
       box-sizing: border-box;
+      transform: translateZ(0);
     }
-    /* mobile：进度条与想吃之间固定 20px；想吃也单独上移，和寿司区域拉开间隔 */
-    .layout-mobile #bubble-area { margin-top: 12px; margin-bottom: 0; transform: translateY(-10px); }
+    /* mobile：把「计时器/想吃/下一个」整体上移，更靠近进度条；仅影响 bubble-area */
+    .layout-mobile #bubble-area { margin-top: 6px; margin-bottom: 0; transform: translateY(-30px) translateZ(0); }
 
     /* 内层真正在排版的行：timer | 想吃 | 下一个 三个组件在这一层里等比缩放 */
     #bubble-row-inner {
@@ -1550,21 +1569,50 @@
       transform-origin: top center;
     }
 
-    /* 移动端：整行等比缩小以适配 20:9 宽度，不溢出、不拉扁 */
+    /* 移动端：不整块等比缩小，用你改的排版 */
     .layout-mobile #bubble-row-inner {
       width: 100%;
-      transform: scale(0.82);
+      transform: none;
       transform-origin: top center;
+      /* mobile：想吃较高（2 排），右侧改成两行：上计时器，下下一个，并整体居中 */
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      justify-content: center;
+      column-gap: 8px; /* 左右更靠近 */
+      row-gap: 4px;
     }
     .layout-mobile #bubble-current {
-      flex: 1 1 auto;
-      min-width: 60%;
+      /* 左侧想吃跨两行 */
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      /* 想吃：不管出现什么组合，都固定为“3个组合时的最大长度” */
+      width: 173px;
+      min-width: 173px;
+      max-width: 173px;
+      /* 想吃整体（含内部图案）同比例缩小一点 */
+      transform: scale(0.85);
+      transform-origin: center center;
     }
     .layout-mobile #bubble-area #timer {
-      flex-shrink: 0;
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+      /* 计时器：增大并往左下移动 */
+      font-size: 1.25rem;
+      width: 100px;
+      min-width: 100px;
+      --timer-tx: -24px;
+      --timer-ty: 10px;
     }
     .layout-mobile #bubble-next {
-      flex-shrink: 0;
+      grid-column: 2;
+      grid-row: 2;
+      justify-self: center;
+      /* 下一个下移一点点，给计时器留空间 */
+      margin-top: -5px; /* 往上移动 */
+      transform: translateX(-16px); /* 往左一点，更贴近想吃 */
     }
 
     #bubble-area #timer {
@@ -1591,7 +1639,7 @@
       flex-shrink: 0;
     }
 
-    /* 【修改】想吃：标题放最上面，下面一排左组|中间空|右组；中间大以支持一行6个 */
+    /* 【修改】想吃：标题放最上面，下面一排左组|中间空|右组；中间大以支持一行6个；translateZ(0) 保证 Android 下与饭友气泡一致稳定显示 */
     #bubble-current {
       position: relative; /* 让自己的倒计时条只覆盖这块气泡，而不是整屏 */
       flex-direction: column;
@@ -1600,6 +1648,7 @@
       min-width: 0;
       gap: 4px;
       padding: 6px 10px;
+      transform: translateZ(0);
     }
     /* 饥饿饭友场景：自己的吃饭区域稍微缩窄一点，给两侧饭友条留空间 */
     .friends-layout #bubble-current {
@@ -1743,6 +1792,7 @@
     }
     #bubble-current .want-container { flex-wrap: wrap; }
     /* 饥饿饭友：左右竖条气泡（红椅位置），中间与正常关卡一样 想吃+下一个 */
+    /* Android：强制独立合成层，避免游戏运行时 conveyor 动画导致本区域不重绘、想吃图不显示 */
     #friends-bubbles {
       position: absolute;
       left: 0;
@@ -1756,6 +1806,7 @@
       justify-content: space-between;
       align-items: stretch;
       padding: 0;
+      transform: translateZ(0);
     }
     #friends-bubbles.hidden { display: none !important; }
     #friends-bubbles .friend-bubble {
@@ -1774,15 +1825,16 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       position: relative;
       align-self: center;
+      transform: translateZ(0);
     }
     #friends-bubbles .friend-bubble-left { margin-left: 4px; }
     #friends-bubbles .friend-bubble-right { margin-right: 4px; }
     #friends-bubbles .friend-bubble-top { position: absolute; }
-    /* 3、4 号饭友上移一点，避免和自己吃饭区域重叠太多：位于 1、2 的正下方但略偏上 */
-    #friends-bubbles .friend-bubble-3 { left: 4px; bottom: 90px; margin: 0; transform: none; }
-    #friends-bubbles .friend-bubble-4 { right: 4px; bottom: 90px; left: auto; margin: 0; }
+    /* 3、4 号饭友上移一点，避免和自己吃饭区域重叠太多：位于 1、2 的正下方但略偏上；保留 translateZ(0) 保证 Android 合成层可见 */
+    #friends-bubbles .friend-bubble-3 { left: 4px; bottom: 90px; margin: 0; transform: translateZ(0); }
+    #friends-bubbles .friend-bubble-4 { right: 4px; bottom: 90px; left: auto; margin: 0; transform: translateZ(0); }
     .friend-bubble-title { font-size: 0.7rem; color: #8b451a; margin-bottom: 2px; flex-shrink: 0; }
-    .friend-bubble-want { flex: 1; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-width: 0; gap: 0; }
+    .friend-bubble-want { flex: 1; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-width: 0; gap: 0; transform: translateZ(0); }
     .friend-bubble-want .friend-want-item { display: flex; align-items: center; justify-content: center; }
     .friend-bubble-want .friend-want-item img, .friend-bubble-want .friend-want-item canvas { max-width: 28px; max-height: 28px; object-fit: contain; }
     .friend-bubble-want .friend-want-plus { font-size: 0.6rem; color: #8b451a; }
@@ -1802,7 +1854,7 @@
       z-index: 0;
       pointer-events: none;
     }
-    .friend-bubble-want { position: relative; z-index: 1; background: transparent; border-radius: 6px; }
+    .friend-bubble-want { position: relative; z-index: 1; background: transparent; border-radius: 6px; backface-visibility: hidden; }
     .friend-bubble-title { position: relative; z-index: 1; background: transparent; border-radius: 4px; }
     /* 计时条永远在最底层，避免覆盖点击/视觉 */
     .friend-bubble-timer { z-index: 0; }
@@ -1913,8 +1965,7 @@
     /* 下一个的角标是 add 上去的，只留右侧空间避免盖住图；不占上边，标题保持原位置 */
     #bubble-next .want-group-wrap { padding-right: 14px; }
 
-    /* 【修改】传送带整行 高度 margin */
-    /* 【修改】回转寿司区变矮、下移，与上方想吃留空隙，最下方位置不变 */
+    /* 【修改】传送带整行 高度 margin；translateZ(0) 避免 Android 下传送带容器不重绘 */
     #conveyor-row {
       height: 90px;
       flex-shrink: 0;
@@ -1926,6 +1977,7 @@
       border-top: 3px solid rgba(0, 0, 0, 0.1);
       border-bottom: none;
       overflow: hidden;
+      transform: translateZ(0);
     }
     /* 浅灰①：传送带「背后」的灰条 = #conveyor-row-bg（寿司在这条上面滑动）。PC 显示；mobile 不显示，避免堆叠盖住寿司 */
     #conveyor-row::before { display: none; }
@@ -2097,6 +2149,7 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
+      min-width: 0;
       z-index: 5;
       background: #d9ad7c;
     }
@@ -2126,23 +2179,24 @@
     .seat-bg-left { left: 0; border-radius: 0; }
     .seat-bg-right { right: 0; border-radius: 0; }
 
-    /* 桌面区域大盒子：把桌上的元素（盘位/盘装菜/酱料与杯子/吃饭区）整体包在一个 box 里，
-       方便在移动端时基于这个 box 做宽度和间隙的整体控制。 */
+    /* 桌面区域大盒子：把桌上的元素（盘位/盘装菜/酱料与杯子/吃饭区）整体包在一个 box 里；
+       translateZ(0) 避免 Android 下整块桌面不重绘 */
     #table-area {
       position: relative;
       flex: 1;
       display: flex;
       flex-direction: column;
       min-height: 0;
+      min-width: 0;
       z-index: 1;
-      /* mobile 的填满/间隙由 JS 动态控制（避免挤进吃饭区） */
+      transform: translateZ(0);
     }
 
     /* 移动端：桌面大 box 水平居中，两侧为饭友竖条和红色座位条预留安全间隙，
        避免桌面内容在窄屏下贴到左右红色 boundary。 */
     .layout-mobile #table-area {
       width: 100%;
-      max-width: calc(100% - 80px); /* 双侧各预留约 40px 安全区 */
+      max-width: calc(100% - 80px); /* 双侧各预留约 40px 安全区（茶壶/饮料/座位条需要这个） */
       margin: 0 auto;
       gap: 0;
       --mobile-gap-after-desk: 0px;
@@ -2150,7 +2204,7 @@
       --mobile-fill-scale: 1;
     }
 
-    /* 【修改】寿司盘位+饮料行：在回转灰色下方不重叠，整行居中；左右留出椅子宽，可乐等不压椅子 */
+    /* 【修改】寿司盘位+饮料行：在回转灰色下方不重叠，整行居中；左右留出椅子宽，可乐等不压椅子；translateZ(0) 避免 Android 下饮料/茶壶不重绘 */
     #desk-row {
       position: relative;
       z-index: 1;
@@ -2161,6 +2215,7 @@
       align-items: center;
       padding: 0 56px;
       margin-top: 14px;
+      transform: translateZ(0);
     }
     #desk-row .side-items { flex-shrink: 0; }
     #desk-row #slots-container { flex: 0 0 auto; }
@@ -2171,7 +2226,7 @@
     .layout-mobile #desk-row .side-items,
     .layout-mobile #dishes-row .dish-item,
     .layout-mobile #bottom-row .cup-zone {
-      transform: translate(0px, 0px) scale(calc(0.9 * var(--mobile-fill-scale, 1)));
+      transform: translate(0px, 0px) translateZ(0);
       transform-origin: center center;
     }
     /* 调料单独整体 0.7，不跟上面 0.9 叠加 */
@@ -2188,7 +2243,7 @@
       gap: 6px;
     }
 
-    /* 【修改】左侧茶水区 最小宽 */
+    /* 【修改】左侧茶水区 最小宽；translateZ(0) 保证 Android 下茶壶/倒水区稳定显示 */
     .side-items.left-drinks {
       position: absolute;
       left: 30px;
@@ -2199,6 +2254,7 @@
       justify-content: flex-start;
       align-self: flex-start;
       align-items: flex-end;
+      transform: translateZ(0);
     }
     .side-items.left-drinks .drink-slot {
       flex-shrink: 0;
@@ -2219,7 +2275,7 @@
       object-fit: contain;
       object-position: center center;
     }
-    /* 【修改】右侧 coke/calpis/orange：间隔小、再往上、靠右，与左侧茶水大致同一高度 */
+    /* 【修改】右侧 coke/calpis/orange：间隔小、再往上、靠右；translateZ(0) 保证 Android 下饮料区稳定显示 */
     .side-items.right-drinks {
       position: absolute;
       right: 62px;
@@ -2231,6 +2287,7 @@
       margin-left: auto;
       align-self: flex-start;
       margin-top: 0;
+      transform: translateZ(0);
     }
     .side-items.right-drinks .drink-slot {
       width: 24px;
@@ -2246,12 +2303,13 @@
       object-position: center center;
     }
 
-    /* 【修改】左侧饮料/茶水槽 每个大小 */
+    /* 【修改】左侧饮料/茶水槽 每个大小；translateZ(0) 避免 Android 下饮料倒水区不重绘 */
     .drink-slot {
       width: 50px;
       height: 50px;
       position: relative;
       flex-shrink: 0;
+      transform: translateZ(0);
     }
 
     .drink-slot canvas,
@@ -2370,46 +2428,51 @@
       margin: 0;
     }
 
-    /* 【修改】盘装菜区 高度 grid gap padding */
+    /* 【修改】盘装菜区：与 desk-row、bottom-row 一致——行 flex+justify-content:center，内层为 grid 居中 */
     #dishes-row {
       height: 165px;
       flex-shrink: 0;
       position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 4px;
+      z-index: 50;
+    }
+    #dishes-row .dishes-row-inner {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1fr;
       grid-template-rows: 1fr 1fr;
       gap: 4px 2px;
       justify-items: center;
       align-items: center;
+      width: 520px;
       max-width: 100%;
-      padding: 0 4px;
-      z-index: 50;
+      height: 100%;
+      padding: 0;
     }
-    /* 【修改】各盘位置 1左圆 2-3椭圆 4右圆 5-6扁
-       每个盘子提供单独的 XY 偏移 和 缩放，方便你微调：
-       translate(Xpx, Ypx) 里的 X/Y、以及 scale(S) 里的 S 都可以随便改数值。
-       （越大的 X 往右，越大的 Y 往下；S>1 放大，0~1 缩小） */
-    #dishes-row .dish-item:nth-child(1) {
+    /* 【修改】各盘位置 1左圆 2-3椭圆 4右圆 5-6扁（内层 grid 子项，相对位置保持） */
+    #dishes-row .dishes-row-inner .dish-item:nth-child(1) {
       grid-column: 1; grid-row: 1;
       transform: translate(43px, 3px) scale(1);
     }
-    #dishes-row .dish-item:nth-child(2) {
+    #dishes-row .dishes-row-inner .dish-item:nth-child(2) {
       grid-column: 2; grid-row: 1;
       transform: translate(18px, -20px) scale(1.05);
     }
-    #dishes-row .dish-item:nth-child(3) {
+    #dishes-row .dishes-row-inner .dish-item:nth-child(3) {
       grid-column: 3; grid-row: 1;
       transform: translate(-18px, -20px) scale(1.08);
     }
-    #dishes-row .dish-item:nth-child(4) {
+    #dishes-row .dishes-row-inner .dish-item:nth-child(4) {
       grid-column: 4; grid-row: 1;
       transform: translate(-45px, 3px) scale(0.97);
     }
-    #dishes-row .dish-item:nth-child(5) {
+    #dishes-row .dishes-row-inner .dish-item:nth-child(5) {
       grid-column: 2; grid-row: 2;
       transform: translate(15px, -32px) scale(1.05);
     }
-    #dishes-row .dish-item:nth-child(6) {
+    #dishes-row .dishes-row-inner .dish-item:nth-child(6) {
       grid-column: 3; grid-row: 2;
       transform: translate(-15px, -32px) scale(1.05);
     }
@@ -2463,7 +2526,7 @@
       object-fit: contain;
     }
 
-    /* 【修改】底排 高度 padding gap */
+    /* 【修改】底排 高度 padding gap；translateZ(0) 避免 Android 下杯子/倒水区不重绘 */
     #bottom-row {
       height: 130px;
       flex-shrink: 0;
@@ -2473,6 +2536,7 @@
       padding: 0 4px;
       gap: 6px;
       z-index: 10;
+      transform: translateZ(0);
     }
 
     /* === 移动端专用排版：整体更窄、更紧凑 ===
@@ -2544,77 +2608,76 @@
     .layout-mobile #slots-container .desk-slot[data-index="5"] {
       grid-column: 2; grid-row: 3;
     }
-    /* 左侧组（茶壶 + 抹茶）XY：仅 mobile，改下面 translate(Xpx, Ypx)，X 正=右移 Y 正=下移 */
+    /* 左侧组（茶壶 + 抹茶）XY：仅 mobile，改下面 translate(Xpx, Ypx)，X 正=右移 Y 正=下移；translateZ(0) 保证 Android 合成层 */
     .layout-mobile #desk-row .side-items.left-drinks {
       left: 20px;
       top: -18px;
-      transform: translate(-40px, -55px) scale(0.9);
+      transform: translate(-40px, -55px) scale(0.9) translateZ(0);
       transform-origin: center center;
     }
-    /* 右侧组（可乐/可尔必思/橙汁等）XY：仅 mobile，改下面 translate(Xpx, Ypx)，X 正=右移 Y 正=下移 */
+    /* 右侧组（可乐/可尔必思/橙汁等）XY：仅 mobile；translateZ(0) 保证 Android 合成层 */
     .layout-mobile #desk-row .side-items.right-drinks {
       right: 40px;
       top: -26px;
-      transform: translate(30px, -43px) scale(0.9);
+      transform: translate(30px, -43px) scale(0.9) translateZ(0);
       transform-origin: center center;
     }
 
-    /* 盘装菜区（dish）：移动端改成“2 行 3 列”，整块居中，留间隙铺满桌子 */
+    /* 盘装菜区（dish）：与虚线寿司碟、调料一致——行 flex+justify-content:center，内层 grid 居中 */
     .layout-mobile #dishes-row {
       height: 165px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* 只让 dish 这一行对齐视口中心线：不吃 table-area 的安全区，从而不影响茶/饮料布局 */
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
       padding: 0 2px;
-      gap: 3px 4px;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      place-items: center;
-      width: 100%;
-      max-width: 100%;
-      margin-left: 0;
-      margin-right: 0;
       margin-top: var(--mobile-gap-after-desk, 0px); /* 仅在“有余量”时由 JS 增加 */
       margin-bottom: 0;
+      overflow: visible; /* 允许 dish 视觉上越过椅子边界 */
     }
-
-    /* iPad 横屏（layout-pad）同样复用 mobile 的 2x3 dish 布局与居中 */
-    .layout-pad #dishes-row {
+    .layout-mobile #dishes-row .dishes-row-inner {
+      display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, 1fr);
-      place-items: center;
-      width: 100%;
-      padding: 0 2px;
       gap: 3px 4px;
-      margin-top: var(--mobile-gap-after-desk, 0px);
+      place-items: center;
+      width: 320px;
+      /* dish 行不吃“左右安全边界”，允许整体继续往左/往右移（不受容器最大宽度约束） */
+      max-width: none;
+      height: 100%;
+      padding: 0;
+      /* 关键：外层 flex 负责“数学居中”，但 6 个盘子自身的 translate 会造成“视觉重心偏右/偏左”；
+         用这个整体偏移把视觉中心线拉回到与虚线碟/调料一致。需要微调就改这个数值。 */
+      transform: translateX(-28px);
+      transform-origin: center center;
     }
-    /* dish1：单独 XY / 缩放（仅 mobile） */
-    .layout-mobile #dishes-row .dish-item:nth-child(1) { /* 第 1 行第 1 个：dish1 */
+
+    /* mobile 六盘相对位置（以 dish2 炒饭 X=0 为基准，其余相对排布） */
+    .layout-mobile #dishes-row .dishes-row-inner .dish-item:nth-child(1) { /* 第1行第1个 */
       grid-column: 1; grid-row: 1;
-      transform: translate(-11px, -10px) scale(0.57);
+      transform: translate(59px, -10px) scale(0.57) translateZ(0);
     }
-    /* dish2：单独 XY / 缩放（仅 mobile） */
-    .layout-mobile #dishes-row .dish-item:nth-child(2) { /* 第 1 行第 2 个：dish2 */
+    .layout-mobile #dishes-row .dishes-row-inner .dish-item:nth-child(2) { /* 第1行第2个 炒饭 X=0 */
       grid-column: 2; grid-row: 1;
-      transform: translate(-70px, -15px) scale(0.67);
+      transform: translate(0px, -15px) scale(0.67) translateZ(0);
     }
-    /* dish3：单独 XY / 缩放（仅 mobile，居中一点） */
-    .layout-mobile #dishes-row .dish-item:nth-child(3) { /* 第 2 行第 2 个：dish3 */
+    .layout-mobile #dishes-row .dishes-row-inner .dish-item:nth-child(3) { /* 第2行第2个 */
       grid-column: 2; grid-row: 2;
-      transform: translate(-68px, -60px) scale(0.67);
+      transform: translate(2px, -60px) scale(0.67) translateZ(0);
     }
-    /* dish4：单独 XY / 缩放（仅 mobile） */
-    .layout-mobile #dishes-row .dish-item:nth-child(4) { /* 第 1 行第 3 个：dish4 */
+    .layout-mobile #dishes-row .dishes-row-inner .dish-item:nth-child(4) { /* 第1行第3个 */
       grid-column: 3; grid-row: 1;
-      transform: translate(-130px, -10px) scale(0.55);
+      transform: translate(-60px, -10px) scale(0.55) translateZ(0);
     }
-    /* 第 2 行：dish5 和 dish6 + 中间放 dish3 */
-    /* dish5：第 2 行第 1 个（仅 mobile） */
-    .layout-mobile #dishes-row .dish-item:nth-child(5) {
+    .layout-mobile #dishes-row .dishes-row-inner .dish-item:nth-child(5) { /* 第2行第1个 */
       grid-column: 1; grid-row: 2;
-      transform: translate(-8px, -50px) scale(0.69);
+      transform: translate(62px, -50px) scale(0.69) translateZ(0);
     }
-    /* dish6：第 2 行第 3 个（仅 mobile） */
-    .layout-mobile #dishes-row .dish-item:nth-child(6) {
+    .layout-mobile #dishes-row .dishes-row-inner .dish-item:nth-child(6) { /* 第2行第3个 */
       grid-column: 3; grid-row: 2;
-      transform: translate(-130px, -50px) scale(0.77);
+      transform: translate(-60px, -50px) scale(0.77) translateZ(0);
     }
 
     /* 底排（酱料 + 杯子）：高度固定，与上方 dish 留间隙，铺满桌子到吃饭区上方 */
@@ -2637,7 +2700,7 @@
       transform-origin: center center;
     }
 
-    /* 【修改】黑杯/透明杯 大小（下面有“整体缩放入口”和“单独 XY/缩放”，PC / mobile 分开控制） */
+    /* 【修改】黑杯/透明杯 大小；translateZ(0) 保证 Android 下倒水/杯子区稳定显示 */
     .cup-zone {
       width: 64px;
       height: 64px;
@@ -2646,22 +2709,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transform: translateZ(0);
     }
-    /* 黑色杯子 / 透明杯：提供单独 XY/缩放 方便微调
-       translate(Xpx, Ypx) 里的 X/Y、scale(S) 里的 S 都可以改 */
+    /* 黑色杯子 / 透明杯：提供单独 XY/缩放 方便微调；translateZ(0) 保证 Android 下倒水区稳定显示 */
     #zone-black-cup {
-      transform: translate(30px, -60px) scale(0.8); /* PC 默认位置 */
+      transform: translate(30px, -60px) scale(0.8) translateZ(0); /* PC 默认位置 */
     }
     #zone-glass-cup {
-      transform: translate(-40px, -70px) scale(1);  /* PC 默认位置 */
+      transform: translate(-40px, -70px) scale(1) translateZ(0);  /* PC 默认位置 */
     }
-    /* mobile 下：单独调杯子位置/大小（用 #bottom-row 提高特异性，覆盖上面的 .cup-zone 统一 transform） */
+    /* mobile 下：单独调杯子位置/大小；translateZ(0) 保证 Android 合成层 */
     .layout-mobile #bottom-row #zone-black-cup {
-      transform: translate(80px, -52px) scale(0.6);
+      transform: translate(80px, -52px) scale(0.6) translateZ(0);
       transform-origin: center center;
     }
     .layout-mobile #bottom-row #zone-glass-cup {
-      transform: translate(-70px, -50px) scale(0.7);
+      transform: translate(-70px, -50px) scale(0.7) translateZ(0);
       transform-origin: center center;
     }
     /* 拿起杯子：原位显示虚线占位（杯子本体隐藏） */
@@ -2771,6 +2834,7 @@
       box-sizing: border-box;
       display: flex;
       align-items: center;
+      transform: translateZ(0);
       justify-content: center;
       pointer-events: none;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
@@ -2817,7 +2881,7 @@
       display: none;
     }
 
-    /* 【修改】筷子容器 宽高（JS里 top 用 y-160 与 height 一致） */
+    /* 【修改】筷子容器 宽高；translateZ(0) 避免 Android 下筷子/夹取物不重绘 */
     #chopsticks-wrap {
       position: fixed;
       width: 160px;
@@ -2825,21 +2889,21 @@
       pointer-events: none;
       left: -1000px;
       top: -1000px;
-      transform: none;
+      transform: translateZ(0);
       transition: transform 0.05s linear;
       touch-action: none;
     }
 
     #chopsticks-wrap.grabbing {
-      transform: scale(0.95);
+      transform: scale(0.95) translateZ(0);
     }
-    /* 手机端：筷子和夹起来的东西整体 x0.7 */
+    /* 手机端：筷子和夹起来的东西整体 x0.7；保留 translateZ(0) 保证 Android 合成层 */
     .layout-mobile #chopsticks-wrap {
-      transform: scale(0.8);
+      transform: scale(0.8) translateZ(0);
       transform-origin: center center;
     }
     .layout-mobile #chopsticks-wrap.grabbing {
-      transform: scale(0.665);
+      transform: scale(0.665) translateZ(0);
     }
 
     /* 【修改】后筷 相对容器位置(translate 微调) */
@@ -3113,7 +3177,7 @@
       <div id="loading-items"></div>
       <div id="loading-combo"></div>
       <div id="loading-card">
-        <img class="logo" data-img="512icon.PNG" alt="logo">
+        <img class="logo" data-img="512icon.PNG" alt="" role="img">
         <h2 style="color:#c45c3e; margin-bottom:10px;" id="loading-title">我要吃三文鱼</h2>
         <div class="bar-bg">
           <div class="bar-fill" id="loading-progress"></div>
@@ -3251,8 +3315,10 @@
               </div>
             </div>
 
-            <!-- 盘装菜 (斜着放) -->
-            <div id="dishes-row"></div>
+            <!-- 盘装菜 (斜着放)：内层与虚线碟/调料一致，用 flex+justify-content:center 居中 -->
+            <div id="dishes-row">
+              <div id="dishes-row-inner" class="dishes-row-inner"></div>
+            </div>
 
             <!-- 左黑杯 酱料 右透明杯 -->
             <div id="bottom-row">
@@ -3269,7 +3335,7 @@
         </div>
       </div>
 
-      <!-- 饥饿饭友模式：1–4 个饭友竖条气泡（不参与内部等比缩放，始终贴在 20:9 盒子边上） -->
+      <!-- 饥饿饭友模式：1–4 个饭友竖条气泡（不参与内部等比缩放，始终贴在 9:16 盒子边上） -->
       <div id="friends-bubbles" class="hidden">
         <div class="friend-bubble friend-bubble-left" id="friend-bubble-left">
           <div class="friend-bubble-timer" id="friend-timer-left"></div>
@@ -3438,7 +3504,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.8";
+    const APP_VERSION = "1.0.9";
     // 移动端锁死缩放：Safari/iOS 必须阻止 gesture 三件套，否则双指/双击仍会放大
     document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
     document.addEventListener("gesturechange", e => e.preventDefault(), { passive: false });
@@ -3483,47 +3549,54 @@
       return null;
     })();
 
-    // 响应式布局：低于 16:9 一律进 mobile（不套额外框）。
-    // 判定按 w/h：w/h <= 16/9 => mobile；更宽则桌面布局。
+    // 与 CSS 同一套条件：窄视口 = 宽高比<560/704 或 宽度≤640px，保证真正切到 mobile
+    function isNarrowViewport() {
+      if (typeof window.matchMedia !== "function") return window.innerWidth <= 640;
+      var q1 = window.matchMedia("(max-aspect-ratio: 560/704)");
+      var q2 = window.matchMedia("(max-width: 640px)");
+      return (q1 && q1.matches) || (q2 && q2.matches);
+    }
     function applyResponsiveLayout() {
       try {
-        const root = document.documentElement;
+        var root = document.documentElement;
         if (DEV_FORCE_LAYOUT === "mobile") {
           root.classList.add("layout-mobile");
-          root.classList.remove("layout-pad");
+          runAfterLayout();
           return;
         }
         if (DEV_FORCE_LAYOUT === "desktop") {
           root.classList.remove("layout-mobile");
-          root.classList.remove("layout-pad");
+          runAfterLayout();
           return;
         }
-        const w = window.innerWidth || document.documentElement.clientWidth || 0;
-        const h = window.innerHeight || document.documentElement.clientHeight || 1;
-        const ratio = h ? (w / h) : 1;
-        const SIXTEEN_NINE = 16 / 9;
-        const useMobile = w > 0 && ratio <= SIXTEEN_NINE;
+        var useMobile = isNarrowViewport();
         if (useMobile) root.classList.add("layout-mobile");
         else root.classList.remove("layout-mobile");
-        // 禁用 layout-pad（避免低于 16:9 还套框）
-        root.classList.remove("layout-pad");
-
-        // 关键：切换 layout class 后强制重算（部分机型 rotate 时样式应用有延迟）
-        const force = function () {
-          try { if (typeof window.__updateGameScaleByWidth === "function") window.__updateGameScaleByWidth(); } catch (e) { }
-          try { if (typeof window.__updateMobileTableFill === "function") window.__updateMobileTableFill(); } catch (e) { }
-        };
-        try {
-          requestAnimationFrame(() => requestAnimationFrame(force));
-          window.setTimeout(force, 200);
-        } catch (e) {
-          window.setTimeout(force, 0);
-        }
+        runAfterLayout();
+      } catch (e) { }
+    }
+    function runAfterLayout() {
+      try {
+        if (typeof window.__updateGameScaleByWidth === "function") window.__updateGameScaleByWidth();
+        if (typeof window.__updateMobileTableFill === "function") window.__updateMobileTableFill();
       } catch (e) { }
     }
     applyResponsiveLayout();
     window.addEventListener("resize", applyResponsiveLayout);
     window.addEventListener("orientationchange", applyResponsiveLayout);
+    window.addEventListener("load", function () {
+      setTimeout(applyResponsiveLayout, 0);
+      setTimeout(applyResponsiveLayout, 100);
+      setTimeout(applyResponsiveLayout, 400);
+    });
+    var mql1 = window.matchMedia && window.matchMedia("(max-aspect-ratio: 560/704)");
+    var mql2 = window.matchMedia && window.matchMedia("(max-width: 640px)");
+    if (mql1 && mql1.addEventListener) mql1.addEventListener("change", applyResponsiveLayout);
+    if (mql2 && mql2.addEventListener) mql2.addEventListener("change", applyResponsiveLayout);
+    if (window.visualViewport && window.visualViewport.addEventListener) {
+      window.visualViewport.addEventListener("resize", applyResponsiveLayout);
+      window.visualViewport.addEventListener("scroll", applyResponsiveLayout);
+    }
 
     // mobile：在“不改变你基准排版”的前提下，按可用空间动态拉开间隙/微放大，且不越过 eat-zone 上边缘
     function updateMobileTableFill() {
@@ -3701,8 +3774,9 @@
       window.btnRulesStart = {};
     }
 
+    /* 512icon 放最前，loading 页 logo 尽早拿到图，减少裂图/“png”一闪 */
     const ASSETS_BY_GUIDE = [
-      "192icon.PNG", "512icon.PNG",
+      "512icon.PNG", "192icon.PNG",
       "backChopstick_black.PNG", "backChopstick_blue.PNG", "backChopstick_brown.PNG", "backChopstick_gold.PNG", "backChopstick_green.PNG", "backChopstick_grey.PNG", "backChopstick_pink.PNG", "backChopstick_red.PNG", "backChopstick_silver.PNG",
       "dish_beef.PNG", "dish_fryRice.PNG", "dish_salmonCube.PNG", "dish_salmonSlice.PNG", "dish_salmon_belly.PNG", "dish_salmon_noodle.PNG",
       "frontChopstick_black.PNG", "frontChopstick_blue.PNG", "frontChopstick_brown.PNG", "frontChopstick_gold.PNG", "frontChopstick_green.PNG", "frontChopstick_grey.PNG", "frontChopstick_pink.PNG", "frontChopstick_red.PNG", "frontChopstick_sliver.PNG",
@@ -3760,12 +3834,21 @@
         img.setAttribute("data-src", src);
         img.onload = function () {
           registerImg(img, src);
-          // loading 界面 logo 一旦 512icon 加载完就显示，其余 data-img 在 finishLoading 统一赋值
           if (src === "512icon.PNG") {
             const logo = document.querySelector("#loading-card .logo");
-            if (logo && img.src) logo.src = img.src;
+            if (logo && img.src) {
+              logo.src = img.src;
+              function showLogo() { logo.classList.add("logo-visible"); }
+              if (logo.complete) showLogo();
+              else logo.onload = showLogo;
+            }
           }
-          onOneLoaded();
+          // Android：等 decode 完成再计为加载完成，减少进游戏后图片闪一下才出现
+          if (img.decode) {
+            img.decode().then(onOneLoaded).catch(onOneLoaded);
+          } else {
+            onOneLoaded();
+          }
         };
         img.onerror = function () {
           onOneLoaded();
@@ -3786,6 +3869,12 @@
           el.src = g_CroppedCanvas[name].src;
         }
       });
+      // loading 页 logo：若此处才被赋 src（或 512icon 先于 logo 显示逻辑），确保加载完成后显示，避免 Android 裂图一闪
+      var loadingLogo = document.querySelector("#loading-card img.logo");
+      if (loadingLogo && loadingLogo.src) {
+        if (loadingLogo.complete) loadingLogo.classList.add("logo-visible");
+        else loadingLogo.onload = function () { loadingLogo.classList.add("logo-visible"); };
+      }
 
       // 从本地存储恢复星星、皮肤与闯关进度，再应用当前皮肤并初始化皮肤商城
       loadProgressFromStorage();
@@ -4276,13 +4365,13 @@
         const unlockedSauces = SAUCE_ORDER.filter(s => (SAUCE_UNLOCK_LEVEL[s] || 99) <= i);
         const unlockedConveyor = CONVEYOR_ORDER.filter(c => (CONVEYOR_UNLOCK_LEVEL[c] || 99) <= i);
         const conveyorSlots = getConveyorSlotsForLevel(i);
-        // 分数要求 x1.5 提高难度；奖励关使用独立阈值
+        // 分数要求 x1.3 提高难度；奖励关使用独立阈值
         let targetScore;
-        if (i === 10) targetScore = Math.round(25 * 1.5);       // 第10关：接东西
-        else if (i === 20) targetScore = Math.round(30 * 1.5);  // 第20关：夹寿司
+        if (i === 10) targetScore = Math.round(25 * 1.3);       // 第10关：接东西
+        else if (i === 20) targetScore = Math.round(30 * 1.3);  // 第20关：夹寿司
         else {
           const baseTarget = 50 + (i - 1) * 12;
-          targetScore = Math.round(baseTarget * 1.3 * 1.5);
+          targetScore = Math.round(baseTarget * 1.3 * 1.3);
         }
         const timeLimit = (i === 10 || i === 20) ? 30 : 90;
         levels.push({
@@ -4849,12 +4938,48 @@
       if (!screen) return;
       renderLevelGrid();
       showView("level");
+      // 选关卡片：按视口同比例缩放（卡片+按钮一起缩放），避免被截断
+      if (typeof window.__updateLevelScreenScale === "function") {
+        requestAnimationFrame(() => window.__updateLevelScreenScale(true));
+      }
     }
 
     function closeLevelScreen() {
       const screen = document.getElementById("level-screen");
       if (screen) screen.classList.remove("visible");
     }
+
+    (function initLevelScreenAutoScale() {
+      function updateLevelScreenScale(force) {
+        const screen = document.getElementById("level-screen");
+        if (!screen || !screen.classList.contains("visible")) return;
+        const inner = document.getElementById("level-screen-inner");
+        if (!inner) return;
+
+        // 用不受 transform 影响的 layout 尺寸（避免 scale 算错导致被截取）
+        if (force) inner.style.setProperty("--level-scale", "1");
+        const w = Math.max(1, inner.offsetWidth || 0);
+        const h = Math.max(1, inner.offsetHeight || 0);
+
+        const vv = window.visualViewport;
+        const vw = (vv && typeof vv.width === "number" && vv.width > 0) ? vv.width : window.innerWidth;
+        const vh = (vv && typeof vv.height === "number" && vv.height > 0) ? vv.height : window.innerHeight;
+
+        // 尽量吃满可视区域，避免“看起来被压窄”（留很大黑边）
+        const pad = 12; // 视口四周安全边距
+        const availW = Math.max(1, vw - pad * 2);
+        const availH = Math.max(1, vh - pad * 2);
+        const s = Math.min(1, availW / w, availH / h);
+        inner.style.setProperty("--level-scale", String(s));
+      }
+
+      window.__updateLevelScreenScale = updateLevelScreenScale;
+      window.addEventListener("resize", () => updateLevelScreenScale(false));
+      window.addEventListener("orientationchange", () => updateLevelScreenScale(false));
+      if (window.visualViewport && window.visualViewport.addEventListener) {
+        window.visualViewport.addEventListener("resize", () => updateLevelScreenScale(false));
+      }
+    })();
 
     const REWARD_LEVELS = [10, 20];
 
@@ -5459,7 +5584,9 @@
         raf = requestAnimationFrame(tickChop);
         const t = window.setInterval(() => {
           if (!running) { clearInterval(t); return; }
+          if (STATE.paused) return;
           timeLeft--;
+          timerEl.textContent = `0:${Math.max(0, timeLeft).toString().padStart(2, "0")}`;
           if (timeLeft <= 0) {
             running = false;
             clearInterval(t);
@@ -5534,6 +5661,7 @@
 
       let highest = -1;
       let maxSeen = -1; // 当前已合成到的最高等级
+      let _challengeFinished = false;
 
       // 防闪烁：top 三个槽位只有在内容变化时才更新
       let _topCache = { bestKey: null, nowKey: null, nextKey: null, lang: null };
@@ -5709,6 +5837,14 @@
         if (v > highest) highest = v;
         if (v > maxSeen) maxSeen = v;
         updateChallengeProgress();
+        // 达成最高级（花之恋）后：自动 5 星胜利
+        if (!_challengeFinished) {
+          const starsNow = starsFromHighest();
+          if (starsNow >= 5) {
+            _challengeFinished = true;
+            finishChallenge(true);
+          }
+        }
       }
 
       function updateChallengeProgress() {
@@ -5758,24 +5894,28 @@
       }
 
       function starsFromHighest() {
-        // 1星=norm三文鱼；2=norm金枪鱼；3=刺身片；4=三文鱼腩；5=花之恋
-        const key = (highest >= 0 && CHAIN[highest]) ? CHAIN[highest].key : "";
-        if (key === "sushi_salmonLove.PNG") return 5;
-        if (key === "get_salmonBelly.PNG") return 4;
-        if (key === "get_salmonSlice.PNG") return 3;
-        if (key === "sushi_norm_tuna.PNG") return 2;
-        if (key === "sushi_norm_salmon.PNG") return 1;
-        // 若资源链缺失，按等级映射保底
-        return Math.max(0, Math.min(5, highest + 1));
+        // 星星规则（鱼鱼挑战）：
+        // - 低于「三文鱼寿司」（norm三文鱼=1星）=> 0星（失败）
+        // - 每高一级 => 多 1 颗星
+        // 这里用 CHAIN 中「norm三文鱼」所在的 goalIndex 作为 1 星基准。
+        const h = highest | 0;
+        if (h < goalIndex) return 0;
+        return Math.max(0, Math.min(5, (h - goalIndex + 1)));
       }
 
       function finishChallenge(win) {
+        if (_challengeFinished) {
+          // setHighest 里可能已标记；避免重复弹窗/重复加星
+        } else {
+          _challengeFinished = true;
+        }
         stopSpecialMiniGame();
-        const stars = starsFromHighest();
+        // 结算弹窗展示“本局星级”；关卡选择里展示“历史最高”
+        const runStars = starsFromHighest();
         const prev = Math.max(0, Math.min(5, STATE.challengeBestStars || 0));
-        if (stars > prev) {
-          STATE.challengeBestStars = stars;
-          const delta = stars - prev;
+        if (runStars > prev) {
+          STATE.challengeBestStars = runStars;
+          const delta = runStars - prev;
           if (delta > 0) {
             STATE.stars += delta;
             updateStarDisplay();
@@ -5783,7 +5923,7 @@
           saveProgressToStorage();
         }
         renderLevelGrid();
-        const filled = Math.max(0, Math.min(5, STATE.challengeBestStars || 0));
+        const filled = Math.max(0, Math.min(5, runStars || 0));
         const empty = 5 - filled;
         const starHtml =
           `<span style="color:#ffb400;font-size:1.6rem;">${"★".repeat(filled)}</span>` +
@@ -6227,7 +6367,7 @@
       }
 
       // Setup Dishes (Arranged slightly tilted via CSS transform)
-      const dishContainer = document.getElementById("dishes-row");
+      const dishContainer = document.getElementById("dishes-row-inner") || document.getElementById("dishes-row");
       dishContainer.innerHTML = "";
       /* 顺序对应半圆排版：上排 左圆-椭圆-椭圆-右圆，下排 扁-扁 */
       const dishes = [
@@ -6623,7 +6763,9 @@
         const wrap = document.createElement("div");
         wrap.className = "canvas-placeholder";
         wrap.style.width = "100%"; wrap.style.height = "100%";
-        const im = og.cloneNode();
+        const im = document.createElement("img");
+        im.alt = "";
+        if (og.src) im.src = og.src;
         im.style.width = "100%"; im.style.height = "100%"; im.style.objectFit = "contain";
         wrap.appendChild(im);
         return wrap;
@@ -7998,9 +8140,13 @@
           resetHolding(); return;
         }
         if (elementContains(glass, dragPos.x, dragPos.y) && currentHolding.raw !== "hu" && currentHolding.raw !== "cha") {
-          // 透明杯：只允许空杯倒入（半杯/满杯都不允许换/续）
+          // 透明杯：空杯可倒入；半杯时允许倒同类饮料填满
           if (STATE.glassCupLevel === 0) {
             STATE.glassCupType = currentHolding.raw;
+            STATE.glassCupLevel = 2;
+            updateDrinksVisuals();
+            poured = true;
+          } else if (STATE.glassCupLevel === 1 && STATE.glassCupType === currentHolding.raw) {
             STATE.glassCupLevel = 2;
             updateDrinksVisuals();
             poured = true;
@@ -8683,53 +8829,44 @@
     // Start sequence
     initLoading();
 
-    // ------------- 桌面：保持你排好的上边缘基准；缩放时以「拿到这里吃掉」上边缘为边界，可放大填满；mobile 不动 -------------
+    // 统一舞台缩放：以 700×880 为设计基准，整套 UI（传送带/想吃/饭友等全部）一起等比缩放并居中
     (function () {
-      const BASE_WIDTH_DESKTOP = 560;
-      const DESKTOP_MARGIN = 24;
-
-      function updateGameScaleByWidth() {
+      function updateStageScale() {
         const game = document.getElementById("game");
         if (!game) return;
-        const eatZone = document.getElementById("eat-zone");
+
+        const BASE_W = 560;
+        const BASE_H = 704;
+        const vv = window.visualViewport;
+        const vw = (vv && typeof vv.width === "number" && vv.width > 0) ? vv.width : window.innerWidth;
+        const vh = (vv && typeof vv.height === "number" && vv.height > 0) ? vv.height : window.innerHeight;
 
         const docEl = document.documentElement;
-        const isMobileLayout = docEl.classList.contains("layout-mobile");
-        const inner = document.getElementById("game-inner");
+        const isMobileLayout = docEl.classList.contains("layout-mobile") || (typeof isNarrowViewport === "function" && isNarrowViewport());
 
-        if (isMobileLayout) {
-          game.style.transformOrigin = "center center";
-          game.style.transform = "translate(-50%, -50%) scale(1)";
-          if (inner) inner.style.transform = "";
-          return;
-        }
+        // PC：等比缩放完整展示（不裁切）
+        // mobile：按高度 BASE_H 充满（scale = vh/BASE_H），宽度自适应（缩放后刚好铺满 vw）
+        const scale = isMobileLayout ? (vh / BASE_H) : Math.min(vw / BASE_W, vh / BASE_H);
 
-        if (inner) inner.style.transform = "";
-        const vw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
-        const vh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 1;
-        const availW = Math.max(0, vw - DESKTOP_MARGIN);
-        const scaleByW = availW / BASE_WIDTH_DESKTOP;
+        // 固定舞台高度为 BASE_H；宽度在 PC 固定为 BASE_W，在 mobile 反推以铺满屏幕宽度
+        const stageW = isMobileLayout ? (vw / Math.max(scale, 0.0001)) : BASE_W;
 
-        game.style.transformOrigin = "top center";
-        game.style.transform = "translateX(-50%) scale(1)";
-        const gameRect = game.getBoundingClientRect();
-        const eatRect = eatZone ? eatZone.getBoundingClientRect() : null;
-        const contentH = eatRect ? (eatRect.top - gameRect.top) : gameRect.height;
-        const maxH = Math.max(1, vh - gameRect.top);
-        const scaleByBoundary = contentH > 0 ? maxH / contentH : 1;
-        // 横屏高度过矮时的兜底：按视口高度再缩一次，避免底部被裁切（只缩小不放大）
-        const scaleByH = gameRect.height > 0 ? (vh / gameRect.height) : 1;
-
-        const s = Math.max(0.1, Math.min(Math.min(scaleByW, scaleByBoundary, scaleByH, 1), 2));
-        game.style.transformOrigin = "top center";
-        game.style.transform = "translateX(-50%) scale(" + s + ")";
+        // 固定舞台尺寸，再整体缩放居中
+        game.style.position = "fixed";
+        game.style.left = "50%";
+        game.style.top = "50%";
+        game.style.right = "auto";
+        game.style.bottom = "auto";
+        game.style.width = stageW + "px";
+        game.style.height = BASE_H + "px";
+        game.style.maxWidth = "none";
+        game.style.transformOrigin = "center center";
+        game.style.transform = `translate(-50%, -50%) scale(${scale})`;
       }
-
-      window.addEventListener("resize", updateGameScaleByWidth);
-      window.addEventListener("orientationchange", updateGameScaleByWidth);
-      updateGameScaleByWidth();
-      // 暴露给 applyResponsiveLayout：切换横竖屏时强制重算，避免残留 mobile transform
-      window.__updateGameScaleByWidth = updateGameScaleByWidth;
+      window.addEventListener("resize", updateStageScale);
+      window.addEventListener("orientationchange", updateStageScale);
+      updateStageScale();
+      window.__updateGameScaleByWidth = updateStageScale;
     })();
   </script>
 </body>
