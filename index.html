@@ -121,6 +121,20 @@
       font-family: "ZCOOL KuaiLe", sans-serif;
     }
 
+    /* 缩放舞台时：尽量让位图（PNG）采样更清晰，减少“发糊” */
+    img,
+    canvas {
+      image-rendering: auto;
+      -ms-interpolation-mode: bicubic;
+    }
+    /* iOS Safari：可用时用更锐利的采样；Android 上可能导致闪烁，避免启用 */
+    @supports (-webkit-overflow-scrolling: touch) and (image-rendering: -webkit-optimize-contrast) {
+      img,
+      canvas {
+        image-rendering: -webkit-optimize-contrast;
+      }
+    }
+
     /* 舞台承载层：铺满视口，不再用 560px 外壳（避免粉边/外框） */
     #app {
       width: 100vw;
@@ -415,12 +429,13 @@
 
     /* 标题页右下角版本号（整个画面右下角） */
     #version-badge {
-      position: absolute;
+      /* 固定在视口右下角，避免被任意容器/缩放裁掉 */
+      position: fixed;
       right: 10px;
       bottom: 8px;
       font-size: 0.6rem;
       color: rgba(139, 69, 26, 0.8);
-      z-index: 5200;
+      z-index: 99999;
       pointer-events: none;
     }
 
@@ -1491,7 +1506,10 @@
       transform: translateX(-50%);
     }
     .star-marker[data-at="30"] { left: 30%; }
+    .star-marker[data-at="20"] { left: 20%; }
+    .star-marker[data-at="40"] { left: 40%; }
     .star-marker[data-at="60"] { left: 60%; }
+    .star-marker[data-at="80"] { left: 80%; }
     .star-marker[data-at="75"] { left: 75%; }
     .star-marker[data-at="90"] { left: 90%; }
     .star-marker[data-at="100"] { left: 100%; }
@@ -1800,13 +1818,17 @@
       top: 78px;
       bottom: 0;
       pointer-events: none;
-      z-index: 7;
+      /* Android: 确保在游戏运行时稳定合成/重绘（避免只在弹窗/暂停时才出现） */
+      z-index: 12000;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: stretch;
       padding: 0;
       transform: translateZ(0);
+      will-change: transform;
+      backface-visibility: hidden;
+      contain: paint;
     }
     #friends-bubbles.hidden { display: none !important; }
     #friends-bubbles .friend-bubble {
@@ -1836,7 +1858,14 @@
     .friend-bubble-title { font-size: 0.7rem; color: #8b451a; margin-bottom: 2px; flex-shrink: 0; }
     .friend-bubble-want { flex: 1; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-width: 0; gap: 0; transform: translateZ(0); }
     .friend-bubble-want .friend-want-item { display: flex; align-items: center; justify-content: center; }
-    .friend-bubble-want .friend-want-item img, .friend-bubble-want .friend-want-item canvas { max-width: 28px; max-height: 28px; object-fit: contain; }
+    .friend-bubble-want .friend-want-item img, .friend-bubble-want .friend-want-item canvas {
+      max-width: 28px;
+      max-height: 28px;
+      object-fit: contain;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform;
+    }
     .friend-bubble-want .friend-want-plus { font-size: 0.6rem; color: #8b451a; }
     .friend-bubble-want .friend-want-xn { font-size: 0.6rem; color: #8b451a; vertical-align: super; }
     #self-timer-in-bubble.hidden { display: none !important; }
@@ -2889,22 +2918,16 @@
       pointer-events: none;
       left: -1000px;
       top: -1000px;
-      transform: translateZ(0);
+      /* 筷子尺寸：以 PC 为 1，mobile 按视口宽度等比缩小（由 JS 写入 --chopsticks-scale） */
+      transform: scale(var(--chopsticks-scale, 1)) translateZ(0);
       transition: transform 0.05s linear;
       touch-action: none;
     }
 
     #chopsticks-wrap.grabbing {
-      transform: scale(0.95) translateZ(0);
+      transform: scale(calc(var(--chopsticks-scale, 1) * 0.95)) translateZ(0);
     }
-    /* 手机端：筷子和夹起来的东西整体 x0.7；保留 translateZ(0) 保证 Android 合成层 */
-    .layout-mobile #chopsticks-wrap {
-      transform: scale(0.8) translateZ(0);
-      transform-origin: center center;
-    }
-    .layout-mobile #chopsticks-wrap.grabbing {
-      transform: scale(0.665) translateZ(0);
-    }
+    #chopsticks-wrap { transform-origin: center center; }
 
     /* 【修改】后筷 相对容器位置(translate 微调) */
     #chop-back {
@@ -3504,7 +3527,13 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.9";
+    const APP_VERSION = "1.0.10";
+    function updateVersionBadge() {
+      try {
+        const badge = document.getElementById("version-badge");
+        if (badge) badge.textContent = "v" + APP_VERSION;
+      } catch (e) { }
+    }
     // 移动端锁死缩放：Safari/iOS 必须阻止 gesture 三件套，否则双指/双击仍会放大
     document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
     document.addEventListener("gesturechange", e => e.preventDefault(), { passive: false });
@@ -3832,6 +3861,7 @@
       CONFIG.assets.forEach(function (src) {
         const img = document.createElement("img");
         img.setAttribute("data-src", src);
+        try { img.decoding = "async"; } catch (e) { }
         img.onload = function () {
           registerImg(img, src);
           if (src === "512icon.PNG") {
@@ -3875,6 +3905,7 @@
         if (loadingLogo.complete) loadingLogo.classList.add("logo-visible");
         else loadingLogo.onload = function () { loadingLogo.classList.add("logo-visible"); };
       }
+      updateVersionBadge();
 
       // 从本地存储恢复星星、皮肤与闯关进度，再应用当前皮肤并初始化皮肤商城
       loadProgressFromStorage();
@@ -5482,7 +5513,7 @@
         front.classList.remove("hidden");
         const cvs = cloneCanvas(imgName);
         if (!cvs) return;
-        cf.appendChild(wrapAsHoldItem(cvs, imgName, 0.08, 1.48, "grab"));
+        cf.appendChild(wrapAsHoldItem(cvs, imgName, 0.08, 1.5, "grab"));
         updateWrapPosition(clientX, clientY);
         var stayMs = 420;
         var fadeMs = 520;
@@ -5849,7 +5880,10 @@
 
       function updateChallengeProgress() {
         const maxLevel = Math.max(1, CHAIN.length - 1);
-        const ratio = Math.max(0, Math.min(1, highest / maxLevel));
+        // 进度条按“第几级/总级数”算，而不是用 0-based 索引除以 (N-1)。
+        // 例：总共 9 级（0..8），达到第 5 级（index=4）应显示 5/9，而不是 4/8。
+        const totalLevels = maxLevel + 1;
+        const ratio = Math.max(0, Math.min(1, (highest >= 0 ? (highest + 1) / totalLevels : 0)));
         const fill = document.getElementById("challenge-progress-fill");
         const text = document.getElementById("challenge-progress-text");
         if (fill) fill.style.width = (ratio * 100).toFixed(1) + "%";
@@ -5859,6 +5893,13 @@
         if (starWrap) {
           const nodes = starWrap.querySelectorAll(".star-marker");
           nodes.forEach((n, idx) => {
+            // 按“真实星级门槛”定位，而不是等分：
+            // 1 星在 goalIndex（例如第 6 级），之后每高一级 +1 星
+            try {
+              const levelForStar = Math.max(0, Math.min(maxLevel, (goalIndex | 0) + idx));
+              const leftPct = ((levelForStar + 1) / totalLevels) * 100;
+              n.style.left = leftPct.toFixed(3) + "%";
+            } catch (e) { }
             if (idx < stars) {
               n.style.color = "#ffce3a";
               n.style.textShadow = "0 0 4px rgba(255, 206, 58, 0.9), 0 0 8px rgba(255, 206, 58, 0.7)";
@@ -6729,7 +6770,19 @@
       inner.className = "hold-inner";
       inner.style.width = Math.max(1, Math.round(baseW * scale)) + "px";
       inner.style.height = Math.max(1, Math.round(baseH * scale)) + "px";
-      const s = (typeof sizeScale === "number" ? sizeScale : 1);
+      // mobile 下 #chopsticks-wrap 会整体按 --chopsticks-scale 缩小（为了筷子），
+      // 但拿起物体也在这个容器里，会被连带缩小；这里抵消掉，保证“拿起态”最终倍率稳定。
+      const wanted = (typeof sizeScale === "number" ? sizeScale : 1);
+      let s = wanted;
+      try {
+        const docEl = document.documentElement;
+        const isMobileLayout = docEl.classList.contains("layout-mobile") || (typeof isNarrowViewport === "function" && isNarrowViewport());
+        if (isMobileLayout) {
+          const cssV = getComputedStyle(docEl).getPropertyValue("--chopsticks-scale");
+          const chopScale = Math.max(0.1, parseFloat(cssV) || 1);
+          s = wanted / chopScale;
+        }
+      } catch (e) { }
       inner.style.transform = `scale(${s})`;
       inner.style.transformOrigin = "center top";
 
@@ -6765,6 +6818,7 @@
         wrap.style.width = "100%"; wrap.style.height = "100%";
         const im = document.createElement("img");
         im.alt = "";
+        try { im.decoding = "async"; } catch (e) { }
         if (og.src) im.src = og.src;
         im.style.width = "100%"; im.style.height = "100%"; im.style.objectFit = "contain";
         wrap.appendChild(im);
@@ -7073,6 +7127,24 @@
     function renderWants() {
       const mapRawToImg = (raw) => getStrictIconPngByRaw(raw);
 
+      // Android 性能：避免频繁清空并重建大量图片节点（会触发解码/GPU 上传卡顿）
+      // 仅当“想吃/下一个/划掉状态”真的变化时才重绘 DOM；计时条由 updateSpeedModeTimerBars 单独刷新。
+      try {
+        const keyObj = {
+          mode: STATE.mode,
+          cross: STATE.crossOutIndex,
+          cur: (STATE.wantsCurrent || []).map(g => ({ items: (g && g.items) ? g.items.slice() : (Array.isArray(g) ? g.slice() : []), count: (g && g.count != null) ? g.count : 1 })),
+          next: (STATE.wantsNext || []).map(g => ({ items: (g && g.items) ? g.items.slice() : (Array.isArray(g) ? g.slice() : []), count: (g && g.count != null) ? g.count : 1 })),
+          timers: !!((STATE.mode === "speed" || STATE.mode === "level") && STATE.wantDeadlines)
+        };
+        const key = JSON.stringify(keyObj);
+        if (window.__wantsRenderKey === key) {
+          if (typeof updateSpeedModeTimerBars === "function") updateSpeedModeTimerBars();
+          return;
+        }
+        window.__wantsRenderKey = key;
+      } catch (e) { }
+
       function renderOneGroup(group, index, isCurrent) {
         const wrap = document.createElement("div");
         wrap.className = "want-group-wrap";
@@ -7114,10 +7186,11 @@
 
       const renderList = (listArr, containerId) => {
         const c = document.getElementById(containerId);
-        c.innerHTML = "";
+        if (!c) return;
         const isCurrent = containerId === "want-current";
         if (isCurrent && listArr.length >= 2) {
           var left = listArr[0], right = listArr[1];
+          const frag = document.createDocumentFragment();
           var leftHalf = document.createElement("div");
           leftHalf.className = "want-current-half";
           var g0 = document.createElement("div");
@@ -7128,16 +7201,16 @@
             var t0 = document.createElement("div");
             t0.id = "want-timer-0";
             t0.className = "want-timer-bar";
-            var maxSec0 = getTimedGroupLimit(WANT_TIMER_SPEED, left);
-            var pct0 = maxSec0 > 0 ? Math.max(0, STATE.wantDeadlines[0]) / maxSec0 : 0;
-            if (pct0 < 0.25) t0.classList.add("urgent");
-            t0.innerHTML = "<div class=\"fill\" style=\"height:" + ((1 - pct0) * 100) + "%\"></div>";
+            var fill0 = document.createElement("div");
+            fill0.className = "fill";
+            fill0.style.height = "0%";
+            t0.appendChild(fill0);
             leftHalf.appendChild(t0);
           }
-          c.appendChild(leftHalf);
+          frag.appendChild(leftHalf);
           var div = document.createElement("div");
           div.className = "want-group-divider";
-          c.appendChild(div);
+          frag.appendChild(div);
           var rightHalf = document.createElement("div");
           rightHalf.className = "want-current-half";
           var g1 = document.createElement("div");
@@ -7148,27 +7221,34 @@
             var t1 = document.createElement("div");
             t1.id = "want-timer-1";
             t1.className = "want-timer-bar";
-            var maxSec1 = getTimedGroupLimit(WANT_TIMER_SPEED, right);
-            var pct1 = maxSec1 > 0 ? Math.max(0, STATE.wantDeadlines[1]) / maxSec1 : 0;
-            if (pct1 < 0.25) t1.classList.add("urgent");
-            t1.innerHTML = "<div class=\"fill\" style=\"height:" + ((1 - pct1) * 100) + "%\"></div>";
+            var fill1 = document.createElement("div");
+            fill1.className = "fill";
+            fill1.style.height = "0%";
+            t1.appendChild(fill1);
             rightHalf.appendChild(t1);
           }
-          c.appendChild(rightHalf);
+          frag.appendChild(rightHalf);
+          c.replaceChildren(frag);
+          if (typeof updateSpeedModeTimerBars === "function") updateSpeedModeTimerBars();
           return;
         }
         // 下一个只显示一组
         if (listArr.length > 0) {
+          const frag = document.createDocumentFragment();
           const comboDiv = renderOneGroup(listArr[0], 0, false);
           const row = document.createElement("div");
           row.className = "want-next-row";
           row.appendChild(comboDiv);
-          c.appendChild(row);
+          frag.appendChild(row);
+          c.replaceChildren(frag);
+        } else {
+          c.replaceChildren();
         }
       };
 
       renderList(STATE.wantsCurrent, "want-current");
       renderList(STATE.wantsNext, "want-next");
+      if (typeof updateSpeedModeTimerBars === "function") updateSpeedModeTimerBars();
     }
 
     // 缓存上次渲染的饮料/杯子状态，仅在实际变化时更新 DOM，避免移动端整块重绘卡顿
@@ -7391,30 +7471,36 @@
         const FRIEND_COOLDOWN_SEC = 2;
         var cooldown = STATE.friendsCooldown || [];
         var n = cooldown.length;
+        var friendsOrderChanged = false;
+        var friendsScoreChanged = false;
         for (var i = 0; i < n; i++) {
           if (cooldown[i] > 0) {
             cooldown[i] -= delta;
             if (cooldown[i] <= 0 && (STATE.friendsWants[i] == null || !STATE.friendsWants[i])) {
               STATE.friendsWants[i] = generateOrder();
               STATE.friendsDeadlines[i] = FRIEND_TIMER;
+              friendsOrderChanged = true;
             }
           } else {
             STATE.friendsDeadlines[i] -= delta;
             if (STATE.friendsDeadlines[i] <= 0) {
               STATE.score -= FRIEND_PENALTY;
+              friendsScoreChanged = true;
               // 扣分飘字：在对应饭友气泡附近显示 -X 分
               showFriendPenalty(i, FRIEND_PENALTY);
               // 扣分场景：不进入“吃吃吃中”，直接立刻刷新成新的想吃
               STATE.friendsWants[i] = generateOrder();
               STATE.friendsDeadlines[i] = FRIEND_TIMER;
               cooldown[i] = 0;
+              friendsOrderChanged = true;
             }
           }
         }
         STATE.friendsCooldown = cooldown;
         renderFriendsBubbles();
-        renderWants();
-        updateTopInfo();
+        // Android 性能关键点：避免每帧重建 wants 的图片 DOM（会导致闪烁/不重绘）
+        if (friendsOrderChanged) renderWants();
+        if (friendsScoreChanged) updateTopInfo();
         // 分数被扣到 0 以下：提前结束本局（0 分还能继续扛一会儿）
         if (STATE.score < 0) {
           STATE.playing = false;
@@ -7496,6 +7582,13 @@
 
     const MONEY_BAR_MAX = 200; // 金钱进度条满格对应的金额，可改
     const SCORE_BAR_MAX = 100; // 闯关分数条满格
+    // 特殊关卡（无限自助/快吃吧你/饥饿饭友）里，快吃/饭友会给“评分星星”
+    // 提高门槛：1/2/3 星需要更高分数
+    const RUN_STAR_1 = 80;
+    const RUN_STAR_2 = 150;
+    const RUN_STAR_3 = 250;
+    // 顶部进度条封顶（快吃/饭友）：按三星门槛满格显示
+    const RUN_SCORE_BAR_MAX = RUN_STAR_3;
     function showFriendPenalty(index, penalty) {
       var bubbleIds = ["friend-bubble-left", "friend-bubble-right", "friend-bubble-3", "friend-bubble-4"];
       var id = bubbleIds[index];
@@ -7518,17 +7611,17 @@
       setTimeout(() => { if (el.parentNode) el.remove(); }, 900);
     }
     function getRunStars(score) {
-      if (score >= 90) return "★★★";
-      if (score >= 60) return "★★☆";
-      if (score >= 30) return "★☆☆";
+      if (score >= RUN_STAR_3) return "★★★";
+      if (score >= RUN_STAR_2) return "★★☆";
+      if (score >= RUN_STAR_1) return "★☆☆";
       return "☆☆☆";
     }
     function addRunStarsToTotal(score) {
       // 根据分数给总星星加 0~3 颗（只加不减）
       let gain = 0;
-      if (score >= 90) gain = 3;
-      else if (score >= 60) gain = 2;
-      else if (score >= 30) gain = 1;
+      if (score >= RUN_STAR_3) gain = 3;
+      else if (score >= RUN_STAR_2) gain = 2;
+      else if (score >= RUN_STAR_1) gain = 1;
       if (gain > 0) {
         STATE.stars += gain;
         updateStarDisplay();
@@ -7549,7 +7642,7 @@
         if (bar) bar.style.width = Math.min((STATE.money / MONEY_BAR_MAX) * 100, 100) + "%";
         if (textEl) textEl.innerText = "¥ " + STATE.money.toFixed(2);
       } else if (STATE.mode === "speed" || STATE.mode === "friends") {
-        const pct = Math.min(100, Math.max(0, (STATE.score / 100) * 100));
+        const pct = Math.min(100, Math.max(0, (STATE.score / RUN_SCORE_BAR_MAX) * 100));
         if (bar) bar.style.width = pct + "%";
         if (textEl) textEl.innerText = t("分数 ", "Score ") + STATE.score;
       } else {
@@ -7936,14 +8029,14 @@
       }
 
       if (hasSeaweed && g_CroppedCanvas["get_seaweed.PNG"] && foodOnlyStr && g_CroppedCanvas[foodOnlyStr]) {
-        var seaweedWrap = wrapAsHoldItem(cloneCanvas("get_seaweed.PNG"), "get_seaweed.PNG", 0.08, 1.48, "grab");
+        var seaweedWrap = wrapAsHoldItem(cloneCanvas("get_seaweed.PNG"), "get_seaweed.PNG", 0.08, 1.5, "grab");
         seaweedWrap.classList.add("hold-item-seaweed");
-        var foodWrap = wrapAsHoldItem(cloneCanvas(foodOnlyStr), foodOnlyStr, 0.08, 1.48, "grab");
+        var foodWrap = wrapAsHoldItem(cloneCanvas(foodOnlyStr), foodOnlyStr, 0.08, 1.5, "grab");
         foodWrap.classList.add("hold-item-food");
         cf.appendChild(seaweedWrap);
         cf.appendChild(foodWrap);
       } else if (cvs) {
-        cf.appendChild(wrapAsHoldItem(cvs, usedName || targetImgStr || explicitImg || "", 0.08, 1.48, "grab"));
+        cf.appendChild(wrapAsHoldItem(cvs, usedName || targetImgStr || explicitImg || "", 0.08, 1.5, "grab"));
       }
     }
 
@@ -8862,6 +8955,11 @@
         game.style.maxWidth = "none";
         game.style.transformOrigin = "center center";
         game.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+        // mobile：筷子以 PC 为 1，按宽度比例缩小（不放大）
+        // 例：vw=280 => scale=0.5；vw>=560 => scale=1
+        const chopScale = isMobileLayout ? Math.max(0.1, Math.min(1, vw / BASE_W)) : 1;
+        docEl.style.setProperty("--chopsticks-scale", String(chopScale));
       }
       window.addEventListener("resize", updateStageScale);
       window.addEventListener("orientationchange", updateStageScale);
