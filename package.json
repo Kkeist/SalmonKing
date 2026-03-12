@@ -1,0 +1,13 @@
+{
+  "name": "i-want-salmon",
+  "version": "1.0.14",
+  "private": true,
+  "scripts": {
+    "build": "echo \"Using static index.html as web build\""
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0"
+  }
+}
