@@ -3552,7 +3552,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.15";
+    const APP_VERSION = "1.0.16";
     const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
     if (IS_ANDROID) {
       try {
@@ -7486,13 +7486,14 @@
       return el;
     }
 
-    /** 回转寿司保底：当前想吃的回转寿司（玩家+饭友）若不在可见区域内，则插入到传送带末尾（插队），保证能吃到。支持闯关/快吃吧你/饭友/闯关+饭友。 */
+    /** 回转寿司保底：当前想吃的回转寿司（玩家+饭友）若不在可见区域内，则插到「当前未入画」的后面 1 格（很快进画面），保证能吃到。支持闯关/快吃吧你/饭友/闯关+饭友/自助。 */
     function ensureConveyorHasWantedSushi() {
       const track = document.getElementById("conveyor-track");
       const clip = document.getElementById("conveyor-row-clip");
       if (!track || !clip) return;
       const clipRect = clip.getBoundingClientRect();
       const visibleTypes = new Set();
+      var lastVisibleIndex = -1;
       for (let i = 0; i < track.children.length; i++) {
         const el = track.children[i];
         if (!el.classList.contains("belt-item") || el.classList.contains("belt-item-ghost")) continue;
@@ -7501,8 +7502,11 @@
         const r = el.getBoundingClientRect();
         if (r.right >= clipRect.left && r.left <= clipRect.right && r.bottom >= clipRect.top && r.top <= clipRect.bottom) {
           visibleTypes.add(normalizeWantRaw(t));
+          lastVisibleIndex = i;
         }
       }
+      // 插入位置：紧挨可见区后面 1～2 格（1 格更快进画）
+      var insertAfter = lastVisibleIndex >= 0 ? lastVisibleIndex + 1 : 0;
       let pool = CONVEYOR_SUSHIS;
       if (STATE.mode === "level") {
         const cfg = getLevelConfig(STATE.currentLevelIndex || 1);
@@ -7523,8 +7527,12 @@
         const base = normalizeWantRaw(g.items[0]);
         if (!conveyorPool.has(base)) continue;
         if (visibleTypes.has(base)) continue;
-        track.appendChild(createOneConveyorItem(base));
+        const newEl = createOneConveyorItem(base);
+        var ref = track.children[insertAfter] || null;
+        if (ref) track.insertBefore(newEl, ref);
+        else track.appendChild(newEl);
         visibleTypes.add(base);
+        insertAfter++;
       }
     }
 

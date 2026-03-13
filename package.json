@@ -1,6 +1,6 @@
 {
   "name": "i-want-salmon",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": true,
   "scripts": {
     "build": "echo \"Using static index.html as web build\"",
