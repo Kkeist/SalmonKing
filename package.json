@@ -1,9 +1,10 @@
 {
   "name": "i-want-salmon",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "private": true,
   "scripts": {
-    "build": "echo \"Using static index.html as web build\""
+    "build": "echo \"Using static index.html as web build\"",
+    "android": "powershell -ExecutionPolicy Bypass -File ./run-android.ps1"
   },
   "dependencies": {
     "@capacitor/android": "^8.2.0",

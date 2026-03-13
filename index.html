@@ -3552,7 +3552,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.14";
+    const APP_VERSION = "1.0.15";
     const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
     if (IS_ANDROID) {
       try {
@@ -6566,7 +6566,10 @@
           STATE.wantDeadlines = null;
         }
         if (typeof renderWants === "function") renderWants();
-        if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
+        // 保底延后一帧执行，确保传送带已布局完成，可见区域判断正确（快吃吧你/闯关）
+        var doEnsure = function () { if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi(); };
+        if (typeof requestAnimationFrame !== "undefined") requestAnimationFrame(doEnsure);
+        else doEnsure();
       }
       var dontWant = document.getElementById("btn-dont-want");
       if (dontWant) {
@@ -6576,6 +6579,7 @@
             STATE.wantsCurrent[0] = generateOrder();
             STATE.wantsCurrent[1] = generateOrder();
             renderWants();
+            if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
           };
         } else {
           dontWant.classList.add("hidden");
@@ -6637,6 +6641,10 @@
       if (b4) b4.style.display = n >= 4 ? "flex" : "none";
       renderFriendsBubbles();
       renderWants();
+      // 保底延后到 fillConveyorBelt 之后执行（setupFriendsModeUI 在 startGame 里早于传送带填充被调用）
+      var doEnsureFriends = function () { if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi(); };
+      if (typeof requestAnimationFrame !== "undefined") requestAnimationFrame(doEnsureFriends);
+      else doEnsureFriends();
     }
     /** 严格查图：只允许从“已预加载的真实文件名”里取，不猜、不试错。 */
     function getStrictIconPngByRaw(raw) {
@@ -7478,7 +7486,7 @@
       return el;
     }
 
-    /** 回转寿司保底：当前想吃的回转寿司若不在可见区域内，则插入到传送带末尾（插队），保证玩家能吃到 */
+    /** 回转寿司保底：当前想吃的回转寿司（玩家+饭友）若不在可见区域内，则插入到传送带末尾（插队），保证能吃到。支持闯关/快吃吧你/饭友/闯关+饭友。 */
     function ensureConveyorHasWantedSushi() {
       const track = document.getElementById("conveyor-track");
       const clip = document.getElementById("conveyor-row-clip");
@@ -7501,9 +7509,16 @@
         if (cfg && cfg.unlockedConveyor && cfg.unlockedConveyor.length) pool = cfg.unlockedConveyor;
       }
       const conveyorPool = new Set(pool);
-      const wants = STATE.wantsCurrent || [];
-      for (let i = 0; i < wants.length; i++) {
-        const g = wants[i];
+      // 收集玩家 + 饭友（闯关+饭友 / 纯饭友）的回转寿司想吃，统一保底
+      const wantGroups = (STATE.wantsCurrent || []).slice();
+      if (typeof isFriendsActive === "function" && isFriendsActive() && STATE.friendsWants && STATE.friendsWants.length) {
+        for (let f = 0; f < STATE.friendsWants.length; f++) {
+          const fw = STATE.friendsWants[f];
+          if (fw && fw.items && fw.items.length) wantGroups.push(fw);
+        }
+      }
+      for (let i = 0; i < wantGroups.length; i++) {
+        const g = wantGroups[i];
         if (!g || !g.items || !g.items.length) continue;
         const base = normalizeWantRaw(g.items[0]);
         if (!conveyorPool.has(base)) continue;
@@ -7631,7 +7646,10 @@
         STATE.friendsCooldown = cooldown;
         renderFriendsBubbles();
         // Android 性能关键点：避免每帧重建 wants 的图片 DOM（会导致闪烁/不重绘）
-        if (friendsOrderChanged) renderWants();
+        if (friendsOrderChanged) {
+          renderWants();
+          if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
+        }
         if (friendsScoreChanged) updateTopInfo();
         // 分数被扣到 0 以下：提前结束本局（0 分还能继续扛一会儿）
         if (STATE.score < 0) {

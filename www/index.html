@@ -3552,7 +3552,7 @@
   </div>
   <script src="trim_metadata.js"></script>
   <script>// 主逻辑：图片全部用 DOM 内 img 预加载，路径 img_trimmed/ 与 index 同目录
-    const APP_VERSION = "1.0.13";
+    const APP_VERSION = "1.0.15";
     const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
     if (IS_ANDROID) {
       try {
@@ -4115,7 +4115,6 @@
         ruleBtn.innerText = t("规则", "How to Play");
         ruleBtn.onclick = () => {
           if (modal) modal.classList.remove("visible");
-          // 规则教学：不进入真正游戏，不开计时，但要让回转寿司转起来
           STATE.playing = false;
           STATE.paused = false;
           STATE.hardStopLoop = false;
@@ -4123,7 +4122,26 @@
           if (window.TUTORIAL && typeof TUTORIAL.start === "function") {
             TUTORIAL.start();
           }
-          // 保证 gameLoop 至少启动一次，用于驱动传送带动画
+          if (!window.gameLoopStarted) {
+            window.gameLoopStarted = true;
+            requestAnimationFrame(gameLoop);
+          }
+        };
+        btnGroup.appendChild(ruleBtn);
+      }
+      // 第6关：抹茶规则引导
+      if (levelIndex === 6) {
+        const ruleBtn = document.createElement("button");
+        ruleBtn.innerText = t("规则", "How to Play");
+        ruleBtn.onclick = () => {
+          if (modal) modal.classList.remove("visible");
+          STATE.playing = false;
+          STATE.paused = false;
+          STATE.hardStopLoop = false;
+          lastTime = 0;
+          if (window.TUTORIAL && typeof TUTORIAL.startMatcha === "function") {
+            TUTORIAL.startMatcha();
+          }
           if (!window.gameLoopStarted) {
             window.gameLoopStarted = true;
             requestAnimationFrame(gameLoop);
@@ -6548,6 +6566,10 @@
           STATE.wantDeadlines = null;
         }
         if (typeof renderWants === "function") renderWants();
+        // 保底延后一帧执行，确保传送带已布局完成，可见区域判断正确（快吃吧你/闯关）
+        var doEnsure = function () { if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi(); };
+        if (typeof requestAnimationFrame !== "undefined") requestAnimationFrame(doEnsure);
+        else doEnsure();
       }
       var dontWant = document.getElementById("btn-dont-want");
       if (dontWant) {
@@ -6557,6 +6579,7 @@
             STATE.wantsCurrent[0] = generateOrder();
             STATE.wantsCurrent[1] = generateOrder();
             renderWants();
+            if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
           };
         } else {
           dontWant.classList.add("hidden");
@@ -6618,6 +6641,10 @@
       if (b4) b4.style.display = n >= 4 ? "flex" : "none";
       renderFriendsBubbles();
       renderWants();
+      // 保底延后到 fillConveyorBelt 之后执行（setupFriendsModeUI 在 startGame 里早于传送带填充被调用）
+      var doEnsureFriends = function () { if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi(); };
+      if (typeof requestAnimationFrame !== "undefined") requestAnimationFrame(doEnsureFriends);
+      else doEnsureFriends();
     }
     /** 严格查图：只允许从“已预加载的真实文件名”里取，不猜、不试错。 */
     function getStrictIconPngByRaw(raw) {
@@ -7459,6 +7486,48 @@
       return el;
     }
 
+    /** 回转寿司保底：当前想吃的回转寿司（玩家+饭友）若不在可见区域内，则插入到传送带末尾（插队），保证能吃到。支持闯关/快吃吧你/饭友/闯关+饭友。 */
+    function ensureConveyorHasWantedSushi() {
+      const track = document.getElementById("conveyor-track");
+      const clip = document.getElementById("conveyor-row-clip");
+      if (!track || !clip) return;
+      const clipRect = clip.getBoundingClientRect();
+      const visibleTypes = new Set();
+      for (let i = 0; i < track.children.length; i++) {
+        const el = track.children[i];
+        if (!el.classList.contains("belt-item") || el.classList.contains("belt-item-ghost")) continue;
+        const t = el.dataset.type;
+        if (!t || t === "placeholder") continue;
+        const r = el.getBoundingClientRect();
+        if (r.right >= clipRect.left && r.left <= clipRect.right && r.bottom >= clipRect.top && r.top <= clipRect.bottom) {
+          visibleTypes.add(normalizeWantRaw(t));
+        }
+      }
+      let pool = CONVEYOR_SUSHIS;
+      if (STATE.mode === "level") {
+        const cfg = getLevelConfig(STATE.currentLevelIndex || 1);
+        if (cfg && cfg.unlockedConveyor && cfg.unlockedConveyor.length) pool = cfg.unlockedConveyor;
+      }
+      const conveyorPool = new Set(pool);
+      // 收集玩家 + 饭友（闯关+饭友 / 纯饭友）的回转寿司想吃，统一保底
+      const wantGroups = (STATE.wantsCurrent || []).slice();
+      if (typeof isFriendsActive === "function" && isFriendsActive() && STATE.friendsWants && STATE.friendsWants.length) {
+        for (let f = 0; f < STATE.friendsWants.length; f++) {
+          const fw = STATE.friendsWants[f];
+          if (fw && fw.items && fw.items.length) wantGroups.push(fw);
+        }
+      }
+      for (let i = 0; i < wantGroups.length; i++) {
+        const g = wantGroups[i];
+        if (!g || !g.items || !g.items.length) continue;
+        const base = normalizeWantRaw(g.items[0]);
+        if (!conveyorPool.has(base)) continue;
+        if (visibleTypes.has(base)) continue;
+        track.appendChild(createOneConveyorItem(base));
+        visibleTypes.add(base);
+      }
+    }
+
     /** 2/3 不可见的大圈，保证每种都有；转一圈回来的空位在 gameLoop 里补 */
     function fillConveyorBelt() {
       const track = document.getElementById("conveyor-track");
@@ -7536,7 +7605,10 @@
             needRender = true;
           }
         }
-        if (needRender) renderWants();
+        if (needRender) {
+          renderWants();
+          if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
+        }
         if (typeof updateSpeedModeTimerBars === "function") updateSpeedModeTimerBars();
       }
 
@@ -7574,7 +7646,10 @@
         STATE.friendsCooldown = cooldown;
         renderFriendsBubbles();
         // Android 性能关键点：避免每帧重建 wants 的图片 DOM（会导致闪烁/不重绘）
-        if (friendsOrderChanged) renderWants();
+        if (friendsOrderChanged) {
+          renderWants();
+          if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
+        }
         if (friendsScoreChanged) updateTopInfo();
         // 分数被扣到 0 以下：提前结束本局（0 分还能继续扛一会儿）
         if (STATE.score < 0) {
@@ -7903,12 +7978,17 @@
           if (drink.classList.contains("locked")) continue;
           if (window.TUTORIAL && TUTORIAL.active && !TUTORIAL.canGrabDrinkBottle(drink.dataset.type)) continue;
           grab(drink.dataset.type, "drink-bottle", null, [], { kind: "drink-slot", id: drink.id });
+          if (window.TUTORIAL && TUTORIAL.active && typeof TUTORIAL.onGrabDrinkBottle === "function") TUTORIAL.onGrabDrinkBottle(drink.dataset.type);
           return;
         }
         const cup = el.closest && el.closest(".cup-zone");
         if (cup && cup.innerHTML !== "") {
           if (window.TUTORIAL && TUTORIAL.active && !TUTORIAL.canGrabCup(cup.id)) continue;
-          if (cup.id === "zone-black-cup" && STATE.blackCupLevel > 0) { grab("blackCup", "cup", null, [], { kind: "cup-zone", id: cup.id }); return; }
+          if (cup.id === "zone-black-cup" && STATE.blackCupLevel > 0) {
+            grab("blackCup", "cup", null, [], { kind: "cup-zone", id: cup.id });
+            if (window.TUTORIAL && TUTORIAL.active && typeof TUTORIAL.onGrabCup === "function") TUTORIAL.onGrabCup(cup.id);
+            return;
+          }
           if (cup.id === "zone-glass-cup" && STATE.glassCupLevel > 0) { grab("glassCup", "cup", null, [], { kind: "cup-zone", id: cup.id }); return; }
         }
       }
@@ -8544,12 +8624,23 @@
         PourWater: 9,
         GrabCup: 10,
         DrinkWater: 11,
-        Done: 12
+        Done: 12,
+        // 第六关抹茶规则
+        LookWantCha: 20,
+        ConfirmWantCha: 21,
+        GrabTeapotCha: 22,
+        PourWaterCha: 23,
+        GrabCha: 24,
+        PourCha: 25,
+        GrabCupWithCha: 26,
+        DrinkCha: 27,
+        DoneCha: 28
       };
 
       const api = {
         active: false,
         step: 0,
+        tutorialKind: null, // "level1" | "matcha" | null
         // 保存引导过程中的关键目标（例如放到哪个桌位）
         _tableSlotIndex: null,
         _expectedTableSlotIndex: null,
@@ -8561,6 +8652,7 @@
         reset() {
           api.active = false;
           api.step = 0;
+          api.tutorialKind = null;
           api._tableSlotIndex = null;
           api._expectedTableSlotIndex = null;
           try {
@@ -8592,6 +8684,23 @@
           pointTo(document.getElementById("bubble-current") || document.getElementById("bubble-area"));
         },
 
+        /** 第六关抹茶规则：想吃抹茶粉 → 点击想吃确认 → 茶壶 → 杯子加水 → 抹茶粉 → 杯子加抹茶 → 有抹茶的杯子放入想吃 → 结束 */
+        startMatcha() {
+          api.active = true;
+          api.tutorialKind = "matcha";
+          api.step = STEP.LookWantCha;
+          STATE.wantsCurrent = [{ items: ["cha"], count: 1 }];
+          STATE.wantsNext = [];
+          STATE.wantDeadlines = null;
+          STATE.blackCupLevel = 0;
+          STATE.blackCupType = null;
+          if (typeof updateDrinksVisuals === "function") updateDrinksVisuals();
+          renderWants();
+          updateTopInfo();
+          showOverlay();
+          pointTo(document.getElementById("bubble-current") || document.getElementById("bubble-area"));
+        },
+
         // ---- 允许/禁止交互（点错=无事发生） ----
         canGrabDish(raw) {
           return api.active && api.step === STEP.GrabSashimi && raw === "salmonSlice";
@@ -8611,16 +8720,31 @@
           return Number.isFinite(idx) && idx === api._tableSlotIndex && slotEl.dataset.type === "norm_salmon";
         },
         canGrabDrinkBottle(raw) {
-          return api.active && api.step === STEP.GrabTeapot && raw === "hu";
+          if (!api.active) return true;
+          if (api.tutorialKind === "matcha") {
+            if (api.step === STEP.GrabTeapotCha && raw === "hu") return true;
+            if (api.step === STEP.GrabCha && raw === "cha") return true;
+            return false;
+          }
+          return api.step === STEP.GrabTeapot && raw === "hu";
         },
         canGrabCup(cupId) {
-          return api.active && api.step === STEP.GrabCup && cupId === "zone-black-cup";
+          if (!api.active) return true;
+          if (api.tutorialKind === "matcha") return api.step === STEP.GrabCupWithCha && cupId === "zone-black-cup" && STATE.blackCupType === "cha";
+          return api.step === STEP.GrabCup && cupId === "zone-black-cup";
         },
         canPour(raw) {
-          return api.active ? (api.step === STEP.PourWater && raw === "hu") : true;
+          if (!api.active) return true;
+          if (api.tutorialKind === "matcha") {
+            if (api.step === STEP.PourWaterCha && raw === "hu") return true;
+            if (api.step === STEP.PourCha && raw === "cha") return true;
+            return false;
+          }
+          return api.step === STEP.PourWater && raw === "hu";
         },
         canDropToEatZone(holding) {
           if (!api.active) return true;
+          if (api.tutorialKind === "matcha") return api.step === STEP.DrinkCha && holding && holding.src === "cup" && holding.raw === "blackCup";
           if (api.step === STEP.EatSashimi) return holding && holding.src === "dish" && holding.raw === "salmonSlice";
           if (api.step === STEP.EatSushi) return holding && (holding.src === "table") && holding.raw === "norm_salmon" && (holding.mods || []).includes("soy");
           if (api.step === STEP.DrinkWater) return holding && holding.src === "cup" && holding.raw === "blackCup";
@@ -8664,13 +8788,61 @@
           }
         },
         onPoured() {
-          if (!api.active || api.step !== STEP.PourWater) return;
+          if (!api.active) return;
+          if (api.tutorialKind === "matcha") {
+            if (api.step === STEP.PourWaterCha) {
+              api.step = STEP.GrabCha;
+              pointTo(document.getElementById("slot-cha"));
+              return;
+            }
+            if (api.step === STEP.PourCha) {
+              api.step = STEP.GrabCupWithCha;
+              pointTo(document.getElementById("zone-black-cup"));
+              return;
+            }
+            return;
+          }
+          if (api.step !== STEP.PourWater) return;
           api.step = STEP.GrabCup;
           showOverlay("倒好了！现在拿起【水杯】。点击左侧黑色杯子拿起。");
           pointTo(document.getElementById("zone-black-cup"));
         },
+        onGrabDrinkBottle(raw) {
+          if (!api.active || api.tutorialKind !== "matcha") return;
+          if (api.step === STEP.GrabTeapotCha && raw === "hu") {
+            api.step = STEP.PourWaterCha;
+            pointTo(document.getElementById("zone-black-cup"));
+          } else if (api.step === STEP.GrabCha && raw === "cha") {
+            api.step = STEP.PourCha;
+            pointTo(document.getElementById("zone-black-cup"));
+          }
+        },
+        onGrabCup(cupId) {
+          if (!api.active || api.tutorialKind !== "matcha" || api.step !== STEP.GrabCupWithCha) return;
+          if (cupId === "zone-black-cup" && STATE.blackCupType === "cha") {
+            api.step = STEP.DrinkCha;
+            pointTo(document.getElementById("eat-zone"));
+          }
+        },
         onDrinkCompleted(drinkContent) {
-          if (!api.active || api.step !== STEP.DrinkWater) return;
+          if (!api.active) return;
+          if (api.tutorialKind === "matcha" && api.step === STEP.DrinkCha) {
+            api.step = STEP.DoneCha;
+            api.tutorialKind = null;
+            hideOverlay();
+            showCustomModal(t("抹茶规则完成！开吃吧！", "Matcha tutorial done! Time to eat!"), [
+              { text: t("返回", "Back"), primary: true, cb: () => {
+                api.reset();
+                STATE.playing = false;
+                STATE.paused = false;
+                if (typeof resetHolding === "function") resetHolding();
+                startGame("level", { startTimer: false });
+                showLevelStartModal(6);
+              }}
+            ]);
+            return;
+          }
+          if (api.step !== STEP.DrinkWater) return;
           api.step = STEP.Done;
           hideOverlay();
           // 完成：提示并回到开始游戏弹窗（并重置）
@@ -8704,7 +8876,9 @@
 
         // 教程内部用来判断“当前是不是在倒水这一步”
         isPourStep() {
-          return api.active && api.step === STEP.PourWater;
+          if (!api.active) return false;
+          if (api.tutorialKind === "matcha") return api.step === STEP.PourWaterCha || api.step === STEP.PourCha;
+          return api.step === STEP.PourWater;
         }
       };
 
@@ -8872,15 +9046,21 @@
           ev.preventDefault();
           ev.stopPropagation();
           if (api._lookPhase === 0) {
-            // 第一击：从“想吃”切到“下一个”
             api._lookPhase = 1;
             pointTo(document.getElementById("bubble-next") || document.getElementById("bubble-area"));
           } else {
-            // 第二击：进入“拿三文鱼刺身”
             api._lookPhase = 0;
             api.step = STEP.GrabSashimi;
             pointTo(getDishEl("salmonSlice"));
           }
+          return true;
+        }
+        // 第六关抹茶：点击想吃确认 → 进入拿茶壶
+        if (api.tutorialKind === "matcha" && api.step === STEP.LookWantCha && (r || api._hotEllipse)) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          api.step = STEP.GrabTeapotCha;
+          pointTo(document.getElementById("slot-hu"));
           return true;
         }
 
@@ -9007,6 +9187,7 @@
           renderFriendsBubbles();
         }
         renderWants();
+        if (typeof ensureConveyorHasWantedSushi === "function") ensureConveyorHasWantedSushi();
       }, 280);
     }
 
